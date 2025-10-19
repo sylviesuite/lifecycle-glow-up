@@ -190,7 +190,7 @@ const LifecycleBreakdown = () => {
                 <BarChart
                   data={filteredData}
                   layout="vertical"
-                  margin={{ top: 20, right: 30, left: 120, bottom: 20 }}
+                  margin={{ top: 20, right: 280, left: 120, bottom: 20 }}
                   barGap={3}
                   barCategoryGap="20%"
                 >
@@ -212,7 +212,11 @@ const LifecycleBreakdown = () => {
                     style={{ fontSize: "13px", fontWeight: 500 }}
                     width={110}
                   />
-                  <Tooltip content={<CustomTooltip />} cursor={{ fill: "hsl(var(--accent))" }} />
+                  <Tooltip 
+                    content={<CustomTooltip />} 
+                    cursor={{ fill: "hsl(var(--accent))" }}
+                    wrapperStyle={{ transform: 'none', position: 'absolute', right: 20, left: 'auto' }}
+                  />
                   <Legend
                     wrapperStyle={{
                       paddingTop: "20px",
