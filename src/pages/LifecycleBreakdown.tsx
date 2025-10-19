@@ -13,8 +13,11 @@ import {
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Input } from "@/components/ui/input";
+import { AnchoredTooltip } from "@/components/AnchoredTooltip";
+import { PhaseDetailsDrawer } from "@/components/PhaseDetailsDrawer";
+import { useIsMobile } from "@/hooks/use-mobile";
 
-type PhaseKey =
+export type PhaseKey =
   | "PointOfOriginProduction"
   | "Transport"
   | "Construction"
@@ -74,7 +77,7 @@ const mockData: Row[] = [
     r.Disposal,
 }));
 
-const phaseConfig = {
+export const phaseConfig = {
   PointOfOriginProduction: {
     label: "Point of Origin → Production",
     color: "#B4E197",
@@ -100,6 +103,13 @@ const phaseConfig = {
 const LifecycleBreakdown = () => {
   const [units, setUnits] = useState<"kgCO2e" | "MJ">("kgCO2e");
   const [filter, setFilter] = useState("");
+  const [activePhase, setActivePhase] = useState<PhaseKey | null>(null);
+  const [selectedPhase, setSelectedPhase] = useState<{
+    material: string;
+    phase: PhaseKey;
+    value: number;
+  } | null>(null);
+  const isMobile = useIsMobile();
 
   const filteredData = mockData.filter((row) =>
     row.material.toLowerCase().includes(filter.toLowerCase())
@@ -109,42 +119,25 @@ const LifecycleBreakdown = () => {
     return new Intl.NumberFormat("en-US").format(value);
   };
 
-  const CustomTooltip = ({ active, payload, label }: any) => {
-    if (active && payload && payload.length) {
-      return (
-        <div className="rounded-lg border bg-popover p-3 shadow-md">
-          <p className="font-semibold text-foreground mb-2">{label}</p>
-          {payload.reverse().map((entry: any, index: number) => (
-            <div key={index} className="flex items-center gap-2 text-sm">
-              <div
-                className="w-3 h-3 rounded-sm"
-                style={{ backgroundColor: entry.color }}
-              />
-              <span className="text-muted-foreground">
-                {phaseConfig[entry.dataKey as PhaseKey]?.label}:
-              </span>
-              <span className="font-medium text-foreground">
-                {formatNumber(entry.value)} {units === "kgCO2e" ? "kg CO₂e" : "MJ"}
-              </span>
-            </div>
-          ))}
-        </div>
-      );
-    }
-    return null;
+  const handlePhaseHover = (phase: PhaseKey | null) => {
+    setActivePhase(phase);
+  };
+
+  const handlePhaseClick = (material: string, phase: PhaseKey, value: number) => {
+    setSelectedPhase({ material, phase, value });
   };
 
   return (
     <div className="min-h-screen bg-background p-6">
       <div className="max-w-6xl mx-auto">
-        <Card className="rounded-2xl shadow-lg">
+        <Card className="rounded-2xl shadow-lg min-h-[520px] md:min-h-[560px]">
           <CardHeader>
             <CardTitle className="text-3xl font-bold">
               Lifecycle Breakdown
             </CardTitle>
             <CardDescription>
               Stacked horizontal bars by lifecycle phase (mock data). Units shown
-              are {units === "kgCO2e" ? "kg CO₂e" : "MJ"} per material.
+              are {units === "kgCO2e" ? "kg CO₂e" : "MJ"} per material. Hover to explore, click for details.
             </CardDescription>
           </CardHeader>
           <CardContent className="space-y-6">
@@ -182,17 +175,19 @@ const LifecycleBreakdown = () => {
 
             {/* Chart */}
             <div
-              className="h-[360px] md:h-[420px]"
+              className="h-[420px] md:h-[480px] relative"
               role="region"
               aria-label="Lifecycle breakdown chart"
+              onMouseLeave={() => handlePhaseHover(null)}
             >
               <ResponsiveContainer width="100%" height="100%">
                 <BarChart
                   data={filteredData}
                   layout="vertical"
-                  margin={{ top: 20, right: 280, left: 120, bottom: 20 }}
+                  margin={{ top: 12, right: 24, bottom: 20, left: 150 }}
                   barGap={3}
                   barCategoryGap="20%"
+                  barSize={isMobile ? 24 : 28}
                 >
                   <CartesianGrid
                     strokeDasharray="3 3"
@@ -210,12 +205,24 @@ const LifecycleBreakdown = () => {
                     type="category"
                     stroke="hsl(var(--muted-foreground))"
                     style={{ fontSize: "13px", fontWeight: 500 }}
-                    width={110}
+                    width={140}
                   />
-                  <Tooltip 
-                    content={<CustomTooltip />} 
-                    cursor={{ fill: "hsl(var(--accent))" }}
-                    wrapperStyle={{ transform: 'none', position: 'absolute', right: 20, left: 'auto' }}
+                  <Tooltip
+                    content={(props) => (
+                      <AnchoredTooltip
+                        {...props}
+                        activePhase={activePhase}
+                        onPhaseClick={(phase) => {
+                          const material = props.label as string;
+                          const entry = filteredData.find((d) => d.material === material);
+                          if (entry) {
+                            handlePhaseClick(material, phase, entry[phase]);
+                          }
+                        }}
+                        units={units}
+                      />
+                    )}
+                    cursor={{ fill: "hsl(var(--accent) / 0.1)" }}
                   />
                   <Legend
                     wrapperStyle={{
@@ -230,28 +237,38 @@ const LifecycleBreakdown = () => {
                     dataKey="PointOfOriginProduction"
                     stackId="a"
                     fill={phaseConfig.PointOfOriginProduction.color}
+                    fillOpacity={activePhase && activePhase !== "PointOfOriginProduction" ? 0.5 : 1}
                     radius={[6, 0, 0, 6]}
+                    onMouseEnter={() => handlePhaseHover("PointOfOriginProduction")}
                   />
                   <Bar
                     dataKey="Transport"
                     stackId="a"
                     fill={phaseConfig.Transport.color}
+                    fillOpacity={activePhase && activePhase !== "Transport" ? 0.5 : 1}
+                    onMouseEnter={() => handlePhaseHover("Transport")}
                   />
                   <Bar
                     dataKey="Construction"
                     stackId="a"
                     fill={phaseConfig.Construction.color}
+                    fillOpacity={activePhase && activePhase !== "Construction" ? 0.5 : 1}
+                    onMouseEnter={() => handlePhaseHover("Construction")}
                   />
                   <Bar
                     dataKey="Maintenance"
                     stackId="a"
                     fill={phaseConfig.Maintenance.color}
+                    fillOpacity={activePhase && activePhase !== "Maintenance" ? 0.5 : 1}
+                    onMouseEnter={() => handlePhaseHover("Maintenance")}
                   />
                   <Bar
                     dataKey="Disposal"
                     stackId="a"
                     fill={phaseConfig.Disposal.color}
+                    fillOpacity={activePhase && activePhase !== "Disposal" ? 0.5 : 1}
                     radius={[0, 6, 6, 0]}
+                    onMouseEnter={() => handlePhaseHover("Disposal")}
                   />
                 </BarChart>
               </ResponsiveContainer>
@@ -264,6 +281,15 @@ const LifecycleBreakdown = () => {
             )}
           </CardContent>
         </Card>
+
+        <PhaseDetailsDrawer
+          open={!!selectedPhase}
+          onOpenChange={(open) => !open && setSelectedPhase(null)}
+          material={selectedPhase?.material || ""}
+          phase={selectedPhase?.phase || null}
+          value={selectedPhase?.value || 0}
+          units={units}
+        />
       </div>
     </div>
   );
