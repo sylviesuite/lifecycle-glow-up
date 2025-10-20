@@ -65,12 +65,11 @@ export function LifecycleFlow() {
       <div className="fixed top-6 left-6 right-6 flex items-center justify-between z-50">
         <Button
           onClick={handleBackToHome}
-          className="shadow-xl px-5 py-2.5 font-semibold border-2 hover:scale-105 transition-transform"
+          className="shadow-lg px-5 py-2.5 font-semibold hover:opacity-90 transition-opacity"
           aria-label="Back to home"
           style={{
-            background: 'rgba(255, 255, 255, 0.95)',
-            borderColor: 'rgba(0, 0, 0, 0.15)',
-            color: 'var(--text)',
+            background: 'var(--phase-prod)',
+            color: 'white',
           }}
         >
           <ArrowLeft className="h-4 w-4 mr-2" />
@@ -80,12 +79,11 @@ export function LifecycleFlow() {
         <Button
           size="icon"
           onClick={toggleTheme}
-          className="shrink-0 shadow-xl border-2 hover:scale-105 transition-transform h-11 w-11"
+          className="shrink-0 shadow-lg hover:opacity-90 transition-opacity h-11 w-11"
           aria-label="Toggle theme"
           style={{
-            background: 'rgba(255, 255, 255, 0.95)',
-            borderColor: 'rgba(0, 0, 0, 0.15)',
-            color: 'var(--text)',
+            background: 'var(--phase-prod)',
+            color: 'white',
           }}
         >
           {theme === 'dark' ? <Sun className="h-5 w-5" /> : <Moon className="h-5 w-5" />}
