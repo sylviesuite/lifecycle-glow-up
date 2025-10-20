@@ -1,5 +1,8 @@
 import { PhaseKey } from "@/pages/LifecycleBreakdown";
 
+export type ImpactCategory = "CO2e" | "Water" | "Acidification" | "Resource";
+export type ScoreTier = "Gold" | "Silver" | "Bronze" | "Problematic";
+
 export type Row = {
   name: string;
   "Point of Origin → Production": number;
@@ -13,6 +16,17 @@ export type Row = {
   energyPerYear: number;
   salvageValue: number;
   lifespanYears: number;
+  lis: number;
+  ris: number;
+  risTier: ScoreTier;
+  cpi: number;
+  costPerM2: number;
+  impacts: {
+    CO2e: number[];
+    Water: number[];
+    Acidification: number[];
+    Resource: number[];
+  };
 };
 
 export const mockData: Row[] = [
@@ -28,6 +42,17 @@ export const mockData: Row[] = [
     energyPerYear: 0.8,
     salvageValue: 5,
     lifespanYears: 50,
+    lis: 78,
+    ris: 85,
+    risTier: "Gold" as ScoreTier,
+    cpi: 0.65,
+    costPerM2: 55,
+    impacts: {
+      CO2e: [38, 6, 14, 3, 5],
+      Water: [120, 15, 35, 8, 12],
+      Acidification: [0.8, 0.2, 0.4, 0.1, 0.15],
+      Resource: [45, 8, 18, 5, 7],
+    },
   },
   {
     name: "2x6 Wall",
@@ -41,6 +66,17 @@ export const mockData: Row[] = [
     energyPerYear: 1.5,
     salvageValue: 8,
     lifespanYears: 30,
+    lis: 54,
+    ris: 58,
+    risTier: "Bronze" as ScoreTier,
+    cpi: 1.08,
+    costPerM2: 120,
+    impacts: {
+      CO2e: [64, 9, 18, 12, 8],
+      Water: [280, 22, 48, 35, 18],
+      Acidification: [1.6, 0.3, 0.6, 0.4, 0.25],
+      Resource: [85, 12, 24, 16, 10],
+    },
   },
   {
     name: "Hempcrete (6\" infill)",
@@ -54,6 +90,17 @@ export const mockData: Row[] = [
     energyPerYear: 0.5,
     salvageValue: 6,
     lifespanYears: 40,
+    lis: 72,
+    ris: 76,
+    risTier: "Silver" as ScoreTier,
+    cpi: 0.87,
+    costPerM2: 47,
+    impacts: {
+      CO2e: [22, 7, 16, 5, 4],
+      Water: [95, 18, 38, 12, 9],
+      Acidification: [0.5, 0.25, 0.5, 0.15, 0.1],
+      Resource: [35, 9, 20, 8, 6],
+    },
   },
   {
     name: "Drywall 4x8 (1/2\")",
@@ -67,6 +114,17 @@ export const mockData: Row[] = [
     energyPerYear: 0.3,
     salvageValue: 2,
     lifespanYears: 25,
+    lis: 62,
+    ris: 65,
+    risTier: "Silver" as ScoreTier,
+    cpi: 0.82,
+    costPerM2: 45,
+    impacts: {
+      CO2e: [31, 5, 10, 2, 7],
+      Water: [145, 12, 28, 6, 16],
+      Acidification: [0.9, 0.15, 0.3, 0.08, 0.2],
+      Resource: [52, 7, 14, 4, 9],
+    },
   },
 ].map((r) => ({
   ...r,
@@ -88,6 +146,9 @@ type LifecycleState = {
   years: number;
   discountRate: number;
   baseline: string | null;
+  impactCategory: ImpactCategory;
+  chartMode: "absolute" | "percentage";
+  viewMode: "impact" | "cpi";
 };
 
 const state: LifecycleState = {
@@ -100,6 +161,9 @@ const state: LifecycleState = {
   years: 30,
   discountRate: 3,
   baseline: null,
+  impactCategory: "CO2e",
+  chartMode: "absolute",
+  viewMode: "impact",
 };
 
 export const lifecycleStore = {
@@ -148,6 +212,18 @@ export const lifecycleStore = {
   
   setBaseline: (baseline: string | null) => {
     state.baseline = baseline;
+  },
+  
+  setImpactCategory: (category: ImpactCategory) => {
+    state.impactCategory = category;
+  },
+  
+  setChartMode: (mode: "absolute" | "percentage") => {
+    state.chartMode = mode;
+  },
+  
+  setViewMode: (mode: "impact" | "cpi") => {
+    state.viewMode = mode;
   },
   
   getFilteredRows: () => {
