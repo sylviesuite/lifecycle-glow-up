@@ -94,7 +94,7 @@ const state: LifecycleState = {
   scope: "A1-A5",
   units: "kgCO2e",
   searchQuery: "",
-  selectedAssemblies: [],
+  selectedAssemblies: mockData.map(r => r.name), // Select all by default
   years: 30,
   discountRate: 3,
   baseline: null,
