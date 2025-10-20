@@ -210,16 +210,16 @@ const LifecycleBreakdown = () => {
         aria-hidden
         className="pointer-events-none fixed inset-0 -z-10"
       >
-        {/* Sage to warm stone gradient */}
-        <div className="absolute inset-0 bg-gradient-to-b from-[#E7F3EE] via-[#EDF2EF] to-[#EAE9E4]" />
+        {/* BlockPlane brand gradient */}
+        <div className="absolute inset-0 bg-gradient-to-b from-[#4E9A83] via-[#6BB39E] to-[#9FD0C2]" />
         {/* Faint noise */}
         <div className="absolute inset-0 opacity-[0.06] mix-blend-overlay bg-[url('data:image/svg+xml;utf8,<svg xmlns=%22http://www.w3.org/2000/svg%22 width=%2240%22 height=%2240%22><rect fill=%22%23000000%22 fill-opacity=%220.04%22 width=%2240%22 height=%2240%22/></svg>')]" />
       </div>
 
-      <div className="max-w-6xl mx-auto p-4 md:p-6">
-        <section ref={cardRef} className="rounded-2xl bg-[#F7F8F6]/90 backdrop-blur-sm ring-1 ring-[rgba(0,0,0,0.06)] shadow-md p-5 md:p-7 min-h-[520px] md:min-h-[560px] relative">
+      <div className="max-w-6xl mx-auto p-6">
+        <section ref={cardRef} className="rounded-2xl bg-[#F7F8F6] backdrop-blur-sm ring-1 ring-[rgba(0,0,0,0.06)] shadow-md p-6 min-h-[520px] md:min-h-[560px] relative">
           <div className="space-y-2 mb-6">
-            <h1 className="text-3xl md:text-4xl font-extrabold tracking-tight">
+            <h1 className="text-3xl md:text-4xl font-extrabold tracking-tight text-slate-800">
               Lifecycle Breakdown
             </h1>
             <p className="text-slate-600">
@@ -234,11 +234,11 @@ const LifecycleBreakdown = () => {
                 <label className="text-sm font-semibold mb-2 block">
                   Filter Materials
                 </label>
-                <Input
+                  <Input
                   placeholder="Search materials..."
                   value={filter}
                   onChange={(e) => setFilter(e.target.value)}
-                  className="max-w-sm rounded-xl border-black/10 bg-white/90 backdrop-blur-sm shadow-sm focus:ring-2 focus:ring-black/10"
+                  className="max-w-sm rounded-xl border-black/10 bg-white backdrop-blur-sm shadow-sm focus:ring-2 focus:ring-[#6BB987]"
                 />
               </div>
               <div className="w-full sm:w-48">
@@ -249,7 +249,7 @@ const LifecycleBreakdown = () => {
                   value={units}
                   onValueChange={(value: "kgCO2e" | "MJ") => setUnits(value)}
                 >
-                  <SelectTrigger className="rounded-xl border-black/10 bg-white/90 backdrop-blur-sm shadow-sm">
+                  <SelectTrigger className="rounded-xl border-black/10 bg-white backdrop-blur-sm shadow-sm">
                     <SelectValue />
                   </SelectTrigger>
                   <SelectContent>
@@ -308,7 +308,7 @@ const LifecycleBreakdown = () => {
                       if (!payload) return null;
                       return (
                         <ul className="flex flex-wrap justify-center gap-3 px-4">
-                          {payload.map((item: any) => {
+                           {payload.map((item: any) => {
                             const phaseKey = item.dataKey as PhaseKey;
                             const isActive = activePhase === phaseKey;
                             const colorClass = phaseConfig[phaseKey].colorClass;
@@ -318,7 +318,7 @@ const LifecycleBreakdown = () => {
                                 className={`flex items-center gap-2 transition-all ${colorClass} rounded-md px-2 py-0.5 ${
                                   isActive
                                     ? "ring-2 ring-current font-semibold bg-white"
-                                    : "bg-white/70 ring-1 ring-black/5 opacity-90"
+                                    : "bg-white/70 backdrop-blur-sm ring-1 ring-black/5 opacity-90"
                                 }`}
                               >
                                 <span className="inline-block w-3 h-3 rounded-sm bg-current" />
@@ -343,8 +343,8 @@ const LifecycleBreakdown = () => {
                     {filteredData.map((row) => (
                       <Cell
                         key={`cell-pop-${row.material}`}
-                        stroke={activeMaterial === row.material && activePhase === "PointOfOriginProduction" ? "#475347" : "none"}
-                        strokeWidth={2}
+                        stroke={activeMaterial === row.material && activePhase === "PointOfOriginProduction" ? "#3A6E5E" : "none"}
+                        strokeWidth={1.5}
                         opacity={activeMaterial === row.material && activePhase === "PointOfOriginProduction" ? 1 : 0.88}
                         onMouseMove={(ev: any) => handleBarMouseMove(row.material, "PointOfOriginProduction", ev)}
                         onMouseLeave={handleBarMouseLeave}
@@ -363,8 +363,8 @@ const LifecycleBreakdown = () => {
                     {filteredData.map((row) => (
                       <Cell
                         key={`cell-transport-${row.material}`}
-                        stroke={activeMaterial === row.material && activePhase === "Transport" ? "#475347" : "none"}
-                        strokeWidth={2}
+                        stroke={activeMaterial === row.material && activePhase === "Transport" ? "#3A6E5E" : "none"}
+                        strokeWidth={1.5}
                         opacity={activeMaterial === row.material && activePhase === "Transport" ? 1 : 0.88}
                         onMouseMove={(ev: any) => handleBarMouseMove(row.material, "Transport", ev)}
                         onMouseLeave={handleBarMouseLeave}
@@ -383,8 +383,8 @@ const LifecycleBreakdown = () => {
                     {filteredData.map((row) => (
                       <Cell
                         key={`cell-construction-${row.material}`}
-                        stroke={activeMaterial === row.material && activePhase === "Construction" ? "#475347" : "none"}
-                        strokeWidth={2}
+                        stroke={activeMaterial === row.material && activePhase === "Construction" ? "#3A6E5E" : "none"}
+                        strokeWidth={1.5}
                         opacity={activeMaterial === row.material && activePhase === "Construction" ? 1 : 0.88}
                         onMouseMove={(ev: any) => handleBarMouseMove(row.material, "Construction", ev)}
                         onMouseLeave={handleBarMouseLeave}
@@ -403,8 +403,8 @@ const LifecycleBreakdown = () => {
                     {filteredData.map((row) => (
                       <Cell
                         key={`cell-maintenance-${row.material}`}
-                        stroke={activeMaterial === row.material && activePhase === "Maintenance" ? "#475347" : "none"}
-                        strokeWidth={2}
+                        stroke={activeMaterial === row.material && activePhase === "Maintenance" ? "#3A6E5E" : "none"}
+                        strokeWidth={1.5}
                         opacity={activeMaterial === row.material && activePhase === "Maintenance" ? 1 : 0.88}
                         onMouseMove={(ev: any) => handleBarMouseMove(row.material, "Maintenance", ev)}
                         onMouseLeave={handleBarMouseLeave}
@@ -424,8 +424,8 @@ const LifecycleBreakdown = () => {
                     {filteredData.map((row) => (
                       <Cell
                         key={`cell-disposal-${row.material}`}
-                        stroke={activeMaterial === row.material && activePhase === "Disposal" ? "#475347" : "none"}
-                        strokeWidth={2}
+                        stroke={activeMaterial === row.material && activePhase === "Disposal" ? "#3A6E5E" : "none"}
+                        strokeWidth={1.5}
                         opacity={activeMaterial === row.material && activePhase === "Disposal" ? 1 : 0.88}
                         onMouseMove={(ev: any) => handleBarMouseMove(row.material, "Disposal", ev)}
                         onMouseLeave={handleBarMouseLeave}
