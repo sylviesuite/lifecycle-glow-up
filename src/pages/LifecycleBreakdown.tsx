@@ -80,22 +80,27 @@ const mockData: Row[] = [
 export const phaseConfig = {
   PointOfOriginProduction: {
     label: "Point of Origin → Production",
+    shortLabel: "Production",
     color: "#B4E197",
   },
   Transport: {
     label: "Transport",
+    shortLabel: "Transport",
     color: "#5CB3FF",
   },
   Construction: {
     label: "Construction",
+    shortLabel: "Construction",
     color: "#FF7F50",
   },
   Maintenance: {
     label: "Maintenance",
+    shortLabel: "Maintenance",
     color: "#FFB347",
   },
   Disposal: {
     label: "End of Life",
+    shortLabel: "End of Life",
     color: "#C96DD8",
   },
 };
@@ -120,6 +125,54 @@ const LifecycleBreakdown = () => {
 
   const formatNumber = (value: number) => {
     return new Intl.NumberFormat("en-US").format(value);
+  };
+
+  const renderSegmentLabel = (props: any, phase: PhaseKey, material: string) => {
+    const { x, y, width, height, value } = props;
+    
+    if (activeMaterial !== material || activePhase !== phase || !value) {
+      return null;
+    }
+
+    const minWidth = 36;
+    const isNarrow = width < minWidth;
+    
+    const labelText = `${phaseConfig[phase].shortLabel} • ${formatNumber(value)} ${units === "kgCO2e" ? "kg CO₂e" : "MJ"}`;
+    const padding = 8;
+    const chipHeight = 24;
+    const chipWidth = Math.max(labelText.length * 6 + padding * 2, 100);
+    
+    const chipX = isNarrow 
+      ? x + width - chipWidth 
+      : x + width / 2 - chipWidth / 2;
+    const chipY = isNarrow 
+      ? y - chipHeight - 4 
+      : y + height / 2 - chipHeight / 2;
+
+    return (
+      <g>
+        <rect
+          x={chipX}
+          y={chipY}
+          width={chipWidth}
+          height={chipHeight}
+          rx={12}
+          fill="rgba(0, 0, 0, 0.85)"
+          filter="url(#chip-shadow)"
+        />
+        <text
+          x={chipX + chipWidth / 2}
+          y={chipY + chipHeight / 2}
+          textAnchor="middle"
+          dominantBaseline="middle"
+          fill="white"
+          fontSize="11"
+          fontWeight="600"
+        >
+          {labelText}
+        </text>
+      </g>
+    );
   };
 
   const handleBarMouseMove = (
@@ -212,6 +265,11 @@ const LifecycleBreakdown = () => {
                   barCategoryGap="20%"
                   barSize={isMobile ? 24 : 28}
                 >
+                  <defs>
+                    <filter id="chip-shadow" x="-50%" y="-50%" width="200%" height="200%">
+                      <feDropShadow dx="0" dy="2" stdDeviation="3" floodOpacity="0.3" />
+                    </filter>
+                  </defs>
                   <CartesianGrid
                     strokeDasharray="3 3"
                     stroke="hsl(var(--border))"
@@ -245,6 +303,7 @@ const LifecycleBreakdown = () => {
                     stackId="a"
                     radius={[6, 0, 0, 6]}
                     fill={phaseConfig.PointOfOriginProduction.color}
+                    label={(props: any) => renderSegmentLabel(props, "PointOfOriginProduction", props.name)}
                   >
                     {filteredData.map((row) => (
                       <Cell
@@ -263,6 +322,7 @@ const LifecycleBreakdown = () => {
                     dataKey="Transport"
                     stackId="a"
                     fill={phaseConfig.Transport.color}
+                    label={(props: any) => renderSegmentLabel(props, "Transport", props.name)}
                   >
                     {filteredData.map((row) => (
                       <Cell
@@ -281,6 +341,7 @@ const LifecycleBreakdown = () => {
                     dataKey="Construction"
                     stackId="a"
                     fill={phaseConfig.Construction.color}
+                    label={(props: any) => renderSegmentLabel(props, "Construction", props.name)}
                   >
                     {filteredData.map((row) => (
                       <Cell
@@ -299,6 +360,7 @@ const LifecycleBreakdown = () => {
                     dataKey="Maintenance"
                     stackId="a"
                     fill={phaseConfig.Maintenance.color}
+                    label={(props: any) => renderSegmentLabel(props, "Maintenance", props.name)}
                   >
                     {filteredData.map((row) => (
                       <Cell
@@ -318,6 +380,7 @@ const LifecycleBreakdown = () => {
                     stackId="a"
                     radius={[0, 6, 6, 0]}
                     fill={phaseConfig.Disposal.color}
+                    label={(props: any) => renderSegmentLabel(props, "Disposal", props.name)}
                   >
                     {filteredData.map((row) => (
                       <Cell
