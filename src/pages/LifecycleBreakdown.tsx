@@ -343,7 +343,7 @@ const LifecycleBreakdown = () => {
                     {filteredData.map((row) => (
                       <Cell
                         key={`cell-pop-${row.material}`}
-                        stroke={activeMaterial === row.material && activePhase === "PointOfOriginProduction" ? "currentColor" : "none"}
+                        stroke={activeMaterial === row.material && activePhase === "PointOfOriginProduction" ? "#000000" : "none"}
                         strokeWidth={2}
                         opacity={activeMaterial === row.material && activePhase === "PointOfOriginProduction" ? 1 : 0.85}
                         onMouseMove={(ev: any) => handleBarMouseMove(row.material, "PointOfOriginProduction", ev)}
@@ -363,7 +363,7 @@ const LifecycleBreakdown = () => {
                     {filteredData.map((row) => (
                       <Cell
                         key={`cell-transport-${row.material}`}
-                        stroke={activeMaterial === row.material && activePhase === "Transport" ? "currentColor" : "none"}
+                        stroke={activeMaterial === row.material && activePhase === "Transport" ? "#000000" : "none"}
                         strokeWidth={2}
                         opacity={activeMaterial === row.material && activePhase === "Transport" ? 1 : 0.85}
                         onMouseMove={(ev: any) => handleBarMouseMove(row.material, "Transport", ev)}
@@ -383,7 +383,7 @@ const LifecycleBreakdown = () => {
                     {filteredData.map((row) => (
                       <Cell
                         key={`cell-construction-${row.material}`}
-                        stroke={activeMaterial === row.material && activePhase === "Construction" ? "currentColor" : "none"}
+                        stroke={activeMaterial === row.material && activePhase === "Construction" ? "#000000" : "none"}
                         strokeWidth={2}
                         opacity={activeMaterial === row.material && activePhase === "Construction" ? 1 : 0.85}
                         onMouseMove={(ev: any) => handleBarMouseMove(row.material, "Construction", ev)}
@@ -403,7 +403,7 @@ const LifecycleBreakdown = () => {
                     {filteredData.map((row) => (
                       <Cell
                         key={`cell-maintenance-${row.material}`}
-                        stroke={activeMaterial === row.material && activePhase === "Maintenance" ? "currentColor" : "none"}
+                        stroke={activeMaterial === row.material && activePhase === "Maintenance" ? "#000000" : "none"}
                         strokeWidth={2}
                         opacity={activeMaterial === row.material && activePhase === "Maintenance" ? 1 : 0.85}
                         onMouseMove={(ev: any) => handleBarMouseMove(row.material, "Maintenance", ev)}
@@ -424,7 +424,7 @@ const LifecycleBreakdown = () => {
                     {filteredData.map((row) => (
                       <Cell
                         key={`cell-disposal-${row.material}`}
-                        stroke={activeMaterial === row.material && activePhase === "Disposal" ? "currentColor" : "none"}
+                        stroke={activeMaterial === row.material && activePhase === "Disposal" ? "#000000" : "none"}
                         strokeWidth={2}
                         opacity={activeMaterial === row.material && activePhase === "Disposal" ? 1 : 0.85}
                         onMouseMove={(ev: any) => handleBarMouseMove(row.material, "Disposal", ev)}
