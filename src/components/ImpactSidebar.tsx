@@ -44,7 +44,7 @@ export function ImpactSidebar({
             animate={{ y: 0 }}
             exit={{ y: "100%" }}
             transition={{ type: "spring", damping: 30, stiffness: 300 }}
-            className="fixed bottom-0 left-0 right-0 h-[60vh] max-h-[600px] z-50 shadow-2xl overflow-y-auto"
+            className="fixed bottom-0 left-0 right-0 h-[35vh] max-h-[350px] z-50 shadow-2xl overflow-y-auto"
             style={{
               background: 'var(--canvas)',
               borderTop: '2px solid var(--ring-lifecycle)',
