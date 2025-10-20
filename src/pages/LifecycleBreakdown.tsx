@@ -432,7 +432,7 @@ const LifecycleBreakdown = () => {
                       if (!payload) return null;
                       return (
                         <ul className="flex flex-wrap justify-center gap-3 px-4">
-                           {payload.map((item: any) => {
+                            {payload.map((item: any) => {
                             const phaseKey = item.dataKey as PhaseKey;
                             const isActive = activePhase === phaseKey;
                             const colorClass = phaseConfig[phaseKey].colorClass;
@@ -444,11 +444,11 @@ const LifecycleBreakdown = () => {
                                   background: isActive ? 'white' : 'var(--legend-pill)',
                                   border: `1px solid var(--ring-lifecycle)`,
                                   boxShadow: isActive ? '0 0 0 2px currentColor inset' : 'none',
-                                  fontWeight: isActive ? 600 : 400
+                                  fontWeight: isActive ? 600 : 500
                                 }}
                               >
                                 <span className="inline-block w-3 h-3 rounded-sm bg-current" />
-                                <span className="text-sm font-medium" style={{ color: 'var(--text-sub)' }}>
+                                <span className="text-sm font-medium" style={{ color: 'var(--text)' }}>
                                   {phaseConfig[phaseKey].label}
                                 </span>
                               </li>
