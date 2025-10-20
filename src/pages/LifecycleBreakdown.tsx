@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useRef } from "react";
 import {
   BarChart,
   Bar,
@@ -102,12 +102,15 @@ export const phaseConfig = {
 const LifecycleBreakdown = () => {
   const [units, setUnits] = useState<"kgCO2e" | "MJ">("kgCO2e");
   const [filter, setFilter] = useState("");
+  const [activeMaterial, setActiveMaterial] = useState<string | null>(null);
   const [activePhase, setActivePhase] = useState<PhaseKey | null>(null);
+  const [anchor, setAnchor] = useState<{ x: number; y: number } | null>(null);
   const [selectedPhase, setSelectedPhase] = useState<{
     material: string;
     phase: PhaseKey;
     value: number;
   } | null>(null);
+  const cardRef = useRef<HTMLDivElement>(null);
   const isMobile = useIsMobile();
 
   const filteredData = mockData.filter((row) =>
@@ -118,18 +121,39 @@ const LifecycleBreakdown = () => {
     return new Intl.NumberFormat("en-US").format(value);
   };
 
-  const handlePhaseHover = (phase: PhaseKey | null) => {
+  const handleBarMouseMove = (
+    material: string,
+    phase: PhaseKey,
+    ev: React.MouseEvent
+  ) => {
+    if (!cardRef.current) return;
+    const rect = cardRef.current.getBoundingClientRect();
+    setActiveMaterial(material);
     setActivePhase(phase);
+    setAnchor({
+      x: ev.clientX - rect.left,
+      y: ev.clientY - rect.top,
+    });
+  };
+
+  const handleBarMouseLeave = () => {
+    setActivePhase(null);
+    setActiveMaterial(null);
+    setAnchor(null);
   };
 
   const handlePhaseClick = (material: string, phase: PhaseKey, value: number) => {
     setSelectedPhase({ material, phase, value });
   };
 
+  const panelData = activeMaterial
+    ? filteredData.find((d) => d.material === activeMaterial)
+    : null;
+
   return (
     <div className="min-h-screen bg-background p-6">
       <div className="max-w-6xl mx-auto">
-        <Card className="rounded-2xl shadow-lg min-h-[520px] md:min-h-[560px]">
+        <Card ref={cardRef} className="rounded-2xl shadow-lg min-h-[520px] md:min-h-[560px] relative">
           <CardHeader>
             <CardTitle className="text-3xl font-bold">
               Lifecycle Breakdown
@@ -177,7 +201,6 @@ const LifecycleBreakdown = () => {
               className="h-[420px] md:h-[480px] relative"
               role="region"
               aria-label="Lifecycle breakdown chart"
-              onMouseLeave={() => handlePhaseHover(null)}
             >
               <ResponsiveContainer width="100%" height="100%">
                 <BarChart
@@ -206,23 +229,7 @@ const LifecycleBreakdown = () => {
                     style={{ fontSize: "13px", fontWeight: 500 }}
                     width={140}
                   />
-                  <Tooltip
-                    content={(props) => (
-                      <AnchoredTooltip
-                        {...props}
-                        activePhase={activePhase}
-                        onPhaseClick={(phase) => {
-                          const material = props.label as string;
-                          const entry = filteredData.find((d) => d.material === material);
-                          if (entry) {
-                            handlePhaseClick(material, phase, entry[phase]);
-                          }
-                        }}
-                        units={units}
-                      />
-                    )}
-                    cursor={{ fill: "hsl(var(--accent) / 0.1)" }}
-                  />
+                  <Tooltip content={<div />} cursor={{ fill: "hsl(var(--accent) / 0.1)" }} />
                   <Legend
                     wrapperStyle={{
                       paddingTop: "20px",
@@ -236,38 +243,53 @@ const LifecycleBreakdown = () => {
                     dataKey="PointOfOriginProduction"
                     stackId="a"
                     fill={phaseConfig.PointOfOriginProduction.color}
-                    fillOpacity={activePhase && activePhase !== "PointOfOriginProduction" ? 0.5 : 1}
+                    fillOpacity={activePhase && activePhase !== "PointOfOriginProduction" ? 0.45 : 1}
                     radius={[6, 0, 0, 6]}
-                    onMouseEnter={() => handlePhaseHover("PointOfOriginProduction")}
+                    onMouseMove={(data: any, _: any, ev: any) => 
+                      handleBarMouseMove(data.material, "PointOfOriginProduction", ev)
+                    }
+                    onMouseLeave={handleBarMouseLeave}
                   />
                   <Bar
                     dataKey="Transport"
                     stackId="a"
                     fill={phaseConfig.Transport.color}
-                    fillOpacity={activePhase && activePhase !== "Transport" ? 0.5 : 1}
-                    onMouseEnter={() => handlePhaseHover("Transport")}
+                    fillOpacity={activePhase && activePhase !== "Transport" ? 0.45 : 1}
+                    onMouseMove={(data: any, _: any, ev: any) => 
+                      handleBarMouseMove(data.material, "Transport", ev)
+                    }
+                    onMouseLeave={handleBarMouseLeave}
                   />
                   <Bar
                     dataKey="Construction"
                     stackId="a"
                     fill={phaseConfig.Construction.color}
-                    fillOpacity={activePhase && activePhase !== "Construction" ? 0.5 : 1}
-                    onMouseEnter={() => handlePhaseHover("Construction")}
+                    fillOpacity={activePhase && activePhase !== "Construction" ? 0.45 : 1}
+                    onMouseMove={(data: any, _: any, ev: any) => 
+                      handleBarMouseMove(data.material, "Construction", ev)
+                    }
+                    onMouseLeave={handleBarMouseLeave}
                   />
                   <Bar
                     dataKey="Maintenance"
                     stackId="a"
                     fill={phaseConfig.Maintenance.color}
-                    fillOpacity={activePhase && activePhase !== "Maintenance" ? 0.5 : 1}
-                    onMouseEnter={() => handlePhaseHover("Maintenance")}
+                    fillOpacity={activePhase && activePhase !== "Maintenance" ? 0.45 : 1}
+                    onMouseMove={(data: any, _: any, ev: any) => 
+                      handleBarMouseMove(data.material, "Maintenance", ev)
+                    }
+                    onMouseLeave={handleBarMouseLeave}
                   />
                   <Bar
                     dataKey="Disposal"
                     stackId="a"
                     fill={phaseConfig.Disposal.color}
-                    fillOpacity={activePhase && activePhase !== "Disposal" ? 0.5 : 1}
+                    fillOpacity={activePhase && activePhase !== "Disposal" ? 0.45 : 1}
                     radius={[0, 6, 6, 0]}
-                    onMouseEnter={() => handlePhaseHover("Disposal")}
+                    onMouseMove={(data: any, _: any, ev: any) => 
+                      handleBarMouseMove(data.material, "Disposal", ev)
+                    }
+                    onMouseLeave={handleBarMouseLeave}
                   />
                 </BarChart>
               </ResponsiveContainer>
@@ -279,6 +301,34 @@ const LifecycleBreakdown = () => {
               </div>
             )}
           </CardContent>
+
+          {/* Anchored hover panel overlay */}
+          {panelData && anchor && activeMaterial && (
+            <AnchoredTooltip
+              active={true}
+              payload={Object.keys(phaseConfig).map((key) => ({
+                dataKey: key,
+                name: key,
+                value: panelData[key as PhaseKey],
+                color: phaseConfig[key as PhaseKey].color,
+              }))}
+              label={activeMaterial}
+              coordinate={{ x: anchor.x, y: anchor.y }}
+              viewBox={{
+                x: 0,
+                y: 0,
+                width: cardRef.current?.offsetWidth || 0,
+                height: cardRef.current?.offsetHeight || 0,
+              }}
+              activePhase={activePhase}
+              onPhaseClick={(phase) => {
+                if (panelData) {
+                  handlePhaseClick(activeMaterial, phase, panelData[phase]);
+                }
+              }}
+              units={units}
+            />
+          )}
         </Card>
 
         <PhaseDetailsDrawer
