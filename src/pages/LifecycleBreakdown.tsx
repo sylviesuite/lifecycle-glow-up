@@ -79,27 +79,27 @@ export const phaseConfig = {
   PointOfOriginProduction: {
     label: "Point of Origin → Production",
     shortLabel: "Production",
-    colorClass: "text-emerald-500",
+    colorClass: "text-[hsl(135,28%,40%)]",
   },
   Transport: {
     label: "Transport",
     shortLabel: "Transport",
-    colorClass: "text-sky-500",
+    colorClass: "text-[hsl(205,35%,48%)]",
   },
   Construction: {
     label: "Construction",
     shortLabel: "Construction",
-    colorClass: "text-amber-500",
+    colorClass: "text-[hsl(24,45%,46%)]",
   },
   Maintenance: {
     label: "Maintenance",
     shortLabel: "Maintenance",
-    colorClass: "text-fuchsia-500",
+    colorClass: "text-[hsl(286,28%,48%)]",
   },
   Disposal: {
     label: "End of Life",
     shortLabel: "End of Life",
-    colorClass: "text-rose-500",
+    colorClass: "text-[hsl(350,38%,46%)]",
   },
 };
 
@@ -210,14 +210,14 @@ const LifecycleBreakdown = () => {
         aria-hidden
         className="pointer-events-none fixed inset-0 -z-10"
       >
-        {/* Soft radial + linear gradient */}
-        <div className="absolute inset-0 bg-[radial-gradient(1200px_600px_at_20%_0%,_#b8e1d6_18%,_transparent_60%),radial-gradient(1000px_500px_at_85%_10%,_#dfeee9_20%,_transparent_60%),linear-gradient(180deg,_#f5f7f8_0%,_#eef3f1_60%,_#e9efed_100%)]" />
+        {/* Soft gradient */}
+        <div className="absolute inset-0 bg-gradient-to-b from-emerald-50 via-stone-50 to-stone-100" />
         {/* Faint noise */}
-        <div className="absolute inset-0 opacity-[0.06] mix-blend-overlay bg-[url('data:image/svg+xml;utf8,<svg xmlns=%22http://www.w3.org/2000/svg%22 width=%2240%22 height=%2240%22 viewBox=%220 0 40 40%22><rect fill=%22%23ffffff%22 fill-opacity=%220.04%22 width=%2240%22 height=%2240%22/></svg>')]" />
+        <div className="absolute inset-0 opacity-[0.05] mix-blend-overlay bg-[url('data:image/svg+xml;utf8,<svg xmlns=%22http://www.w3.org/2000/svg%22 width=%2240%22 height=%2240%22><rect fill=%22%23000000%22 fill-opacity=%220.04%22 width=%2240%22 height=%2240%22/></svg>')]" />
       </div>
 
       <div className="max-w-6xl mx-auto p-4 md:p-6">
-        <section ref={cardRef} className="rounded-2xl bg-white/85 backdrop-blur-sm ring-1 ring-black/5 shadow-lg p-5 md:p-7 min-h-[520px] md:min-h-[560px] relative">
+        <section ref={cardRef} className="rounded-2xl bg-stone-50/90 backdrop-blur-sm ring-1 ring-stone-200/70 shadow-md p-5 md:p-7 min-h-[520px] md:min-h-[560px] relative">
           <div className="space-y-2 mb-6">
             <h1 className="text-3xl md:text-4xl font-extrabold tracking-tight">
               Lifecycle Breakdown
@@ -266,7 +266,8 @@ const LifecycleBreakdown = () => {
               role="region"
               aria-label="Lifecycle breakdown chart"
             >
-              <ResponsiveContainer width="100%" height="100%">
+              <div className="rounded-xl ring-1 ring-stone-200/60 bg-white/60 p-3 h-full">
+                <ResponsiveContainer width="100%" height="100%">
                 <BarChart
                   data={filteredData}
                   layout="vertical"
@@ -282,7 +283,7 @@ const LifecycleBreakdown = () => {
                   </defs>
                   <CartesianGrid
                     strokeDasharray="3 3"
-                    stroke="rgba(2, 6, 23, 0.06)"
+                    stroke="rgba(2,6,23,0.08)"
                   />
                   <XAxis
                     type="number"
@@ -317,7 +318,7 @@ const LifecycleBreakdown = () => {
                                 className={`flex items-center gap-2 transition-all ${colorClass} rounded-md px-2 py-0.5 ${
                                   isActive
                                     ? "ring-2 ring-current font-semibold bg-white"
-                                    : "bg-white/70 ring-1 ring-black/5"
+                                    : "bg-white/70 ring-1 ring-stone-200/70"
                                 }`}
                               >
                                 <span className="inline-block w-3 h-3 rounded-sm bg-current" />
@@ -435,6 +436,7 @@ const LifecycleBreakdown = () => {
                   </Bar>
                 </BarChart>
               </ResponsiveContainer>
+              </div>
             </div>
 
             {filteredData.length === 0 && (
