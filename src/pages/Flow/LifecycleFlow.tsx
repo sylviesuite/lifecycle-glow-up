@@ -64,13 +64,13 @@ export function LifecycleFlow() {
       {/* Header Actions - Fixed position */}
       <div className="fixed top-6 left-6 right-6 flex items-center justify-between z-50">
         <Button
-          variant="outline"
           onClick={handleBackToHome}
-          className="shadow-lg px-4 py-2"
+          className="shadow-xl px-5 py-2.5 font-semibold border-2 hover:scale-105 transition-transform"
           aria-label="Back to home"
           style={{
-            background: 'var(--canvas)',
-            borderColor: 'var(--ring-lifecycle)',
+            background: 'rgba(255, 255, 255, 0.95)',
+            borderColor: 'rgba(0, 0, 0, 0.15)',
+            color: 'var(--text)',
           }}
         >
           <ArrowLeft className="h-4 w-4 mr-2" />
@@ -78,17 +78,17 @@ export function LifecycleFlow() {
         </Button>
         
         <Button
-          variant="outline"
           size="icon"
           onClick={toggleTheme}
-          className="shrink-0 shadow-lg"
+          className="shrink-0 shadow-xl border-2 hover:scale-105 transition-transform h-11 w-11"
           aria-label="Toggle theme"
           style={{
-            background: 'var(--canvas)',
-            borderColor: 'var(--ring-lifecycle)',
+            background: 'rgba(255, 255, 255, 0.95)',
+            borderColor: 'rgba(0, 0, 0, 0.15)',
+            color: 'var(--text)',
           }}
         >
-          {theme === 'dark' ? <Sun className="h-4 w-4" /> : <Moon className="h-4 w-4" />}
+          {theme === 'dark' ? <Sun className="h-5 w-5" /> : <Moon className="h-5 w-5" />}
         </Button>
       </div>
 
