@@ -10,6 +10,8 @@ interface AnchoredTooltipProps {
   activePhase: PhaseKey | null;
   onPhaseClick: (phase: PhaseKey) => void;
   units: "kgCO2e" | "MJ";
+  rowTotal: number;
+  sumSelected: number;
 }
 
 export const AnchoredTooltip = ({
@@ -21,6 +23,8 @@ export const AnchoredTooltip = ({
   activePhase,
   onPhaseClick,
   units,
+  rowTotal,
+  sumSelected,
 }: AnchoredTooltipProps) => {
   const tooltipRef = useRef<HTMLDivElement>(null);
   const [position, setPosition] = useState<{ left: number; top: number; flipAbove: boolean } | null>(null);
@@ -60,6 +64,14 @@ export const AnchoredTooltip = ({
   const formatNumber = (value: number) => {
     return new Intl.NumberFormat("en-US").format(value);
   };
+
+  const formatPercent = (value: number) => {
+    return `${Math.round(value * 100)}%`;
+  };
+
+  const activePhaseValue = activePhase && payload
+    ? payload.find((p) => p.dataKey === activePhase)?.value || 0
+    : 0;
 
   return (
     <div
@@ -107,6 +119,29 @@ export const AnchoredTooltip = ({
           );
         })}
       </div>
+
+      {activePhase && activePhaseValue > 0 && (
+        <div className="mt-3 border-t border-black/10 pt-3 space-y-2">
+          <div className="text-[13px] text-slate-700">
+            <div>
+              <span className="font-medium">This phase:</span> {formatNumber(activePhaseValue)}{" "}
+              {units === "kgCO2e" ? "kg CO₂e" : "MJ"} • {formatPercent(activePhaseValue / rowTotal)} of this
+              material
+            </div>
+            <div className="mt-1">
+              <span className="font-medium">This material:</span> {formatPercent(rowTotal / sumSelected)} of
+              total across selected
+            </div>
+          </div>
+          <div className="h-2 w-full overflow-hidden rounded bg-black/10">
+            <div
+              className="h-full bg-current/60"
+              style={{ width: `${Math.min(100, (activePhaseValue / rowTotal) * 100)}%` }}
+            />
+          </div>
+        </div>
+      )}
+
       <p className="text-[10px] text-slate-500 mt-2.5 text-center italic">
         Click any phase for detailed breakdown
       </p>

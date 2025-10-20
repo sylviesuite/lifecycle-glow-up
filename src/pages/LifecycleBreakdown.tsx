@@ -13,7 +13,7 @@ import {
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { Moon, Sun } from "lucide-react";
+import { Moon, Sun, ArrowLeft, X } from "lucide-react";
 import { AnchoredTooltip } from "@/components/AnchoredTooltip";
 import { PhaseDetailsDrawer } from "@/components/PhaseDetailsDrawer";
 
@@ -109,6 +109,68 @@ export const phaseConfig: Record<PhaseKey, { label: string; shortLabel: string; 
     fill: "var(--phase-eol)",
   },
 };
+
+const CALC_STEPS = [
+  { key: "data", label: "Data", icon: "📄" },
+  { key: "normalize", label: "Normalize", icon: "⚖️" },
+  { key: "allocate", label: "Allocate", icon: "📊" },
+  { key: "sum", label: "Sum", icon: "➕" },
+  { key: "compare", label: "Compare", icon: "📈" },
+];
+
+function Header({ onBack, onClose }: { onBack?: () => void; onClose?: () => void }) {
+  return (
+    <div className="flex items-center justify-between mb-4">
+      <button
+        onClick={() => (onBack ? onBack() : window.history.back())}
+        className="inline-flex items-center gap-2 rounded-xl border border-black/10 bg-white/70 px-3 py-2 shadow-sm hover:bg-white focus:outline-none focus:ring-2 focus:ring-emerald-500/30"
+        aria-label="Go back"
+      >
+        <ArrowLeft className="h-4 w-4 text-slate-700" />
+        <span className="text-sm font-medium text-slate-700">Back</span>
+      </button>
+
+      <h1 className="text-2xl md:text-3xl font-extrabold tracking-tight" style={{ color: 'var(--text)' }}>
+        Lifecycle Breakdown
+      </h1>
+
+      <button
+        onClick={onClose}
+        className="h-9 w-9 grid place-items-center rounded-xl border border-black/10 bg-white/70 shadow-sm hover:bg-white focus:outline-none focus:ring-2 focus:ring-emerald-500/30"
+        aria-label="Close"
+      >
+        <X className="h-5 w-5 text-slate-700" />
+      </button>
+    </div>
+  );
+}
+
+function Stepper({ current = 5 }: { current?: number }) {
+  return (
+    <div className="mt-2 mb-4">
+      <ol className="flex items-center gap-4">
+        {CALC_STEPS.map((s, i) => {
+          const active = i < current;
+          return (
+            <li key={s.key} className="flex items-center gap-2">
+              <span
+                className={`h-6 w-6 grid place-items-center rounded-full text-xs ${
+                  active ? "bg-emerald-600 text-white" : "bg-white/70 text-slate-600 border border-black/10"
+                }`}
+              >
+                {s.icon}
+              </span>
+              <span className={`text-xs ${active ? "text-slate-800 font-medium" : "text-slate-500"}`}>
+                {s.label}
+              </span>
+              {i < CALC_STEPS.length - 1 && <span className="mx-1 h-[2px] w-8 rounded bg-black/10" />}
+            </li>
+          );
+        })}
+      </ol>
+    </div>
+  );
+}
 
 const LifecycleBreakdown = () => {
   const [units, setUnits] = useState<"kgCO2e" | "MJ">("kgCO2e");
@@ -244,6 +306,8 @@ const LifecycleBreakdown = () => {
     ? mockData.find((d) => d.name === activeMaterial)
     : null;
 
+  const sumSelected = filteredData.reduce((sum, row) => sum + (row.total || 0), 0);
+
   return (
     <div className="relative min-h-screen bg-transparent">
       {/* Ambient Background */}
@@ -269,28 +333,24 @@ const LifecycleBreakdown = () => {
             border: '1px solid var(--ring-lifecycle)' 
           }}
         >
-          <div className="space-y-2 mb-6 flex items-start justify-between">
-            <div>
-              <h1 
-                className="text-3xl md:text-4xl font-extrabold tracking-tight"
-                style={{ color: 'var(--text)' }}
+          <div className="mb-6">
+            <div className="flex items-start justify-between mb-3">
+              <Header />
+              <Button
+                variant="outline"
+                size="icon"
+                onClick={toggleTheme}
+                className="shrink-0"
+                aria-label="Toggle theme"
               >
-                Lifecycle Breakdown
-              </h1>
-              <p style={{ color: 'var(--text-sub)' }}>
-                Stacked horizontal bars by lifecycle phase (mock data). Units shown
-                are {units === "kgCO2e" ? "kg CO₂e" : "MJ"} per material. Hover to explore, click for details.
-              </p>
+                {theme === 'dark' ? <Sun className="h-5 w-5" /> : <Moon className="h-5 w-5" />}
+              </Button>
             </div>
-            <Button
-              variant="outline"
-              size="icon"
-              onClick={toggleTheme}
-              className="shrink-0"
-              aria-label="Toggle theme"
-            >
-              {theme === 'dark' ? <Sun className="h-5 w-5" /> : <Moon className="h-5 w-5" />}
-            </Button>
+            <Stepper current={5} />
+            <p style={{ color: 'var(--text-sub)' }} className="text-sm">
+              Stacked horizontal bars by lifecycle phase (mock data). Units shown
+              are {units === "kgCO2e" ? "kg CO₂e" : "MJ"} per material. Hover to explore, click for details.
+            </p>
           </div>
           <div className="space-y-6">
             {/* Controls */}
@@ -409,7 +469,7 @@ const LifecycleBreakdown = () => {
                     type="category"
                     tick={{ fill: 'var(--text-sub)' }}
                     style={{ fontSize: "13px", fontWeight: 500 }}
-                    width={170}
+                    width={190}
                   />
                   <Tooltip content={<div />} cursor={{ fill: "transparent" }} />
                   <Legend
@@ -584,6 +644,8 @@ const LifecycleBreakdown = () => {
                 }
               }}
               units={units}
+              rowTotal={panelData.total || 0}
+              sumSelected={sumSelected}
             />
           )}
         </section>
