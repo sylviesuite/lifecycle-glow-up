@@ -243,55 +243,6 @@ const LifecycleBreakdown = () => {
     return new Intl.NumberFormat("en-US").format(value);
   };
 
-  const renderSegmentLabel = (props: any, phase: PhaseKey, material: string) => {
-    const { x, y, width, height, value } = props;
-    
-    if (activeMaterial !== material || activePhase !== phase || !value) {
-      return null;
-    }
-
-    const minWidth = 36;
-    const isNarrow = width < minWidth;
-    
-    const labelText = phaseConfig[phase].label;
-    const padding = 8;
-    const chipHeight = 22;
-    const chipWidth = Math.max(labelText.length * 6.5 + padding * 2, 80);
-    
-    const chipX = isNarrow 
-      ? x + width - chipWidth 
-      : x + width / 2 - chipWidth / 2;
-    const chipY = isNarrow 
-      ? y - chipHeight - 4 
-      : y + height / 2 - chipHeight / 2;
-
-    return (
-      <g>
-        <rect
-          x={chipX}
-          y={chipY}
-          width={chipWidth}
-          height={chipHeight}
-          rx={chipHeight / 2}
-          fill="currentColor"
-          opacity={0.9}
-          filter="url(#chip-shadow)"
-          className={phaseConfig[phase].colorClass}
-        />
-        <text
-          x={chipX + chipWidth / 2}
-          y={chipY + chipHeight / 2}
-          textAnchor="middle"
-          dominantBaseline="middle"
-          fill="white"
-          fontSize="11"
-          fontWeight="500"
-        >
-          {labelText}
-        </text>
-      </g>
-    );
-  };
 
   const handleBarMouseMove = (
     material: string,
@@ -454,11 +405,6 @@ const LifecycleBreakdown = () => {
                   barCategoryGap="20%"
                   barSize={28}
                 >
-                  <defs>
-                    <filter id="chip-shadow" x="-50%" y="-50%" width="200%" height="200%">
-                      <feDropShadow dx="0" dy="2" stdDeviation="3" floodOpacity="0.3" />
-                    </filter>
-                  </defs>
                   <CartesianGrid
                     strokeDasharray="3 3"
                     stroke="var(--grid)"
@@ -517,7 +463,6 @@ const LifecycleBreakdown = () => {
                     stackId="lc"
                     radius={[4, 0, 0, 4]}
                     fill={phaseConfig["Point of Origin → Production"].fill}
-                    label={(props: any) => renderSegmentLabel(props, "Point of Origin → Production", props.name)}
                   >
                     {filteredData.map((row) => (
                       <Cell
@@ -537,7 +482,6 @@ const LifecycleBreakdown = () => {
                     stackId="lc"
                     radius={[4, 4, 4, 4]}
                     fill={phaseConfig.Transport.fill}
-                    label={(props: any) => renderSegmentLabel(props, "Transport", props.name)}
                   >
                     {filteredData.map((row) => (
                       <Cell
@@ -557,7 +501,6 @@ const LifecycleBreakdown = () => {
                     stackId="lc"
                     radius={[4, 4, 4, 4]}
                     fill={phaseConfig.Construction.fill}
-                    label={(props: any) => renderSegmentLabel(props, "Construction", props.name)}
                   >
                     {filteredData.map((row) => (
                       <Cell
@@ -577,7 +520,6 @@ const LifecycleBreakdown = () => {
                     stackId="lc"
                     radius={[4, 4, 4, 4]}
                     fill={phaseConfig.Maintenance.fill}
-                    label={(props: any) => renderSegmentLabel(props, "Maintenance", props.name)}
                   >
                     {filteredData.map((row) => (
                       <Cell
@@ -597,7 +539,6 @@ const LifecycleBreakdown = () => {
                     stackId="lc"
                     radius={[0, 4, 4, 0]}
                     fill={phaseConfig["End of Life"].fill}
-                    label={(props: any) => renderSegmentLabel(props, "End of Life", props.name)}
                   >
                     {filteredData.map((row) => (
                       <Cell
