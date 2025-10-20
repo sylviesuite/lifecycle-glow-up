@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
-import { Moon, Sun } from "lucide-react";
+import { Moon, Sun, ArrowLeft } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { useNavigate } from "react-router-dom";
 import { Step1Filters } from "./Step1Filters";
 import { Step2Materials } from "./Step2Materials";
 import { Step3Breakdown } from "./Step3Breakdown";
@@ -9,6 +10,7 @@ import { Step4Insights } from "./Step4Insights";
 export function LifecycleFlow() {
   const [step, setStep] = useState(1);
   const [theme, setTheme] = useState<"light" | "dark">("light");
+  const navigate = useNavigate();
 
   useEffect(() => {
     const saved = localStorage.getItem('bp-theme') as "light" | "dark" | null;
@@ -38,8 +40,11 @@ export function LifecycleFlow() {
   };
 
   const handleFinish = () => {
-    // Navigate back or reset
-    window.history.back();
+    navigate("/");
+  };
+
+  const handleBackToHome = () => {
+    navigate("/");
   };
 
   return (
@@ -56,8 +61,22 @@ export function LifecycleFlow() {
         <div className="absolute inset-0 opacity-[0.06] mix-blend-overlay bg-[url('data:image/svg+xml;utf8,<svg xmlns=%22http://www.w3.org/2000/svg%22 width=%2240%22 height=%2240%22><rect fill=%22%23000000%22 fill-opacity=%220.04%22 width=%2240%22 height=%2240%22/></svg>')]" />
       </div>
 
-      {/* Theme Toggle - Fixed position */}
-      <div className="fixed top-6 right-6 z-50">
+      {/* Header Actions - Fixed position */}
+      <div className="fixed top-6 left-6 right-6 flex items-center justify-between z-50">
+        <Button
+          variant="outline"
+          onClick={handleBackToHome}
+          className="shadow-lg px-4 py-2"
+          aria-label="Back to home"
+          style={{
+            background: 'var(--canvas)',
+            borderColor: 'var(--ring-lifecycle)',
+          }}
+        >
+          <ArrowLeft className="h-4 w-4 mr-2" />
+          Home
+        </Button>
+        
         <Button
           variant="outline"
           size="icon"
