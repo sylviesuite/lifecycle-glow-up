@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import { phaseConfig, PhaseKey } from "@/pages/LifecycleBreakdown";
+import { Info } from "lucide-react";
 
 interface AnchoredTooltipProps {
   active?: boolean;
@@ -12,6 +13,15 @@ interface AnchoredTooltipProps {
   units: "kgCO2e" | "MJ";
   rowTotal: number;
   sumSelected: number;
+  measure?: "Impact" | "Cost";
+  costData?: {
+    capex: number;
+    tco: number;
+    mac: number | null;
+    payback: number | null;
+    years: number;
+    discountRate: number;
+  };
 }
 
 export const AnchoredTooltip = ({
@@ -25,6 +35,8 @@ export const AnchoredTooltip = ({
   units,
   rowTotal,
   sumSelected,
+  measure = "Impact",
+  costData,
 }: AnchoredTooltipProps) => {
   const tooltipRef = useRef<HTMLDivElement>(null);
   const [position, setPosition] = useState<{ left: number; top: number; flipAbove: boolean } | null>(null);
@@ -90,37 +102,80 @@ export const AnchoredTooltip = ({
       aria-live="polite"
     >
       <p className="font-semibold text-sm text-slate-900 mb-2.5">{label}</p>
-      <div className="space-y-1">
-        {payload?.map((entry: any) => {
-          const key = entry.dataKey as PhaseKey;
-          const phase = phaseConfig[key];
-          if (!phase) return null;
+      
+      {measure === "Impact" ? (
+        <div className="space-y-1">
+          {payload?.map((entry: any) => {
+            const key = entry.dataKey as PhaseKey;
+            const phase = phaseConfig[key];
+            if (!phase) return null;
 
-          return (
-            <div
-              key={key}
-              onClick={() => onPhaseClick(key)}
-              className={`flex items-center gap-2 px-2 py-1.5 rounded transition-all pointer-events-auto cursor-pointer ${
-                activePhase === key
-                  ? "bg-black/5 font-bold scale-[1.02]"
-                  : "hover:bg-black/5 opacity-80"
-              }`}
-            >
+            return (
               <div
-                className={`w-3 h-3 rounded-sm flex-shrink-0 ${phase.colorClass} bg-current`}
-              />
-              <span className="text-xs text-slate-600 flex-1 text-left">
-                {phase.label}:
-              </span>
-              <span className="text-xs font-medium text-slate-900 whitespace-nowrap">
-                {formatNumber(entry.value)} {units === "kgCO2e" ? "kg CO₂e" : "MJ"}
-              </span>
+                key={key}
+                onClick={() => onPhaseClick(key)}
+                className={`flex items-center gap-2 px-2 py-1.5 rounded transition-all pointer-events-auto cursor-pointer ${
+                  activePhase === key
+                    ? "bg-black/5 font-bold scale-[1.02]"
+                    : "hover:bg-black/5 opacity-80"
+                }`}
+              >
+                <div
+                  className={`w-3 h-3 rounded-sm flex-shrink-0 ${phase.colorClass} bg-current`}
+                />
+                <span className="text-xs text-slate-600 flex-1 text-left">
+                  {phase.label}:
+                </span>
+                <span className="text-xs font-medium text-slate-900 whitespace-nowrap">
+                  {formatNumber(entry.value)} {units === "kgCO2e" ? "kg CO₂e" : "MJ"}
+                </span>
+              </div>
+            );
+          })}
+        </div>
+      ) : (
+        costData && (
+          <div className="space-y-2">
+            <div className="space-y-1 text-xs">
+              <div className="flex justify-between items-center py-1">
+                <span className="text-slate-600">Initial Cost:</span>
+                <span className="font-medium text-slate-900">${formatNumber(costData.capex)}/m²</span>
+              </div>
+              <div className="flex justify-between items-center py-1">
+                <span className="text-slate-600">TCO ({costData.years}y @ {costData.discountRate}%):</span>
+                <span className="font-medium text-slate-900">${formatNumber(costData.tco)}/m²</span>
+              </div>
+              {costData.mac !== null && (
+                <div className="flex justify-between items-center py-1">
+                  <span className="text-slate-600">MAC vs Baseline:</span>
+                  <span className={`font-medium ${costData.mac <= 0 ? 'text-green-600' : 'text-orange-600'}`}>
+                    ${formatNumber(costData.mac)}/tCO₂e
+                  </span>
+                </div>
+              )}
+              {costData.payback !== null && costData.payback > 0 && (
+                <div className="flex justify-between items-center py-1">
+                  <span className="text-slate-600">Payback:</span>
+                  <span className="font-medium text-slate-900">{costData.payback.toFixed(1)} years</span>
+                </div>
+              )}
             </div>
-          );
-        })}
-      </div>
+            
+            <div className="border-t border-black/10 pt-2 mt-2">
+              <div className="flex items-start gap-2 text-[10px] text-slate-500 bg-black/5 p-2 rounded">
+                <Info className="h-3 w-3 mt-0.5 flex-shrink-0" />
+                <div>
+                  <div className="font-medium mb-1">Cost Formulas:</div>
+                  <div>TCO = CAPEX + Σ(Operating Costs × Discount Factor) - Salvage Value</div>
+                  <div className="mt-1">MAC = (Cost - Baseline Cost) / (Baseline CO₂e - Material CO₂e)</div>
+                </div>
+              </div>
+            </div>
+          </div>
+        )
+      )}
 
-      {activePhase && activePhaseValue > 0 && (
+      {measure === "Impact" && activePhase && activePhaseValue > 0 && (
         <div className="mt-3 border-t border-black/10 pt-3 space-y-2">
           <div className="text-[13px] text-slate-700">
             <div>
@@ -142,9 +197,11 @@ export const AnchoredTooltip = ({
         </div>
       )}
 
-      <p className="text-[10px] text-slate-500 mt-2.5 text-center italic">
-        Click any phase for detailed breakdown
-      </p>
+      {measure === "Impact" && (
+        <p className="text-[10px] text-slate-500 mt-2.5 text-center italic">
+          Click any phase for detailed breakdown
+        </p>
+      )}
     </div>
   );
 };
