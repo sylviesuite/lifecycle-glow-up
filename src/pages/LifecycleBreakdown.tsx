@@ -244,6 +244,7 @@ const LifecycleBreakdown = () => {
                     dataKey="PointOfOriginProduction"
                     stackId="a"
                     radius={[6, 0, 0, 6]}
+                    fill={phaseConfig.PointOfOriginProduction.color}
                   >
                     {filteredData.map((row) => (
                       <Cell
@@ -261,6 +262,7 @@ const LifecycleBreakdown = () => {
                   <Bar
                     dataKey="Transport"
                     stackId="a"
+                    fill={phaseConfig.Transport.color}
                   >
                     {filteredData.map((row) => (
                       <Cell
@@ -278,6 +280,7 @@ const LifecycleBreakdown = () => {
                   <Bar
                     dataKey="Construction"
                     stackId="a"
+                    fill={phaseConfig.Construction.color}
                   >
                     {filteredData.map((row) => (
                       <Cell
@@ -295,6 +298,7 @@ const LifecycleBreakdown = () => {
                   <Bar
                     dataKey="Maintenance"
                     stackId="a"
+                    fill={phaseConfig.Maintenance.color}
                   >
                     {filteredData.map((row) => (
                       <Cell
@@ -313,6 +317,7 @@ const LifecycleBreakdown = () => {
                     dataKey="Disposal"
                     stackId="a"
                     radius={[0, 6, 6, 0]}
+                    fill={phaseConfig.Disposal.color}
                   >
                     {filteredData.map((row) => (
                       <Cell
