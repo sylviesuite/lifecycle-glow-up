@@ -137,13 +137,6 @@ export const phaseConfig: Record<PhaseKey, { label: string; shortLabel: string; 
   },
 };
 
-const CALC_STEPS = [
-  { key: "data", label: "Data", icon: "📄" },
-  { key: "normalize", label: "Normalize", icon: "⚖️" },
-  { key: "allocate", label: "Allocate", icon: "📊" },
-  { key: "sum", label: "Sum", icon: "➕" },
-  { key: "compare", label: "Compare", icon: "📈" },
-];
 
 function Header({ onBack, onClose, onToggleTheme, theme }: { 
   onBack?: () => void; 
@@ -188,32 +181,6 @@ function Header({ onBack, onClose, onToggleTheme, theme }: {
   );
 }
 
-function Stepper({ current = 5 }: { current?: number }) {
-  return (
-    <div className="mt-2 mb-4">
-      <ol className="flex items-center gap-4">
-        {CALC_STEPS.map((s, i) => {
-          const active = i < current;
-          return (
-            <li key={s.key} className="flex items-center gap-2">
-              <span
-                className={`h-6 w-6 grid place-items-center rounded-full text-xs ${
-                  active ? "bg-emerald-600 text-white" : "bg-white/70 text-slate-600 border border-black/10"
-                }`}
-              >
-                {s.icon}
-              </span>
-              <span className={`text-xs ${active ? "text-slate-800 font-medium" : "text-slate-500"}`}>
-                {s.label}
-              </span>
-              {i < CALC_STEPS.length - 1 && <span className="mx-1 h-[2px] w-8 rounded bg-black/10" />}
-            </li>
-          );
-        })}
-      </ol>
-    </div>
-  );
-}
 
 const LifecycleBreakdown = () => {
   const [units, setUnits] = useState<"kgCO2e" | "MJ">("kgCO2e");
@@ -365,8 +332,7 @@ const LifecycleBreakdown = () => {
         >
           <div className="mb-5">
             <Header onToggleTheme={toggleTheme} theme={theme} />
-            <Stepper current={5} />
-            <p style={{ color: 'var(--text-sub)' }} className="text-sm mt-2">
+            <p style={{ color: 'var(--text-sub)' }} className="text-sm mt-4">
               {measure === "Impact" 
                 ? `Stacked horizontal bars by lifecycle phase (mock data). Units shown are ${units === "kgCO2e" ? "kg CO₂e" : "MJ"} per material.`
                 : `Total cost of ownership shown in $/m² over ${years} years at ${discountRate}% discount rate.`
