@@ -39,20 +39,30 @@ All colors MUST be HSL.
     --radius: 0.5rem;
 
     --sidebar-background: 0 0% 98%;
-
     --sidebar-foreground: 240 5.3% 26.1%;
-
     --sidebar-primary: 240 5.9% 10%;
-
     --sidebar-primary-foreground: 0 0% 98%;
-
     --sidebar-accent: 240 4.8% 95.9%;
-
     --sidebar-accent-foreground: 240 5.9% 10%;
-
     --sidebar-border: 220 13% 91%;
-
     --sidebar-ring: 217.2 91.2% 59.8%;
+
+    /* BlockPlane Lifecycle theme - Light */
+    --bg-from: #4E9A83;
+    --bg-via: #6BB39E;
+    --bg-to: #9FD0C2;
+    --canvas: #F7F8F6;
+    --ring-lifecycle: rgba(0,0,0,0.06);
+    --text: #1E293B;
+    --text-sub: #475569;
+    --grid: rgba(2,6,23,0.08);
+    --phase-prod: #7FA181;
+    --phase-trans: #6E8FA0;
+    --phase-cons: #B9784C;
+    --phase-main: #9B7C9F;
+    --phase-eol: #9A676A;
+    --hover-stroke: #3A6E5E;
+    --legend-pill: #FFFFFFB3;
   }
 
   .dark {
@@ -91,6 +101,25 @@ All colors MUST be HSL.
     --sidebar-accent-foreground: 240 4.8% 95.9%;
     --sidebar-border: 240 3.7% 15.9%;
     --sidebar-ring: 217.2 91.2% 59.8%;
+  }
+
+  [data-theme="dark"] {
+    /* BlockPlane Lifecycle theme - Dark */
+    --bg-from: #0E2E2A;
+    --bg-via: #123E38;
+    --bg-to: #1B4F48;
+    --canvas: rgba(18, 31, 29, 0.85);
+    --ring-lifecycle: rgba(255,255,255,0.08);
+    --text: #E6F2EE;
+    --text-sub: #B6C8C3;
+    --grid: rgba(230,242,238,0.10);
+    --phase-prod: #6C8E72;
+    --phase-trans: #5B7F8E;
+    --phase-cons: #A26E4A;
+    --phase-main: #896E90;
+    --phase-eol: #87585C;
+    --hover-stroke: #9DD4C4;
+    --legend-pill: rgba(255,255,255,0.10);
   }
 }
 

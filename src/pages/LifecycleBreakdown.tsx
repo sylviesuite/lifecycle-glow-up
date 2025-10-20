@@ -1,4 +1,4 @@
-import { useState, useRef } from "react";
+import { useState, useRef, useEffect } from "react";
 import {
   BarChart,
   Bar,
@@ -12,6 +12,8 @@ import {
 } from "recharts";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
+import { Moon, Sun } from "lucide-react";
 import { AnchoredTooltip } from "@/components/AnchoredTooltip";
 import { PhaseDetailsDrawer } from "@/components/PhaseDetailsDrawer";
 
@@ -79,27 +81,27 @@ export const phaseConfig = {
   PointOfOriginProduction: {
     label: "Point of Origin → Production",
     shortLabel: "Production",
-    colorClass: "text-[#7FA181]",
+    colorClass: "text-[color:var(--phase-prod)]",
   },
   Transport: {
     label: "Transport",
     shortLabel: "Transport",
-    colorClass: "text-[#6E8FA0]",
+    colorClass: "text-[color:var(--phase-trans)]",
   },
   Construction: {
     label: "Construction",
     shortLabel: "Construction",
-    colorClass: "text-[#B9784C]",
+    colorClass: "text-[color:var(--phase-cons)]",
   },
   Maintenance: {
     label: "Maintenance",
     shortLabel: "Maintenance",
-    colorClass: "text-[#9B7C9F]",
+    colorClass: "text-[color:var(--phase-main)]",
   },
   Disposal: {
     label: "End of Life",
     shortLabel: "End of Life",
-    colorClass: "text-[#9A676A]",
+    colorClass: "text-[color:var(--phase-eol)]",
   },
 };
 
@@ -114,7 +116,24 @@ const LifecycleBreakdown = () => {
     phase: PhaseKey;
     value: number;
   } | null>(null);
+  const [theme, setTheme] = useState<"light" | "dark">("light");
   const cardRef = useRef<HTMLDivElement>(null);
+
+  // Theme management
+  useEffect(() => {
+    const saved = localStorage.getItem('bp-theme') as "light" | "dark" | null;
+    const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+    const initialTheme = saved ?? (prefersDark ? 'dark' : 'light');
+    setTheme(initialTheme);
+    document.documentElement.setAttribute('data-theme', initialTheme);
+  }, []);
+
+  const toggleTheme = () => {
+    const next = theme === 'dark' ? 'light' : 'dark';
+    setTheme(next);
+    document.documentElement.setAttribute('data-theme', next);
+    localStorage.setItem('bp-theme', next);
+  };
 
   const filteredData = mockData.filter((row) =>
     row.material.toLowerCase().includes(filter.toLowerCase())
@@ -210,22 +229,46 @@ const LifecycleBreakdown = () => {
         aria-hidden
         className="pointer-events-none fixed inset-0 -z-10"
       >
-        {/* BlockPlane brand gradient */}
-        <div className="absolute inset-0 bg-gradient-to-b from-[#4E9A83] via-[#6BB39E] to-[#9FD0C2]" />
+        {/* BlockPlane brand gradient using CSS variables */}
+        <div 
+          className="absolute inset-0" 
+          style={{ background: 'linear-gradient(180deg, var(--bg-from), var(--bg-via), var(--bg-to))' }}
+        />
         {/* Faint noise */}
         <div className="absolute inset-0 opacity-[0.06] mix-blend-overlay bg-[url('data:image/svg+xml;utf8,<svg xmlns=%22http://www.w3.org/2000/svg%22 width=%2240%22 height=%2240%22><rect fill=%22%23000000%22 fill-opacity=%220.04%22 width=%2240%22 height=%2240%22/></svg>')]" />
       </div>
 
       <div className="max-w-6xl mx-auto p-6">
-        <section ref={cardRef} className="rounded-2xl bg-[#F7F8F6] backdrop-blur-sm ring-1 ring-[rgba(0,0,0,0.06)] shadow-md p-6 min-h-[520px] md:min-h-[560px] relative">
-          <div className="space-y-2 mb-6">
-            <h1 className="text-3xl md:text-4xl font-extrabold tracking-tight text-slate-800">
-              Lifecycle Breakdown
-            </h1>
-            <p className="text-slate-600">
-              Stacked horizontal bars by lifecycle phase (mock data). Units shown
-              are {units === "kgCO2e" ? "kg CO₂e" : "MJ"} per material. Hover to explore, click for details.
-            </p>
+        <section 
+          ref={cardRef} 
+          className="rounded-2xl backdrop-blur-sm shadow-md p-6 min-h-[520px] md:min-h-[560px] relative"
+          style={{ 
+            background: 'var(--canvas)', 
+            border: '1px solid var(--ring-lifecycle)' 
+          }}
+        >
+          <div className="space-y-2 mb-6 flex items-start justify-between">
+            <div>
+              <h1 
+                className="text-3xl md:text-4xl font-extrabold tracking-tight"
+                style={{ color: 'var(--text)' }}
+              >
+                Lifecycle Breakdown
+              </h1>
+              <p style={{ color: 'var(--text-sub)' }}>
+                Stacked horizontal bars by lifecycle phase (mock data). Units shown
+                are {units === "kgCO2e" ? "kg CO₂e" : "MJ"} per material. Hover to explore, click for details.
+              </p>
+            </div>
+            <Button
+              variant="outline"
+              size="icon"
+              onClick={toggleTheme}
+              className="shrink-0"
+              aria-label="Toggle theme"
+            >
+              {theme === 'dark' ? <Sun className="h-5 w-5" /> : <Moon className="h-5 w-5" />}
+            </Button>
           </div>
           <div className="space-y-6">
             {/* Controls */}
@@ -238,7 +281,12 @@ const LifecycleBreakdown = () => {
                   placeholder="Search materials..."
                   value={filter}
                   onChange={(e) => setFilter(e.target.value)}
-                  className="max-w-sm rounded-xl border-black/10 bg-white backdrop-blur-sm shadow-sm focus:ring-2 focus:ring-[#6BB987]"
+                  className="max-w-sm rounded-xl backdrop-blur-sm shadow-sm"
+                  style={{ 
+                    background: 'var(--canvas)', 
+                    borderColor: 'var(--ring-lifecycle)',
+                    color: 'var(--text)'
+                  }}
                 />
               </div>
               <div className="w-full sm:w-48">
@@ -249,7 +297,14 @@ const LifecycleBreakdown = () => {
                   value={units}
                   onValueChange={(value: "kgCO2e" | "MJ") => setUnits(value)}
                 >
-                  <SelectTrigger className="rounded-xl border-black/10 bg-white backdrop-blur-sm shadow-sm">
+                  <SelectTrigger 
+                    className="rounded-xl backdrop-blur-sm shadow-sm"
+                    style={{ 
+                      background: 'var(--canvas)', 
+                      borderColor: 'var(--ring-lifecycle)',
+                      color: 'var(--text)'
+                    }}
+                  >
                     <SelectValue />
                   </SelectTrigger>
                   <SelectContent>
@@ -266,7 +321,13 @@ const LifecycleBreakdown = () => {
               role="region"
               aria-label="Lifecycle breakdown chart"
             >
-              <div className="rounded-xl ring-1 ring-[rgba(0,0,0,0.06)] bg-white/60 p-3 h-full">
+              <div 
+                className="rounded-xl p-3 h-full" 
+                style={{ 
+                  border: '1px solid var(--ring-lifecycle)',
+                  background: 'rgba(255, 255, 255, 0.6)'
+                }}
+              >
                 <ResponsiveContainer width="100%" height="100%">
                 <BarChart
                   data={filteredData}
@@ -283,18 +344,18 @@ const LifecycleBreakdown = () => {
                   </defs>
                   <CartesianGrid
                     strokeDasharray="3 3"
-                    stroke="rgba(2,6,23,0.08)"
+                    stroke="var(--grid)"
                   />
                   <XAxis
                     type="number"
                     tickFormatter={formatNumber}
-                    stroke="#475569"
+                    tick={{ fill: 'var(--text-sub)' }}
                     style={{ fontSize: "12px" }}
                   />
                   <YAxis
                     dataKey="material"
                     type="category"
-                    stroke="#475569"
+                    tick={{ fill: 'var(--text-sub)' }}
                     style={{ fontSize: "13px", fontWeight: 500 }}
                     width={160}
                   />
@@ -315,14 +376,16 @@ const LifecycleBreakdown = () => {
                             return (
                               <li
                                 key={phaseKey}
-                                className={`flex items-center gap-2 transition-all ${colorClass} rounded-md px-2 py-0.5 ${
-                                  isActive
-                                    ? "ring-2 ring-current font-semibold bg-white"
-                                    : "bg-white/70 backdrop-blur-sm ring-1 ring-black/5 opacity-90"
-                                }`}
+                                className={`flex items-center gap-2 transition-all ${colorClass} rounded-md px-2 py-0.5`}
+                                style={{
+                                  background: isActive ? 'rgba(255,255,255,0.9)' : 'var(--legend-pill)',
+                                  border: `1px solid var(--ring-lifecycle)`,
+                                  boxShadow: isActive ? '0 0 0 2px currentColor inset' : 'none',
+                                  fontWeight: isActive ? 600 : 400
+                                }}
                               >
                                 <span className="inline-block w-3 h-3 rounded-sm bg-current" />
-                                <span className="text-xs text-slate-700 font-medium">
+                                <span className="text-xs font-medium" style={{ color: 'var(--text-sub)' }}>
                                   {phaseConfig[phaseKey].label}
                                 </span>
                               </li>
@@ -343,13 +406,16 @@ const LifecycleBreakdown = () => {
                     {filteredData.map((row) => (
                       <Cell
                         key={`cell-pop-${row.material}`}
-                        stroke={activeMaterial === row.material && activePhase === "PointOfOriginProduction" ? "#3A6E5E" : "none"}
+                        stroke={activeMaterial === row.material && activePhase === "PointOfOriginProduction" ? "currentColor" : "none"}
                         strokeWidth={1.5}
-                        opacity={activeMaterial === row.material && activePhase === "PointOfOriginProduction" ? 1 : 0.88}
+                        style={{
+                          color: 'var(--hover-stroke)',
+                          opacity: activeMaterial === row.material && activePhase === "PointOfOriginProduction" ? 1 : 0.9,
+                          cursor: "pointer"
+                        }}
                         onMouseMove={(ev: any) => handleBarMouseMove(row.material, "PointOfOriginProduction", ev)}
                         onMouseLeave={handleBarMouseLeave}
                         onClick={() => openPhaseDetails(row.material, "PointOfOriginProduction", row.PointOfOriginProduction)}
-                        style={{ cursor: "pointer" }}
                       />
                     ))}
                   </Bar>
@@ -363,13 +429,16 @@ const LifecycleBreakdown = () => {
                     {filteredData.map((row) => (
                       <Cell
                         key={`cell-transport-${row.material}`}
-                        stroke={activeMaterial === row.material && activePhase === "Transport" ? "#3A6E5E" : "none"}
+                        stroke={activeMaterial === row.material && activePhase === "Transport" ? "currentColor" : "none"}
                         strokeWidth={1.5}
-                        opacity={activeMaterial === row.material && activePhase === "Transport" ? 1 : 0.88}
+                        style={{
+                          color: 'var(--hover-stroke)',
+                          opacity: activeMaterial === row.material && activePhase === "Transport" ? 1 : 0.9,
+                          cursor: "pointer"
+                        }}
                         onMouseMove={(ev: any) => handleBarMouseMove(row.material, "Transport", ev)}
                         onMouseLeave={handleBarMouseLeave}
                         onClick={() => openPhaseDetails(row.material, "Transport", row.Transport)}
-                        style={{ cursor: "pointer" }}
                       />
                     ))}
                   </Bar>
@@ -383,13 +452,16 @@ const LifecycleBreakdown = () => {
                     {filteredData.map((row) => (
                       <Cell
                         key={`cell-construction-${row.material}`}
-                        stroke={activeMaterial === row.material && activePhase === "Construction" ? "#3A6E5E" : "none"}
+                        stroke={activeMaterial === row.material && activePhase === "Construction" ? "currentColor" : "none"}
                         strokeWidth={1.5}
-                        opacity={activeMaterial === row.material && activePhase === "Construction" ? 1 : 0.88}
+                        style={{
+                          color: 'var(--hover-stroke)',
+                          opacity: activeMaterial === row.material && activePhase === "Construction" ? 1 : 0.9,
+                          cursor: "pointer"
+                        }}
                         onMouseMove={(ev: any) => handleBarMouseMove(row.material, "Construction", ev)}
                         onMouseLeave={handleBarMouseLeave}
                         onClick={() => openPhaseDetails(row.material, "Construction", row.Construction)}
-                        style={{ cursor: "pointer" }}
                       />
                     ))}
                   </Bar>
@@ -403,13 +475,16 @@ const LifecycleBreakdown = () => {
                     {filteredData.map((row) => (
                       <Cell
                         key={`cell-maintenance-${row.material}`}
-                        stroke={activeMaterial === row.material && activePhase === "Maintenance" ? "#3A6E5E" : "none"}
+                        stroke={activeMaterial === row.material && activePhase === "Maintenance" ? "currentColor" : "none"}
                         strokeWidth={1.5}
-                        opacity={activeMaterial === row.material && activePhase === "Maintenance" ? 1 : 0.88}
+                        style={{
+                          color: 'var(--hover-stroke)',
+                          opacity: activeMaterial === row.material && activePhase === "Maintenance" ? 1 : 0.9,
+                          cursor: "pointer"
+                        }}
                         onMouseMove={(ev: any) => handleBarMouseMove(row.material, "Maintenance", ev)}
                         onMouseLeave={handleBarMouseLeave}
                         onClick={() => openPhaseDetails(row.material, "Maintenance", row.Maintenance)}
-                        style={{ cursor: "pointer" }}
                       />
                     ))}
                   </Bar>
@@ -424,13 +499,16 @@ const LifecycleBreakdown = () => {
                     {filteredData.map((row) => (
                       <Cell
                         key={`cell-disposal-${row.material}`}
-                        stroke={activeMaterial === row.material && activePhase === "Disposal" ? "#3A6E5E" : "none"}
+                        stroke={activeMaterial === row.material && activePhase === "Disposal" ? "currentColor" : "none"}
                         strokeWidth={1.5}
-                        opacity={activeMaterial === row.material && activePhase === "Disposal" ? 1 : 0.88}
+                        style={{
+                          color: 'var(--hover-stroke)',
+                          opacity: activeMaterial === row.material && activePhase === "Disposal" ? 1 : 0.9,
+                          cursor: "pointer"
+                        }}
                         onMouseMove={(ev: any) => handleBarMouseMove(row.material, "Disposal", ev)}
                         onMouseLeave={handleBarMouseLeave}
                         onClick={() => openPhaseDetails(row.material, "Disposal", row.Disposal)}
-                        style={{ cursor: "pointer" }}
                       />
                     ))}
                   </Bar>
@@ -440,7 +518,7 @@ const LifecycleBreakdown = () => {
             </div>
 
             {filteredData.length === 0 && (
-              <div className="text-center py-8 text-slate-500">
+              <div className="text-center py-8" style={{ color: 'var(--text-sub)' }}>
                 No materials found matching "{filter}"
               </div>
             )}
