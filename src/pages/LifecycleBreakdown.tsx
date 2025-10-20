@@ -293,11 +293,38 @@ const LifecycleBreakdown = () => {
                   <Legend
                     wrapperStyle={{
                       paddingTop: "20px",
-                      fontSize: "12px",
                     }}
-                    formatter={(value) =>
-                      phaseConfig[value as PhaseKey]?.label || value
-                    }
+                    content={(props) => {
+                      const { payload } = props;
+                      if (!payload) return null;
+                      return (
+                        <ul className="flex flex-wrap justify-center gap-3 px-4">
+                          {payload.map((item: any) => {
+                            const phaseKey = item.dataKey as PhaseKey;
+                            const isActive = activePhase === phaseKey;
+                            return (
+                              <li
+                                key={phaseKey}
+                                className={`flex items-center gap-2 transition-all ${
+                                  isActive
+                                    ? "ring-2 font-semibold bg-accent/20 rounded-md px-2 py-1"
+                                    : "opacity-70 px-2 py-1"
+                                }`}
+                                style={{ color: phaseConfig[phaseKey].color }}
+                              >
+                                <span
+                                  className="inline-block w-3 h-3 rounded-sm"
+                                  style={{ backgroundColor: phaseConfig[phaseKey].color }}
+                                />
+                                <span className="text-xs text-foreground font-medium">
+                                  {phaseConfig[phaseKey].label}
+                                </span>
+                              </li>
+                            );
+                          })}
+                        </ul>
+                      );
+                    }}
                   />
                   <Bar
                     dataKey="PointOfOriginProduction"
