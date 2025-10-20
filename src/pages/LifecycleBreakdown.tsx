@@ -79,27 +79,27 @@ export const phaseConfig = {
   PointOfOriginProduction: {
     label: "Point of Origin → Production",
     shortLabel: "Production",
-    colorClass: "text-[hsl(142,45%,45%)]",
+    colorClass: "text-[#7FA181]",
   },
   Transport: {
     label: "Transport",
     shortLabel: "Transport",
-    colorClass: "text-[hsl(199,52%,52%)]",
+    colorClass: "text-[#6E8FA0]",
   },
   Construction: {
     label: "Construction",
     shortLabel: "Construction",
-    colorClass: "text-[hsl(28,65%,54%)]",
+    colorClass: "text-[#B9784C]",
   },
   Maintenance: {
     label: "Maintenance",
     shortLabel: "Maintenance",
-    colorClass: "text-[hsl(292,48%,58%)]",
+    colorClass: "text-[#9B7C9F]",
   },
   Disposal: {
     label: "End of Life",
     shortLabel: "End of Life",
-    colorClass: "text-[hsl(348,58%,54%)]",
+    colorClass: "text-[#9A676A]",
   },
 };
 
@@ -166,7 +166,7 @@ const LifecycleBreakdown = () => {
           dominantBaseline="middle"
           fill="white"
           fontSize="11"
-          fontWeight="600"
+          fontWeight="500"
         >
           {labelText}
         </text>
@@ -210,14 +210,14 @@ const LifecycleBreakdown = () => {
         aria-hidden
         className="pointer-events-none fixed inset-0 -z-10"
       >
-        {/* Green to teal gradient */}
-        <div className="absolute inset-0 bg-gradient-to-br from-emerald-400 via-teal-400 to-cyan-500" />
+        {/* Sage to warm stone gradient */}
+        <div className="absolute inset-0 bg-gradient-to-b from-[#E7F3EE] via-[#EDF2EF] to-[#EAE9E4]" />
         {/* Faint noise */}
-        <div className="absolute inset-0 opacity-[0.05] mix-blend-overlay bg-[url('data:image/svg+xml;utf8,<svg xmlns=%22http://www.w3.org/2000/svg%22 width=%2240%22 height=%2240%22><rect fill=%22%23000000%22 fill-opacity=%220.04%22 width=%2240%22 height=%2240%22/></svg>')]" />
+        <div className="absolute inset-0 opacity-[0.06] mix-blend-overlay bg-[url('data:image/svg+xml;utf8,<svg xmlns=%22http://www.w3.org/2000/svg%22 width=%2240%22 height=%2240%22><rect fill=%22%23000000%22 fill-opacity=%220.04%22 width=%2240%22 height=%2240%22/></svg>')]" />
       </div>
 
       <div className="max-w-6xl mx-auto p-4 md:p-6">
-        <section ref={cardRef} className="rounded-2xl bg-stone-50/90 backdrop-blur-sm ring-1 ring-stone-200/70 shadow-md p-5 md:p-7 min-h-[520px] md:min-h-[560px] relative">
+        <section ref={cardRef} className="rounded-2xl bg-[#F7F8F6]/90 backdrop-blur-sm ring-1 ring-[rgba(0,0,0,0.06)] shadow-md p-5 md:p-7 min-h-[520px] md:min-h-[560px] relative">
           <div className="space-y-2 mb-6">
             <h1 className="text-3xl md:text-4xl font-extrabold tracking-tight">
               Lifecycle Breakdown
@@ -238,7 +238,7 @@ const LifecycleBreakdown = () => {
                   placeholder="Search materials..."
                   value={filter}
                   onChange={(e) => setFilter(e.target.value)}
-                  className="max-w-sm rounded-xl border-black/10 bg-white/90 backdrop-blur-sm shadow-sm focus:ring-2 focus:ring-emerald-500/25"
+                  className="max-w-sm rounded-xl border-black/10 bg-white/90 backdrop-blur-sm shadow-sm focus:ring-2 focus:ring-black/10"
                 />
               </div>
               <div className="w-full sm:w-48">
@@ -266,7 +266,7 @@ const LifecycleBreakdown = () => {
               role="region"
               aria-label="Lifecycle breakdown chart"
             >
-              <div className="rounded-xl ring-1 ring-stone-200/60 bg-white/60 p-3 h-full">
+              <div className="rounded-xl ring-1 ring-[rgba(0,0,0,0.06)] bg-white/60 p-3 h-full">
                 <ResponsiveContainer width="100%" height="100%">
                 <BarChart
                   data={filteredData}
@@ -288,13 +288,13 @@ const LifecycleBreakdown = () => {
                   <XAxis
                     type="number"
                     tickFormatter={formatNumber}
-                    stroke="hsl(var(--muted-foreground))"
+                    stroke="#475569"
                     style={{ fontSize: "12px" }}
                   />
                   <YAxis
                     dataKey="material"
                     type="category"
-                    stroke="hsl(var(--muted-foreground))"
+                    stroke="#475569"
                     style={{ fontSize: "13px", fontWeight: 500 }}
                     width={160}
                   />
@@ -318,7 +318,7 @@ const LifecycleBreakdown = () => {
                                 className={`flex items-center gap-2 transition-all ${colorClass} rounded-md px-2 py-0.5 ${
                                   isActive
                                     ? "ring-2 ring-current font-semibold bg-white"
-                                    : "bg-white/70 ring-1 ring-stone-200/70"
+                                    : "bg-white/70 ring-1 ring-black/5 opacity-90"
                                 }`}
                               >
                                 <span className="inline-block w-3 h-3 rounded-sm bg-current" />
@@ -343,9 +343,9 @@ const LifecycleBreakdown = () => {
                     {filteredData.map((row) => (
                       <Cell
                         key={`cell-pop-${row.material}`}
-                        stroke={activeMaterial === row.material && activePhase === "PointOfOriginProduction" ? "#000000" : "none"}
+                        stroke={activeMaterial === row.material && activePhase === "PointOfOriginProduction" ? "#475347" : "none"}
                         strokeWidth={2}
-                        opacity={activeMaterial === row.material && activePhase === "PointOfOriginProduction" ? 1 : 0.85}
+                        opacity={activeMaterial === row.material && activePhase === "PointOfOriginProduction" ? 1 : 0.88}
                         onMouseMove={(ev: any) => handleBarMouseMove(row.material, "PointOfOriginProduction", ev)}
                         onMouseLeave={handleBarMouseLeave}
                         onClick={() => openPhaseDetails(row.material, "PointOfOriginProduction", row.PointOfOriginProduction)}
@@ -363,9 +363,9 @@ const LifecycleBreakdown = () => {
                     {filteredData.map((row) => (
                       <Cell
                         key={`cell-transport-${row.material}`}
-                        stroke={activeMaterial === row.material && activePhase === "Transport" ? "#000000" : "none"}
+                        stroke={activeMaterial === row.material && activePhase === "Transport" ? "#475347" : "none"}
                         strokeWidth={2}
-                        opacity={activeMaterial === row.material && activePhase === "Transport" ? 1 : 0.85}
+                        opacity={activeMaterial === row.material && activePhase === "Transport" ? 1 : 0.88}
                         onMouseMove={(ev: any) => handleBarMouseMove(row.material, "Transport", ev)}
                         onMouseLeave={handleBarMouseLeave}
                         onClick={() => openPhaseDetails(row.material, "Transport", row.Transport)}
@@ -383,9 +383,9 @@ const LifecycleBreakdown = () => {
                     {filteredData.map((row) => (
                       <Cell
                         key={`cell-construction-${row.material}`}
-                        stroke={activeMaterial === row.material && activePhase === "Construction" ? "#000000" : "none"}
+                        stroke={activeMaterial === row.material && activePhase === "Construction" ? "#475347" : "none"}
                         strokeWidth={2}
-                        opacity={activeMaterial === row.material && activePhase === "Construction" ? 1 : 0.85}
+                        opacity={activeMaterial === row.material && activePhase === "Construction" ? 1 : 0.88}
                         onMouseMove={(ev: any) => handleBarMouseMove(row.material, "Construction", ev)}
                         onMouseLeave={handleBarMouseLeave}
                         onClick={() => openPhaseDetails(row.material, "Construction", row.Construction)}
@@ -403,9 +403,9 @@ const LifecycleBreakdown = () => {
                     {filteredData.map((row) => (
                       <Cell
                         key={`cell-maintenance-${row.material}`}
-                        stroke={activeMaterial === row.material && activePhase === "Maintenance" ? "#000000" : "none"}
+                        stroke={activeMaterial === row.material && activePhase === "Maintenance" ? "#475347" : "none"}
                         strokeWidth={2}
-                        opacity={activeMaterial === row.material && activePhase === "Maintenance" ? 1 : 0.85}
+                        opacity={activeMaterial === row.material && activePhase === "Maintenance" ? 1 : 0.88}
                         onMouseMove={(ev: any) => handleBarMouseMove(row.material, "Maintenance", ev)}
                         onMouseLeave={handleBarMouseLeave}
                         onClick={() => openPhaseDetails(row.material, "Maintenance", row.Maintenance)}
@@ -424,9 +424,9 @@ const LifecycleBreakdown = () => {
                     {filteredData.map((row) => (
                       <Cell
                         key={`cell-disposal-${row.material}`}
-                        stroke={activeMaterial === row.material && activePhase === "Disposal" ? "#000000" : "none"}
+                        stroke={activeMaterial === row.material && activePhase === "Disposal" ? "#475347" : "none"}
                         strokeWidth={2}
-                        opacity={activeMaterial === row.material && activePhase === "Disposal" ? 1 : 0.85}
+                        opacity={activeMaterial === row.material && activePhase === "Disposal" ? 1 : 0.88}
                         onMouseMove={(ev: any) => handleBarMouseMove(row.material, "Disposal", ev)}
                         onMouseLeave={handleBarMouseLeave}
                         onClick={() => openPhaseDetails(row.material, "Disposal", row.Disposal)}
