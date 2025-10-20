@@ -278,16 +278,15 @@ export function Step3Breakdown({ onNext, onBack }: Step3BreakdownProps) {
           {/* Chart */}
           <motion.div 
             className="flex-1 min-h-0"
-            key={`${impactCategory}-${chartMode}-${viewMode}`}
-            initial={{ opacity: 0, y: 10 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.3 }}
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ duration: 0.5, ease: "easeInOut" }}
           >
             <ResponsiveContainer width="100%" height="100%">
               <BarChart
                 data={transformedRows}
                 layout="vertical"
-                margin={{ top: 20, right: 30, left: 180, bottom: 20 }}
+                margin={{ top: 20, right: 30, left: 200, bottom: 20 }}
               >
                 <CartesianGrid strokeDasharray="3 3" stroke="rgba(0, 0, 0, 0.1)" />
                 <XAxis 
@@ -298,7 +297,8 @@ export function Step3Breakdown({ onNext, onBack }: Step3BreakdownProps) {
                 <YAxis
                   type="category"
                   dataKey="name"
-                  width={170}
+                  width={190}
+                  interval={0}
                   stroke="var(--text)"
                   style={{ fontSize: '14px', fontWeight: 500 }}
                 />
@@ -308,6 +308,9 @@ export function Step3Breakdown({ onNext, onBack }: Step3BreakdownProps) {
                     dataKey={phase}
                     stackId="lc"
                     fill={phaseConfig[phase].fill}
+                    isAnimationActive={true}
+                    animationDuration={600}
+                    animationEasing="ease-in-out"
                     onMouseEnter={(data) => handleBarMouseEnter(data.name, phase)}
                     onMouseLeave={handleBarMouseLeave}
                     onClick={(data, index, event) => handleBarClick(data, phase, event)}
