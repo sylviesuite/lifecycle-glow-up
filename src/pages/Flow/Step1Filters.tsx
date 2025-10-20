@@ -31,7 +31,7 @@ export function Step1Filters({ onNext }: Step1FiltersProps) {
   }, [searchQuery]);
 
   return (
-    <div className="flex flex-col items-center justify-center min-h-screen p-6">
+    <div className="flex flex-col items-center justify-center min-h-screen p-6 overflow-hidden">
       <div 
         className="w-full max-w-2xl rounded-2xl backdrop-blur-sm shadow-md p-8"
         style={{ 

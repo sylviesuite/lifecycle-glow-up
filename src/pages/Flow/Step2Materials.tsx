@@ -34,9 +34,9 @@ export function Step2Materials({ onNext, onBack }: Step2MaterialsProps) {
   );
 
   return (
-    <div className="flex flex-col items-center justify-center min-h-screen p-6">
+    <div className="flex flex-col items-center justify-center min-h-screen p-6 overflow-hidden">
       <div 
-        className="w-full max-w-2xl rounded-2xl backdrop-blur-sm shadow-md p-8"
+        className="w-full max-w-2xl h-[calc(100vh-3rem)] flex flex-col rounded-2xl backdrop-blur-sm shadow-md p-8"
         style={{ 
           background: 'var(--canvas)', 
           border: '1px solid var(--ring-lifecycle)' 
@@ -60,8 +60,9 @@ export function Step2Materials({ onNext, onBack }: Step2MaterialsProps) {
           </div>
         </div>
 
-        <div className="space-y-3 mb-8 max-h-[400px] overflow-y-auto pr-2">
-          {filteredMaterials.map((material) => (
+        <div className="flex-1 min-h-0 overflow-y-auto pr-2 mb-6">
+          <div className="space-y-3">
+            {filteredMaterials.map((material) => (
             <div
               key={material.name}
               className="flex items-center gap-3 p-4 rounded-xl border transition-all hover:shadow-md"
@@ -90,10 +91,11 @@ export function Step2Materials({ onNext, onBack }: Step2MaterialsProps) {
                 {material.total} kg CO₂e
               </span>
             </div>
-          ))}
+            ))}
+          </div>
         </div>
 
-        <div className="flex items-center justify-between">
+        <div className="flex items-center justify-between shrink-0">
           <Button
             onClick={onBack}
             className="px-6 py-3 rounded-xl text-base font-medium shadow-sm"

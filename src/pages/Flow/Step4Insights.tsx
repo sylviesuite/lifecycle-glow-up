@@ -31,15 +31,13 @@ export function Step4Insights({ onBack, onFinish }: Step4InsightsProps) {
   return (
     <div className="flex flex-col items-center justify-center min-h-screen p-6 overflow-hidden">
       <div 
-        className="w-full max-w-3xl rounded-2xl backdrop-blur-sm shadow-md p-8"
+        className="w-full max-w-3xl h-[calc(100vh-3rem)] flex flex-col rounded-2xl backdrop-blur-sm shadow-md p-8"
         style={{ 
           background: 'var(--canvas)', 
           border: '1px solid var(--ring-lifecycle)',
-          maxHeight: 'calc(100vh - 3rem)',
-          overflowY: 'auto',
         }}
       >
-        <div className="mb-8 text-center">
+        <div className="mb-6 text-center shrink-0">
           <h2 className="text-3xl md:text-4xl font-extrabold tracking-tight mb-3" style={{ color: 'var(--text)' }}>
             Insights & Export
           </h2>
@@ -48,8 +46,10 @@ export function Step4Insights({ onBack, onFinish }: Step4InsightsProps) {
           </p>
         </div>
 
-        {/* Key Insights */}
-        <div className="space-y-4 mb-8">
+        {/* Scrollable Content */}
+        <div className="flex-1 min-h-0 overflow-y-auto pr-2">
+          {/* Key Insights */}
+          <div className="space-y-4 mb-6">
           <div 
             className="p-5 rounded-xl border-l-4"
             style={{
@@ -98,10 +98,10 @@ export function Step4Insights({ onBack, onFinish }: Step4InsightsProps) {
               <span className="font-semibold">{average.toFixed(1)} {units === "kgCO2e" ? "kg CO₂e" : "MJ"}/m²</span>
             </p>
           </div>
-        </div>
+          </div>
 
-        {/* How We Calculated */}
-        <div 
+          {/* How We Calculated */}
+          <div
           className="p-5 rounded-xl mb-8"
           style={{
             background: 'rgba(255, 255, 255, 0.5)',
@@ -116,32 +116,33 @@ export function Step4Insights({ onBack, onFinish }: Step4InsightsProps) {
             production, transport, construction, maintenance, and end-of-life. All values are normalized
             per functional unit (m²). Data sources include EPDs, industry databases, and project-specific inputs.
           </p>
+          </div>
+
+          {/* Export Actions */}
+          <div className="space-y-3 mb-4">
+            <h3 className="font-semibold text-base mb-3" style={{ color: 'var(--text)' }}>
+              Export Your Analysis
+            </h3>
+            <Button
+              onClick={handleExportPDF}
+              variant="outline"
+              className="w-full justify-start gap-3 py-5 rounded-xl text-base font-medium"
+            >
+              <FileText className="h-5 w-5" />
+              Export as PDF Report
+            </Button>
+            <Button
+              onClick={handleExportCSV}
+              variant="outline"
+              className="w-full justify-start gap-3 py-5 rounded-xl text-base font-medium"
+            >
+              <Download className="h-5 w-5" />
+              Export as CSV Data
+            </Button>
+          </div>
         </div>
 
-        {/* Export Actions */}
-        <div className="space-y-3 mb-8">
-          <h3 className="font-semibold text-base mb-3" style={{ color: 'var(--text)' }}>
-            Export Your Analysis
-          </h3>
-          <Button
-            onClick={handleExportPDF}
-            variant="outline"
-            className="w-full justify-start gap-3 py-6 rounded-xl text-base font-medium"
-          >
-            <FileText className="h-5 w-5" />
-            Export as PDF Report
-          </Button>
-          <Button
-            onClick={handleExportCSV}
-            variant="outline"
-            className="w-full justify-start gap-3 py-6 rounded-xl text-base font-medium"
-          >
-            <Download className="h-5 w-5" />
-            Export as CSV Data
-          </Button>
-        </div>
-
-        <div className="flex items-center justify-between">
+        <div className="flex items-center justify-between shrink-0 pt-4">
           <Button
             onClick={onBack}
             className="px-6 py-3 rounded-xl text-base font-medium shadow-sm"
