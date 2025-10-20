@@ -62,38 +62,38 @@ export function LifecycleFlow() {
       </div>
 
       {/* Header Actions - Fixed position */}
-      <div className="fixed top-6 left-6 right-6 flex items-center justify-between z-50">
+      <div className="fixed top-3 left-4 right-4 flex items-center justify-between z-50">
         <Button
           onClick={handleBackToHome}
-          className="shadow-lg px-5 py-2.5 font-semibold hover:opacity-90 transition-opacity"
+          className="shadow-lg px-3 py-1.5 text-sm font-semibold hover:opacity-90 transition-opacity"
           aria-label="Back to home"
           style={{
             background: 'var(--phase-prod)',
             color: 'white',
           }}
         >
-          <ArrowLeft className="h-4 w-4 mr-2" />
+          <ArrowLeft className="h-3.5 w-3.5 mr-1.5" />
           Home
         </Button>
         
         <Button
           size="icon"
           onClick={toggleTheme}
-          className="shrink-0 shadow-lg hover:opacity-90 transition-opacity h-11 w-11"
+          className="shrink-0 shadow-lg hover:opacity-90 transition-opacity h-9 w-9"
           aria-label="Toggle theme"
           style={{
             background: 'var(--phase-prod)',
             color: 'white',
           }}
         >
-          {theme === 'dark' ? <Sun className="h-5 w-5" /> : <Moon className="h-5 w-5" />}
+          {theme === 'dark' ? <Sun className="h-4 w-4" /> : <Moon className="h-4 w-4" />}
         </Button>
       </div>
 
       {/* Step Indicator */}
-      <div className="fixed top-6 left-1/2 -translate-x-1/2 z-50">
+      <div className="fixed top-3 left-1/2 -translate-x-1/2 z-50">
         <div 
-          className="flex items-center gap-2 px-4 py-2 rounded-full shadow-lg"
+          className="flex items-center gap-2 px-3 py-1.5 rounded-full shadow-lg"
           style={{
             background: 'var(--canvas)',
             border: '1px solid var(--ring-lifecycle)',
