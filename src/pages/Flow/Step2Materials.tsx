@@ -96,8 +96,11 @@ export function Step2Materials({ onNext, onBack }: Step2MaterialsProps) {
         <div className="flex items-center justify-between">
           <Button
             onClick={onBack}
-            variant="outline"
             className="px-6 py-3 rounded-xl text-base font-medium shadow-sm"
+            style={{
+              background: 'rgba(255, 255, 255, 0.95)',
+              color: 'var(--text)',
+            }}
           >
             <ChevronLeft className="h-4 w-4 mr-2" />
             Back
