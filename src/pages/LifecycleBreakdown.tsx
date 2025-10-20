@@ -137,10 +137,10 @@ const LifecycleBreakdown = () => {
     const minWidth = 36;
     const isNarrow = width < minWidth;
     
-    const labelText = `${phaseConfig[phase].shortLabel} • ${formatNumber(value)} ${units === "kgCO2e" ? "kg CO₂e" : "MJ"}`;
+    const labelText = phaseConfig[phase].label;
     const padding = 8;
-    const chipHeight = 24;
-    const chipWidth = Math.max(labelText.length * 6 + padding * 2, 100);
+    const chipHeight = 22;
+    const chipWidth = Math.max(labelText.length * 6.5 + padding * 2, 80);
     
     const chipX = isNarrow 
       ? x + width - chipWidth 
@@ -156,8 +156,9 @@ const LifecycleBreakdown = () => {
           y={chipY}
           width={chipWidth}
           height={chipHeight}
-          rx={12}
-          fill="rgba(0, 0, 0, 0.85)"
+          rx={chipHeight / 2}
+          fill={phaseConfig[phase].color}
+          opacity={0.9}
           filter="url(#chip-shadow)"
         />
         <text
