@@ -34,6 +34,7 @@ const impactCategories: { value: ImpactCategory; label: string; unit: string }[]
   { value: "Water", label: "Water Use", unit: "m³ water eq" },
   { value: "Acidification", label: "Acidification", unit: "kg SO₂ eq" },
   { value: "Resource", label: "Resource Depletion", unit: "kg Sb eq" },
+  { value: "Energy", label: "Embodied Energy", unit: "MJ" },
 ];
 
 export function Step3Breakdown({ onNext, onBack }: Step3BreakdownProps) {

@@ -1,6 +1,6 @@
 import { PhaseKey } from "@/pages/LifecycleBreakdown";
 
-export type ImpactCategory = "CO2e" | "Water" | "Acidification" | "Resource";
+export type ImpactCategory = "CO2e" | "Water" | "Acidification" | "Resource" | "Energy";
 export type ScoreTier = "Gold" | "Silver" | "Bronze" | "Problematic";
 
 export type Row = {
@@ -26,6 +26,7 @@ export type Row = {
     Water: number[];
     Acidification: number[];
     Resource: number[];
+    Energy: number[];
   };
 };
 
@@ -52,6 +53,7 @@ export const mockData: Row[] = [
       Water: [120, 15, 35, 8, 12],
       Acidification: [0.8, 0.2, 0.4, 0.1, 0.15],
       Resource: [45, 8, 18, 5, 7],
+      Energy: [580, 95, 220, 45, 75],
     },
   },
   {
@@ -76,6 +78,7 @@ export const mockData: Row[] = [
       Water: [280, 22, 48, 35, 18],
       Acidification: [1.6, 0.3, 0.6, 0.4, 0.25],
       Resource: [85, 12, 24, 16, 10],
+      Energy: [920, 135, 280, 185, 120],
     },
   },
   {
@@ -100,6 +103,7 @@ export const mockData: Row[] = [
       Water: [95, 18, 38, 12, 9],
       Acidification: [0.5, 0.25, 0.5, 0.15, 0.1],
       Resource: [35, 9, 20, 8, 6],
+      Energy: [340, 105, 245, 75, 60],
     },
   },
   {
@@ -124,6 +128,7 @@ export const mockData: Row[] = [
       Water: [145, 12, 28, 6, 16],
       Acidification: [0.9, 0.15, 0.3, 0.08, 0.2],
       Resource: [52, 7, 14, 4, 9],
+      Energy: [475, 75, 155, 30, 105],
     },
   },
 ].map((r) => ({
