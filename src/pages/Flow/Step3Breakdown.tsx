@@ -43,7 +43,8 @@ export function Step3Breakdown({ onNext, onBack }: Step3BreakdownProps) {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [selectedMaterial, setSelectedMaterial] = useState<string | null>(null);
   const [selectedPhase, setSelectedPhase] = useState<PhaseKey | null>(null);
-  const [layoutView, setLayoutView] = useState<"chart" | "tiles">("chart");
+  const [layoutView, setLayoutView] = useState<"chart" | "tiles">("tiles");
+  const [activePhaseFilters, setActivePhaseFilters] = useState<Set<PhaseKey>>(new Set());
   const cardRef = useRef<HTMLDivElement>(null);
 
   const state = lifecycleStore.getState();
@@ -132,10 +133,25 @@ export function Step3Breakdown({ onNext, onBack }: Step3BreakdownProps) {
   const originalRow = rows.find(r => r.name === activeMaterial);
   const sidebarRow = rows.find(r => r.name === selectedMaterial);
 
+  const togglePhaseFilter = (phase: PhaseKey) => {
+    setActivePhaseFilters((prev) => {
+      const newSet = new Set(prev);
+      if (newSet.has(phase)) {
+        newSet.delete(phase);
+      } else {
+        newSet.add(phase);
+      }
+      return newSet;
+    });
+  };
+
   const getCurrentUnit = () => {
     if (viewMode === "cpi") return "$ / kg CO₂e";
     if (chartMode === "percentage") return "% of total";
-    return impactCategories.find(c => c.value === impactCategory)?.unit || "kg CO₂e";
+    
+    // Format units properly - use kg or t (tonnes) for large values
+    const unit = impactCategories.find(c => c.value === impactCategory)?.unit || "kg CO₂e";
+    return unit;
   };
 
   const currentCategory = impactCategories.find(c => c.value === impactCategory);
@@ -154,7 +170,7 @@ export function Step3Breakdown({ onNext, onBack }: Step3BreakdownProps) {
         {/* Header with toggles */}
         <div className="mb-3 flex items-start justify-between">
           <div>
-            <h2 className="text-2xl md:text-3xl font-extrabold tracking-tight mb-1" style={{ color: 'var(--text)' }}>
+            <h2 className="text-xl md:text-2xl font-bold tracking-tight mb-1" style={{ color: 'var(--text)' }}>
               Lifecycle Breakdown
             </h2>
             <p className="text-sm" style={{ color: 'var(--text-sub)' }}>
@@ -287,31 +303,48 @@ export function Step3Breakdown({ onNext, onBack }: Step3BreakdownProps) {
             </div>
           )}
 
-          {/* Legend - only show for chart view */}
-          {layoutView === "chart" && (
-            <div className="flex flex-wrap gap-3 mb-6">
-              {phases.map((phase) => (
-                <div
-                  key={phase}
-                  className="flex items-center gap-2 px-3 py-1.5 rounded-md transition-all"
+          {/* Phase Filter Pills */}
+          <div className="mb-4">
+            <p className="text-xs font-semibold mb-2 uppercase tracking-wide" style={{ color: 'var(--text-sub)' }}>
+              Filter by Phase
+            </p>
+            <div className="flex flex-wrap gap-2">
+              {phases.map((phase) => {
+                const isActive = activePhaseFilters.size === 0 || activePhaseFilters.has(phase);
+                return (
+                  <button
+                    key={phase}
+                    onClick={() => togglePhaseFilter(phase)}
+                    className="flex items-center gap-2 px-3 py-1.5 rounded-full transition-all text-sm font-medium cursor-pointer"
+                    style={{
+                      background: isActive ? phaseConfig[phase].fill : 'rgba(0, 0, 0, 0.05)',
+                      color: isActive ? 'white' : 'var(--text-sub)',
+                      border: `1px solid ${isActive ? phaseConfig[phase].fill : 'transparent'}`,
+                      opacity: isActive ? 1 : 0.6,
+                    }}
+                  >
+                    <div
+                      className="w-2 h-2 rounded-full"
+                      style={{ background: isActive ? 'white' : phaseConfig[phase].fill }}
+                    />
+                    <span>{phaseConfig[phase].shortLabel}</span>
+                  </button>
+                );
+              })}
+              {activePhaseFilters.size > 0 && (
+                <button
+                  onClick={() => setActivePhaseFilters(new Set())}
+                  className="px-3 py-1.5 rounded-full text-xs font-medium transition-all"
                   style={{
-                    background: activePhase === phase ? 'white' : 'rgba(255, 255, 255, 0.7)',
-                    border: `1px solid ${activePhase === phase ? phaseConfig[phase].fill : 'rgba(0,0,0,0.05)'}`,
-                    opacity: activePhase === phase ? 1 : 0.7,
-                    fontWeight: activePhase === phase ? 600 : 400,
+                    background: 'rgba(0, 0, 0, 0.05)',
+                    color: 'var(--text-sub)',
                   }}
                 >
-                  <div
-                    className="w-3 h-3 rounded-sm"
-                    style={{ background: phaseConfig[phase].fill }}
-                  />
-                  <span className="text-sm" style={{ color: 'var(--text)' }}>
-                    {phaseConfig[phase].shortLabel}
-                  </span>
-                </div>
-              ))}
+                  Clear filters
+                </button>
+              )}
             </div>
-          )}
+          </div>
 
           {/* Conditional Rendering: Chart or Tiles */}
           {layoutView === "chart" ? (
@@ -341,30 +374,37 @@ export function Step3Breakdown({ onNext, onBack }: Step3BreakdownProps) {
                     stroke="var(--text)"
                     style={{ fontSize: '14px', fontWeight: 500 }}
                   />
-                  {phases.map((phase) => (
-                    <Bar
-                      key={phase}
-                      dataKey={phase}
-                      stackId="lc"
-                      fill={phaseConfig[phase].fill}
-                      isAnimationActive={true}
-                      animationDuration={600}
-                      animationEasing="ease-in-out"
-                      onMouseEnter={(data) => handleBarMouseEnter(data.name, phase)}
-                      onMouseLeave={handleBarMouseLeave}
-                      onClick={(data, index, event) => handleBarClick(data, phase, event)}
-                      style={{ cursor: 'pointer' }}
-                    >
-                      {transformedRows.map((row) => (
-                        <Cell
-                          key={`cell-${row.name}-${phase}`}
-                          opacity={activeMaterial === row.name && activePhase === phase ? 1 : 0.9}
-                          stroke={activeMaterial === row.name && activePhase === phase ? '#3A6E5E' : 'none'}
-                          strokeWidth={activeMaterial === row.name && activePhase === phase ? 1.5 : 0}
-                        />
-                      ))}
-                    </Bar>
-                  ))}
+                  {phases.map((phase) => {
+                    const isPhaseActive = activePhaseFilters.size === 0 || activePhaseFilters.has(phase);
+                    return (
+                      <Bar
+                        key={phase}
+                        dataKey={phase}
+                        stackId="lc"
+                        fill={phaseConfig[phase].fill}
+                        isAnimationActive={true}
+                        animationDuration={600}
+                        animationEasing="ease-in-out"
+                        onMouseEnter={(data) => handleBarMouseEnter(data.name, phase)}
+                        onMouseLeave={handleBarMouseLeave}
+                        onClick={(data, index, event) => handleBarClick(data, phase, event)}
+                        style={{ cursor: 'pointer' }}
+                      >
+                        {transformedRows.map((row) => {
+                          const baseOpacity = isPhaseActive ? 0.9 : 0.3;
+                          const hoverOpacity = activeMaterial === row.name && activePhase === phase ? 1 : baseOpacity;
+                          return (
+                            <Cell
+                              key={`cell-${row.name}-${phase}`}
+                              opacity={hoverOpacity}
+                              stroke={activeMaterial === row.name && activePhase === phase ? '#3A6E5E' : 'none'}
+                              strokeWidth={activeMaterial === row.name && activePhase === phase ? 1.5 : 0}
+                            />
+                          );
+                        })}
+                      </Bar>
+                    );
+                  })}
                 </BarChart>
               </ResponsiveContainer>
             </motion.div>
@@ -374,9 +414,9 @@ export function Step3Breakdown({ onNext, onBack }: Step3BreakdownProps) {
               className="flex-1 min-h-0 overflow-y-auto pr-2"
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
-              transition={{ duration: 0.5, ease: "easeInOut" }}
+              transition={{ duration: 0.3, ease: "easeOut" }}
             >
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 pb-4">
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3 pb-4">
                 {transformedRows.map((row) => {
                   const originalRow = rows.find(r => r.name === row.name);
                   const impactData = originalRow?.impacts[impactCategory] || [0, 0, 0, 0, 0];
@@ -388,11 +428,15 @@ export function Step3Breakdown({ onNext, onBack }: Step3BreakdownProps) {
                       onClick={() => handleTileClick(row.name)}
                       currentMetric={row.total || 0}
                       currentUnit={getCurrentUnit()}
-                      phases={phases.map((phase, idx) => ({
-                        phase,
-                        value: impactData[idx],
-                        color: phaseConfig[phase].fill,
-                      }))}
+                      phases={phases.map((phase, idx) => {
+                        const isActive = activePhaseFilters.size === 0 || activePhaseFilters.has(phase);
+                        return {
+                          phase,
+                          value: impactData[idx],
+                          color: phaseConfig[phase].fill,
+                          isActive,
+                        };
+                      })}
                     />
                   );
                 })}
@@ -454,13 +498,9 @@ export function Step3Breakdown({ onNext, onBack }: Step3BreakdownProps) {
         onClose={() => setSidebarOpen(false)}
         material={sidebarRow || null}
         phase={selectedPhase}
-        phaseValue={
-          sidebarRow && selectedPhase
-            ? sidebarRow.impacts[impactCategory][phases.indexOf(selectedPhase)]
-            : 0
-        }
-        phaseColor={selectedPhase ? phaseConfig[selectedPhase].fill : ''}
-        phaseLabel={selectedPhase ? phaseConfig[selectedPhase].label : ''}
+        impactData={sidebarRow ? sidebarRow.impacts[impactCategory] : []}
+        currentUnit={getCurrentUnit()}
+        activePhases={activePhaseFilters}
       />
     </>
   );

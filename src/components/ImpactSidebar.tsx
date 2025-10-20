@@ -1,29 +1,56 @@
 import { motion, AnimatePresence } from "framer-motion";
-import { X, ArrowLeft, Download } from "lucide-react";
+import { X, ExternalLink } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { PhaseKey } from "@/pages/LifecycleBreakdown";
+import { PhaseKey, phaseConfig } from "@/pages/LifecycleBreakdown";
 import { Row } from "@/store/lifecycleStore";
+import { ScoreBadge } from "@/components/ui/score-badge";
+import { useEffect } from "react";
 
 interface ImpactSidebarProps {
   isOpen: boolean;
   onClose: () => void;
   material: Row | null;
   phase: PhaseKey | null;
-  phaseValue: number;
-  phaseColor: string;
-  phaseLabel: string;
+  impactData: number[];
+  currentUnit: string;
+  activePhases?: Set<PhaseKey>;
 }
+
+const phases: PhaseKey[] = [
+  "Point of Origin → Production",
+  "Transport",
+  "Construction",
+  "Maintenance",
+  "End of Life",
+];
 
 export function ImpactSidebar({
   isOpen,
   onClose,
   material,
   phase,
-  phaseValue,
-  phaseColor,
-  phaseLabel,
+  impactData,
+  currentUnit,
+  activePhases = new Set(),
 }: ImpactSidebarProps) {
   if (!material || !phase) return null;
+
+  const totalImpact = impactData.reduce((sum, val) => sum + val, 0);
+  const phaseIndex = phases.indexOf(phase);
+  const phaseValue = impactData[phaseIndex];
+  const phaseColor = phaseConfig[phase].fill;
+  const phaseLabel = phaseConfig[phase].shortLabel;
+
+  // ESC key to close drawer
+  useEffect(() => {
+    const handleEsc = (e: KeyboardEvent) => {
+      if (e.key === "Escape" && isOpen) {
+        onClose();
+      }
+    };
+    document.addEventListener("keydown", handleEsc);
+    return () => document.removeEventListener("keydown", handleEsc);
+  }, [isOpen, onClose]);
 
   return (
     <AnimatePresence>
@@ -38,13 +65,13 @@ export function ImpactSidebar({
             onClick={onClose}
           />
 
-          {/* Bottom Panel */}
+          {/* Drawer Panel */}
           <motion.div
             initial={{ y: "100%" }}
             animate={{ y: 0 }}
             exit={{ y: "100%" }}
-            transition={{ type: "spring", damping: 30, stiffness: 300 }}
-            className="fixed bottom-0 left-0 right-0 h-[35vh] max-h-[350px] z-50 shadow-2xl overflow-y-auto"
+            transition={{ duration: 0.25, ease: "easeOut" }}
+            className="fixed bottom-0 left-0 right-0 h-[60vh] z-50 shadow-2xl overflow-y-auto rounded-t-2xl"
             style={{
               background: 'var(--canvas)',
               borderTop: '2px solid var(--ring-lifecycle)',
@@ -52,183 +79,180 @@ export function ImpactSidebar({
           >
             {/* Header */}
             <div 
-              className="sticky top-0 p-6 border-b flex items-center justify-between"
+              className="sticky top-0 p-4 border-b flex items-center justify-between backdrop-blur-sm z-10"
               style={{
                 background: 'var(--canvas)',
                 borderColor: 'var(--ring-lifecycle)',
               }}
             >
-              <Button
-                onClick={onClose}
-                variant="ghost"
-                size="sm"
-                className="gap-2"
-              >
-                <ArrowLeft className="h-4 w-4" />
-                Back
-              </Button>
-              <Button
-                variant="ghost"
-                size="sm"
-                className="gap-2"
-              >
-                <Download className="h-4 w-4" />
-                Export Data
-              </Button>
+              <h2 className="text-lg font-bold" style={{ color: 'var(--text)' }}>
+                Material Detail
+              </h2>
               <button
                 onClick={onClose}
-                className="rounded-sm opacity-70 transition-opacity hover:opacity-100"
+                className="rounded-full p-1 opacity-70 transition-opacity hover:opacity-100 hover:bg-black/5"
                 style={{ color: 'var(--text)' }}
+                aria-label="Close drawer"
               >
                 <X className="h-5 w-5" />
               </button>
             </div>
 
             {/* Content */}
-            <div className="p-6 space-y-6 grid grid-cols-1 md:grid-cols-3 gap-6">
-              {/* Column 1: Material & Phase Impact */}
-              <div className="space-y-4">
-                <div>
-                  <h2 className="text-2xl font-bold mb-2" style={{ color: 'var(--text)' }}>
-                    {material.name}
-                  </h2>
-                  <div 
-                    className="inline-flex items-center gap-2 px-3 py-1.5 rounded-lg"
-                    style={{ background: phaseColor + '20' }}
-                  >
-                    <div 
-                      className="w-3 h-3 rounded"
-                      style={{ background: phaseColor }}
-                    />
-                    <span className="font-semibold" style={{ color: phaseColor }}>
-                      {phaseLabel}
-                    </span>
+            <div className="p-6 space-y-6">
+              {/* Material Header & Full Lifecycle Bar */}
+              <section className="space-y-4">
+                <div className="flex items-start justify-between">
+                  <div>
+                    <h3 className="text-2xl font-bold mb-1" style={{ color: 'var(--text)' }}>
+                      {material.name}
+                    </h3>
+                    <p className="text-sm" style={{ color: 'var(--text-sub)' }}>
+                      Total: {totalImpact.toFixed(1)} {currentUnit}
+                    </p>
                   </div>
                 </div>
 
-                {/* Phase Impact */}
-                <div 
-                  className="p-4 rounded-lg"
-                  style={{ background: 'rgba(255, 255, 255, 0.5)' }}
-                >
-                  <p className="text-sm mb-1" style={{ color: 'var(--text-sub)' }}>
-                    Phase Impact
+                {/* Full Stacked Horizontal Bar */}
+                <div className="space-y-2">
+                  <p className="text-xs font-semibold" style={{ color: 'var(--text-sub)' }}>
+                    LIFECYCLE PHASES
                   </p>
-                  <p className="text-3xl font-bold" style={{ color: 'var(--text)' }}>
-                    {phaseValue.toFixed(1)} kg CO₂e
-                  </p>
-                  <p className="text-sm mt-1" style={{ color: 'var(--text-sub)' }}>
-                    {((phaseValue / (material.total || 1)) * 100).toFixed(1)}% of total lifecycle
-                  </p>
-                </div>
-              </div>
+                  <div className="flex h-8 rounded-lg overflow-hidden" style={{ background: 'rgba(0, 0, 0, 0.05)' }}>
+                    {phases.map((ph, idx) => {
+                      const value = impactData[idx];
+                      const widthPercent = totalImpact > 0 ? (value / totalImpact) * 100 : 0;
+                      const isActive = activePhases.size === 0 || activePhases.has(ph);
+                      
+                      return (
+                        <div
+                          key={ph}
+                          style={{
+                            width: `${widthPercent}%`,
+                            background: phaseConfig[ph].fill,
+                            opacity: isActive ? 1 : 0.3,
+                          }}
+                          className="h-full transition-all"
+                          title={`${phaseConfig[ph].shortLabel}: ${value.toFixed(1)} ${currentUnit}`}
+                        />
+                      );
+                    })}
+                  </div>
 
-              {/* Column 2: Data Source & Phase Notes */}
-              <div className="space-y-4">
-                <div>
-                  <h3 className="text-lg font-semibold mb-3" style={{ color: 'var(--text)' }}>
+                  {/* Interactive Legend */}
+                  <div className="flex flex-wrap gap-2">
+                    {phases.map((ph, idx) => {
+                      const value = impactData[idx];
+                      const percent = totalImpact > 0 ? (value / totalImpact) * 100 : 0;
+                      const isActive = activePhases.size === 0 || activePhases.has(ph);
+                      
+                      return (
+                        <div
+                          key={ph}
+                          className="flex items-center gap-2 px-2 py-1 rounded text-xs transition-all"
+                          style={{
+                            background: isActive ? 'rgba(255, 255, 255, 0.7)' : 'rgba(0, 0, 0, 0.05)',
+                            border: `1px solid ${phaseConfig[ph].fill}`,
+                            opacity: isActive ? 1 : 0.5,
+                          }}
+                        >
+                          <div
+                            className="w-2 h-2 rounded-sm"
+                            style={{ background: phaseConfig[ph].fill }}
+                          />
+                          <span className="font-medium" style={{ color: 'var(--text)' }}>
+                            {phaseConfig[ph].shortLabel}
+                          </span>
+                          <span style={{ color: 'var(--text-sub)' }}>
+                            {value.toFixed(0)} ({percent.toFixed(0)}%)
+                          </span>
+                        </div>
+                      );
+                    })}
+                  </div>
+                </div>
+              </section>
+
+              {/* Grid Layout for Data Source & Impact Scores */}
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                {/* Data Source */}
+                <section>
+                  <h3 className="text-sm font-semibold mb-3 uppercase tracking-wide" style={{ color: 'var(--text-sub)' }}>
                     Data Source
                   </h3>
                   <div 
-                    className="p-4 rounded-lg border-l-4"
+                    className="p-4 rounded-lg border-l-4 space-y-2"
                     style={{ 
-                      background: 'rgba(255, 255, 255, 0.3)',
+                      background: 'rgba(255, 255, 255, 0.5)',
                       borderColor: phaseColor,
                     }}
                   >
-                    <p className="font-medium mb-2" style={{ color: 'var(--text)' }}>
-                      EPD #4123 (2024)
-                    </p>
-                    <p className="text-sm" style={{ color: 'var(--text-sub)' }}>
-                      Source: Ecoinvent v3.8 database
-                    </p>
-                    <p className="text-sm" style={{ color: 'var(--text-sub)' }}>
-                      Region: North America
-                    </p>
-                    <p className="text-sm" style={{ color: 'var(--text-sub)' }}>
-                      Verified: ISO 14025 compliant
-                    </p>
+                    <div className="flex items-start justify-between">
+                      <div>
+                        <p className="font-semibold mb-1" style={{ color: 'var(--text)' }}>
+                          EPD #4123 (2024)
+                        </p>
+                        <p className="text-sm mb-0.5" style={{ color: 'var(--text-sub)' }}>
+                          Ecoinvent v3.8 database
+                        </p>
+                        <p className="text-sm mb-0.5" style={{ color: 'var(--text-sub)' }}>
+                          North America
+                        </p>
+                        <p className="text-xs" style={{ color: 'var(--text-sub)' }}>
+                          ISO 14025 compliant
+                        </p>
+                      </div>
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        className="gap-1 text-xs"
+                      >
+                        <ExternalLink className="h-3 w-3" />
+                        View
+                      </Button>
+                    </div>
                   </div>
-                </div>
+                  
+                  <div className="mt-4 p-3 rounded-lg" style={{ background: 'rgba(255, 255, 255, 0.3)' }}>
+                    <p className="text-xs font-semibold mb-2" style={{ color: 'var(--text)' }}>
+                      METHODOLOGY NOTES
+                    </p>
+                    <ul className="space-y-1 text-xs" style={{ color: 'var(--text-sub)' }}>
+                      <li>• Industry average for {material.name.toLowerCase()}</li>
+                      <li>• Includes upstream emissions</li>
+                      <li>• Transport: 300 km average</li>
+                      <li>• {material.lifespanYears}-year lifespan</li>
+                    </ul>
+                  </div>
+                </section>
 
-                <div>
-                  <h3 className="text-lg font-semibold mb-3" style={{ color: 'var(--text)' }}>
-                    Phase Notes
+                {/* Impact Scores */}
+                <section>
+                  <h3 className="text-sm font-semibold mb-3 uppercase tracking-wide" style={{ color: 'var(--text-sub)' }}>
+                    Impact Scores
                   </h3>
-                  <div className="space-y-2 text-sm" style={{ color: 'var(--text-sub)' }}>
-                    <p>
-                      • Industry average data for {material.name.toLowerCase()}
-                    </p>
-                    <p>
-                      • Includes upstream emissions and material extraction
-                    </p>
-                    <p>
-                      • Transportation assumed at 300 km average distance
-                    </p>
-                    <p>
-                      • Maintenance schedule based on {material.lifespanYears}-year lifespan
-                    </p>
+                  <div className="space-y-3">
+                    <ScoreBadge
+                      label="RIS"
+                      value={material.ris}
+                      maxValue={100}
+                      description="Regenerative potential & circularity"
+                    />
+                    <ScoreBadge
+                      label="LIS"
+                      value={material.lis}
+                      maxValue={100}
+                      description="Lifecycle environmental performance"
+                    />
+                    <ScoreBadge
+                      label="CPI"
+                      value={material.cpi}
+                      maxValue={10}
+                      unit="$ / kg CO₂e"
+                      description="Cost efficiency vs. baseline"
+                    />
                   </div>
-                </div>
-              </div>
-
-              {/* Column 3: Impact Scores */}
-              <div>
-                <h3 className="text-lg font-semibold mb-3" style={{ color: 'var(--text)' }}>
-                  Impact Scores
-                </h3>
-                <div className="space-y-3">
-                  <div 
-                    className="p-3 rounded-lg"
-                    style={{ background: 'rgba(255, 255, 255, 0.5)' }}
-                  >
-                    <div className="flex items-center justify-between mb-1">
-                      <span className="font-medium" style={{ color: 'var(--text)' }}>
-                        RIS (Regenerative Impact)
-                      </span>
-                      <span className="text-lg font-bold" style={{ color: 'var(--phase-prod)' }}>
-                        {material.ris}
-                      </span>
-                    </div>
-                    <p className="text-xs" style={{ color: 'var(--text-sub)' }}>
-                      Measures carbon sequestration potential, durability, and end-of-life circularity
-                    </p>
-                  </div>
-
-                  <div 
-                    className="p-3 rounded-lg"
-                    style={{ background: 'rgba(255, 255, 255, 0.5)' }}
-                  >
-                    <div className="flex items-center justify-between mb-1">
-                      <span className="font-medium" style={{ color: 'var(--text)' }}>
-                        LIS (Lifecycle Impact)
-                      </span>
-                      <span className="text-lg font-bold" style={{ color: 'var(--phase-prod)' }}>
-                        {material.lis}
-                      </span>
-                    </div>
-                    <p className="text-xs" style={{ color: 'var(--text-sub)' }}>
-                      Comprehensive environmental performance across all lifecycle phases
-                    </p>
-                  </div>
-
-                  <div 
-                    className="p-3 rounded-lg"
-                    style={{ background: 'rgba(255, 255, 255, 0.5)' }}
-                  >
-                    <div className="flex items-center justify-between mb-1">
-                      <span className="font-medium" style={{ color: 'var(--text)' }}>
-                        CPI (Cost per Impact)
-                      </span>
-                      <span className="text-lg font-bold" style={{ color: 'var(--phase-prod)' }}>
-                        ${material.cpi.toFixed(2)}
-                      </span>
-                    </div>
-                    <p className="text-xs" style={{ color: 'var(--text-sub)' }}>
-                      Economic efficiency: dollars per kg CO₂e saved vs. baseline
-                    </p>
-                  </div>
-                </div>
+                </section>
               </div>
             </div>
           </motion.div>

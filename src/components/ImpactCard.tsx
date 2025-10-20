@@ -1,13 +1,14 @@
 import { ScoreTier, Row } from "@/store/lifecycleStore";
 import { ArrowRight } from "lucide-react";
 import { PhaseKey } from "@/pages/LifecycleBreakdown";
+import { formatCO2eValue } from "@/lib/utils";
 
 interface ImpactCardProps {
   material: Row;
   onClick: () => void;
   currentMetric: number;
   currentUnit: string;
-  phases: { phase: PhaseKey; value: number; color: string }[];
+  phases: { phase: PhaseKey; value: number; color: string; isActive?: boolean }[];
 }
 
 export function ImpactCard({ 
@@ -19,67 +20,71 @@ export function ImpactCard({
 }: ImpactCardProps) {
   const maxValue = Math.max(...phases.map(p => p.value));
   
-  // Get material category and region (mock data for now)
+  // Get material category and region
   const category = material.name.includes('Wall') ? 'Wood' : 
                    material.name.includes('Hempcrete') ? 'Bio-based' : 
                    material.name.includes('Rammed') ? 'Earth' : 'Mineral';
-  const region = 'PNW'; // Pacific Northwest placeholder
+  const region = 'PNW';
+
+  // Format large values properly
+  const formatted = formatCO2eValue(currentMetric, currentUnit);
 
   return (
     <button 
       onClick={onClick}
-      className="group w-full rounded-xl shadow-sm border transition-all hover:shadow-md hover:scale-[1.02] active:scale-[0.98] p-4 text-left"
+      className="group w-full rounded-lg shadow-sm border transition-all hover:shadow-md hover:scale-[1.01] active:scale-[0.99] p-3 text-left"
       style={{
-        background: 'rgba(255, 255, 255, 0.6)',
-        borderColor: 'rgba(0, 0, 0, 0.1)',
-        minHeight: '140px',
-        maxHeight: '160px',
+        background: 'rgba(255, 255, 255, 0.7)',
+        borderColor: 'var(--ring-lifecycle)',
+        minHeight: '120px',
       }}
     >
       {/* Header: Material name + category/region */}
-      <div className="flex items-start justify-between mb-3">
+      <div className="flex items-start justify-between mb-2">
         <div className="flex-1 min-w-0">
-          <h3 className="font-bold text-base truncate mb-1" style={{ color: 'var(--text)' }}>
+          <h3 className="font-semibold text-sm truncate mb-0.5" style={{ color: 'var(--text)' }}>
             {material.name}
           </h3>
-          <p className="text-xs font-medium" style={{ color: 'var(--text-sub)' }}>
+          <p className="text-xs" style={{ color: 'var(--text-sub)' }}>
             {category} · {region}
           </p>
         </div>
         <ArrowRight 
-          className="h-4 w-4 shrink-0 ml-2 transition-transform group-hover:translate-x-1" 
+          className="h-3.5 w-3.5 shrink-0 ml-2 transition-transform group-hover:translate-x-0.5" 
           style={{ color: 'var(--text-sub)' }} 
         />
       </div>
 
       {/* Key Metric */}
-      <div className="mb-3">
-        <div className="flex items-baseline gap-2">
-          <span className="text-2xl font-bold" style={{ color: 'var(--phase-prod)' }}>
-            {currentMetric.toFixed(1)}
+      <div className="mb-2">
+        <div className="flex items-baseline gap-1.5">
+          <span className="text-xl font-bold" style={{ color: 'var(--phase-prod)' }}>
+            {formatted.value}
           </span>
-          <span className="text-xs font-medium" style={{ color: 'var(--text-sub)' }}>
-            {currentUnit}
+          <span className="text-xs" style={{ color: 'var(--text-sub)' }}>
+            {formatted.unit}
           </span>
         </div>
       </div>
 
       {/* Mini horizontal bar preview */}
       <div className="space-y-1">
-        <p className="text-xs font-medium mb-1.5" style={{ color: 'var(--text-sub)' }}>
+        <p className="text-xs mb-1" style={{ color: 'var(--text-sub)' }}>
           Lifecycle phases
         </p>
-        <div className="flex h-2 rounded-full overflow-hidden" style={{ background: 'rgba(0, 0, 0, 0.05)' }}>
+        <div className="flex h-1.5 rounded-full overflow-hidden" style={{ background: 'rgba(0, 0, 0, 0.08)' }}>
           {phases.map((phase, idx) => {
             const widthPercent = maxValue > 0 ? (phase.value / phases.reduce((sum, p) => sum + p.value, 0)) * 100 : 0;
+            const isActive = phase.isActive !== false;
             return (
               <div
                 key={idx}
                 style={{
                   width: `${widthPercent}%`,
                   background: phase.color,
+                  opacity: isActive ? 1 : 0.3,
                 }}
-                className="h-full"
+                className="h-full transition-all"
               />
             );
           })}
@@ -87,9 +92,9 @@ export function ImpactCard({
       </div>
 
       {/* Subtle "Details" CTA */}
-      <div className="mt-3 pt-2 border-t" style={{ borderColor: 'rgba(0, 0, 0, 0.05)' }}>
-        <span className="text-xs font-medium group-hover:underline" style={{ color: 'var(--phase-prod)' }}>
-          View full breakdown
+      <div className="mt-2 pt-2 border-t" style={{ borderColor: 'var(--ring-lifecycle)' }}>
+        <span className="text-xs font-medium transition-all group-hover:translate-x-0.5 inline-flex items-center gap-1" style={{ color: 'var(--phase-prod)' }}>
+          Details →
         </span>
       </div>
     </button>
