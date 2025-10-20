@@ -38,16 +38,16 @@ export function ImpactSidebar({
             onClick={onClose}
           />
 
-          {/* Sidebar */}
+          {/* Bottom Panel */}
           <motion.div
-            initial={{ x: "100%" }}
-            animate={{ x: 0 }}
-            exit={{ x: "100%" }}
+            initial={{ y: "100%" }}
+            animate={{ y: 0 }}
+            exit={{ y: "100%" }}
             transition={{ type: "spring", damping: 30, stiffness: 300 }}
-            className="fixed right-0 top-0 h-full w-[480px] z-50 shadow-2xl overflow-y-auto"
+            className="fixed bottom-0 left-0 right-0 h-[60vh] max-h-[600px] z-50 shadow-2xl overflow-y-auto"
             style={{
               background: 'var(--canvas)',
-              borderLeft: '1px solid var(--ring-lifecycle)',
+              borderTop: '2px solid var(--ring-lifecycle)',
             }}
           >
             {/* Header */}
@@ -85,91 +85,94 @@ export function ImpactSidebar({
             </div>
 
             {/* Content */}
-            <div className="p-6 space-y-6">
-              {/* Material & Phase Header */}
-              <div>
-                <h2 className="text-2xl font-bold mb-2" style={{ color: 'var(--text)' }}>
-                  {material.name}
-                </h2>
-                <div 
-                  className="inline-flex items-center gap-2 px-3 py-1.5 rounded-lg"
-                  style={{ background: phaseColor + '20' }}
-                >
+            <div className="p-6 space-y-6 grid grid-cols-1 md:grid-cols-3 gap-6">
+              {/* Column 1: Material & Phase Impact */}
+              <div className="space-y-4">
+                <div>
+                  <h2 className="text-2xl font-bold mb-2" style={{ color: 'var(--text)' }}>
+                    {material.name}
+                  </h2>
                   <div 
-                    className="w-3 h-3 rounded"
-                    style={{ background: phaseColor }}
-                  />
-                  <span className="font-semibold" style={{ color: phaseColor }}>
-                    {phaseLabel}
-                  </span>
+                    className="inline-flex items-center gap-2 px-3 py-1.5 rounded-lg"
+                    style={{ background: phaseColor + '20' }}
+                  >
+                    <div 
+                      className="w-3 h-3 rounded"
+                      style={{ background: phaseColor }}
+                    />
+                    <span className="font-semibold" style={{ color: phaseColor }}>
+                      {phaseLabel}
+                    </span>
+                  </div>
                 </div>
-              </div>
 
-              {/* Phase Impact */}
-              <div 
-                className="p-4 rounded-lg"
-                style={{ background: 'rgba(255, 255, 255, 0.5)' }}
-              >
-                <p className="text-sm mb-1" style={{ color: 'var(--text-sub)' }}>
-                  Phase Impact
-                </p>
-                <p className="text-3xl font-bold" style={{ color: 'var(--text)' }}>
-                  {phaseValue.toFixed(1)} kg CO₂e
-                </p>
-                <p className="text-sm mt-1" style={{ color: 'var(--text-sub)' }}>
-                  {((phaseValue / (material.total || 1)) * 100).toFixed(1)}% of total lifecycle
-                </p>
-              </div>
-
-              {/* Data Source */}
-              <div>
-                <h3 className="text-lg font-semibold mb-3" style={{ color: 'var(--text)' }}>
-                  Data Source
-                </h3>
+                {/* Phase Impact */}
                 <div 
-                  className="p-4 rounded-lg border-l-4"
-                  style={{ 
-                    background: 'rgba(255, 255, 255, 0.3)',
-                    borderColor: phaseColor,
-                  }}
+                  className="p-4 rounded-lg"
+                  style={{ background: 'rgba(255, 255, 255, 0.5)' }}
                 >
-                  <p className="font-medium mb-2" style={{ color: 'var(--text)' }}>
-                    EPD #4123 (2024)
+                  <p className="text-sm mb-1" style={{ color: 'var(--text-sub)' }}>
+                    Phase Impact
                   </p>
-                  <p className="text-sm" style={{ color: 'var(--text-sub)' }}>
-                    Source: Ecoinvent v3.8 database
+                  <p className="text-3xl font-bold" style={{ color: 'var(--text)' }}>
+                    {phaseValue.toFixed(1)} kg CO₂e
                   </p>
-                  <p className="text-sm" style={{ color: 'var(--text-sub)' }}>
-                    Region: North America
-                  </p>
-                  <p className="text-sm" style={{ color: 'var(--text-sub)' }}>
-                    Verified: ISO 14025 compliant
+                  <p className="text-sm mt-1" style={{ color: 'var(--text-sub)' }}>
+                    {((phaseValue / (material.total || 1)) * 100).toFixed(1)}% of total lifecycle
                   </p>
                 </div>
               </div>
 
-              {/* Phase Notes */}
-              <div>
-                <h3 className="text-lg font-semibold mb-3" style={{ color: 'var(--text)' }}>
-                  Phase Notes
-                </h3>
-                <div className="space-y-2 text-sm" style={{ color: 'var(--text-sub)' }}>
-                  <p>
-                    • Industry average data for {material.name.toLowerCase()}
-                  </p>
-                  <p>
-                    • Includes upstream emissions and material extraction
-                  </p>
-                  <p>
-                    • Transportation assumed at 300 km average distance
-                  </p>
-                  <p>
-                    • Maintenance schedule based on {material.lifespanYears}-year lifespan
-                  </p>
+              {/* Column 2: Data Source & Phase Notes */}
+              <div className="space-y-4">
+                <div>
+                  <h3 className="text-lg font-semibold mb-3" style={{ color: 'var(--text)' }}>
+                    Data Source
+                  </h3>
+                  <div 
+                    className="p-4 rounded-lg border-l-4"
+                    style={{ 
+                      background: 'rgba(255, 255, 255, 0.3)',
+                      borderColor: phaseColor,
+                    }}
+                  >
+                    <p className="font-medium mb-2" style={{ color: 'var(--text)' }}>
+                      EPD #4123 (2024)
+                    </p>
+                    <p className="text-sm" style={{ color: 'var(--text-sub)' }}>
+                      Source: Ecoinvent v3.8 database
+                    </p>
+                    <p className="text-sm" style={{ color: 'var(--text-sub)' }}>
+                      Region: North America
+                    </p>
+                    <p className="text-sm" style={{ color: 'var(--text-sub)' }}>
+                      Verified: ISO 14025 compliant
+                    </p>
+                  </div>
+                </div>
+
+                <div>
+                  <h3 className="text-lg font-semibold mb-3" style={{ color: 'var(--text)' }}>
+                    Phase Notes
+                  </h3>
+                  <div className="space-y-2 text-sm" style={{ color: 'var(--text-sub)' }}>
+                    <p>
+                      • Industry average data for {material.name.toLowerCase()}
+                    </p>
+                    <p>
+                      • Includes upstream emissions and material extraction
+                    </p>
+                    <p>
+                      • Transportation assumed at 300 km average distance
+                    </p>
+                    <p>
+                      • Maintenance schedule based on {material.lifespanYears}-year lifespan
+                    </p>
+                  </div>
                 </div>
               </div>
 
-              {/* RIS Documentation */}
+              {/* Column 3: Impact Scores */}
               <div>
                 <h3 className="text-lg font-semibold mb-3" style={{ color: 'var(--text)' }}>
                   Impact Scores
