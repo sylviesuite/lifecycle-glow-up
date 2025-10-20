@@ -79,27 +79,27 @@ export const phaseConfig = {
   PointOfOriginProduction: {
     label: "Point of Origin → Production",
     shortLabel: "Production",
-    colorClass: "text-[hsl(135,28%,40%)]",
+    colorClass: "text-[hsl(142,45%,45%)]",
   },
   Transport: {
     label: "Transport",
     shortLabel: "Transport",
-    colorClass: "text-[hsl(205,35%,48%)]",
+    colorClass: "text-[hsl(199,52%,52%)]",
   },
   Construction: {
     label: "Construction",
     shortLabel: "Construction",
-    colorClass: "text-[hsl(24,45%,46%)]",
+    colorClass: "text-[hsl(28,65%,54%)]",
   },
   Maintenance: {
     label: "Maintenance",
     shortLabel: "Maintenance",
-    colorClass: "text-[hsl(286,28%,48%)]",
+    colorClass: "text-[hsl(292,48%,58%)]",
   },
   Disposal: {
     label: "End of Life",
     shortLabel: "End of Life",
-    colorClass: "text-[hsl(350,38%,46%)]",
+    colorClass: "text-[hsl(348,58%,54%)]",
   },
 };
 
@@ -210,8 +210,8 @@ const LifecycleBreakdown = () => {
         aria-hidden
         className="pointer-events-none fixed inset-0 -z-10"
       >
-        {/* Soft gradient */}
-        <div className="absolute inset-0 bg-gradient-to-b from-emerald-50 via-stone-50 to-stone-100" />
+        {/* Green to teal gradient */}
+        <div className="absolute inset-0 bg-gradient-to-br from-emerald-400 via-teal-400 to-cyan-500" />
         {/* Faint noise */}
         <div className="absolute inset-0 opacity-[0.05] mix-blend-overlay bg-[url('data:image/svg+xml;utf8,<svg xmlns=%22http://www.w3.org/2000/svg%22 width=%2240%22 height=%2240%22><rect fill=%22%23000000%22 fill-opacity=%220.04%22 width=%2240%22 height=%2240%22/></svg>')]" />
       </div>
