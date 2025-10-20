@@ -410,7 +410,7 @@ const LifecycleBreakdown = () => {
                     {filteredData.map((row) => (
                       <Cell
                         key={`cell-pop-${row.material}`}
-                        stroke={activeMaterial === row.material && activePhase === "PointOfOriginProduction" ? "#3A6E5E" : "none"}
+                        stroke={activeMaterial === row.material && activePhase === "PointOfOriginProduction" ? "#000000" : "none"}
                         strokeWidth={1.5}
                         opacity={activeMaterial === row.material && activePhase === "PointOfOriginProduction" ? 1.0 : 0.9}
                         style={{ cursor: "pointer" }}
@@ -429,7 +429,7 @@ const LifecycleBreakdown = () => {
                     {filteredData.map((row) => (
                       <Cell
                         key={`cell-transport-${row.material}`}
-                        stroke={activeMaterial === row.material && activePhase === "Transport" ? "#3A6E5E" : "none"}
+                        stroke={activeMaterial === row.material && activePhase === "Transport" ? "#000000" : "none"}
                         strokeWidth={1.5}
                         opacity={activeMaterial === row.material && activePhase === "Transport" ? 1.0 : 0.9}
                         style={{ cursor: "pointer" }}
@@ -448,7 +448,7 @@ const LifecycleBreakdown = () => {
                     {filteredData.map((row) => (
                       <Cell
                         key={`cell-construction-${row.material}`}
-                        stroke={activeMaterial === row.material && activePhase === "Construction" ? "#3A6E5E" : "none"}
+                        stroke={activeMaterial === row.material && activePhase === "Construction" ? "#000000" : "none"}
                         strokeWidth={1.5}
                         opacity={activeMaterial === row.material && activePhase === "Construction" ? 1.0 : 0.9}
                         style={{ cursor: "pointer" }}
@@ -467,7 +467,7 @@ const LifecycleBreakdown = () => {
                     {filteredData.map((row) => (
                       <Cell
                         key={`cell-maintenance-${row.material}`}
-                        stroke={activeMaterial === row.material && activePhase === "Maintenance" ? "#3A6E5E" : "none"}
+                        stroke={activeMaterial === row.material && activePhase === "Maintenance" ? "#000000" : "none"}
                         strokeWidth={1.5}
                         opacity={activeMaterial === row.material && activePhase === "Maintenance" ? 1.0 : 0.9}
                         style={{ cursor: "pointer" }}
@@ -487,7 +487,7 @@ const LifecycleBreakdown = () => {
                     {filteredData.map((row) => (
                       <Cell
                         key={`cell-disposal-${row.material}`}
-                        stroke={activeMaterial === row.material && activePhase === "Disposal" ? "#3A6E5E" : "none"}
+                        stroke={activeMaterial === row.material && activePhase === "Disposal" ? "#000000" : "none"}
                         strokeWidth={1.5}
                         opacity={activeMaterial === row.material && activePhase === "Disposal" ? 1.0 : 0.9}
                         style={{ cursor: "pointer" }}
