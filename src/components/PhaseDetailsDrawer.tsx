@@ -98,11 +98,7 @@ export const PhaseDetailsDrawer = ({
             {calculationSteps[phase].map((step, index) => (
               <li key={index} className="flex items-start gap-2 text-sm text-muted-foreground">
                 <span
-                  className="w-6 h-6 rounded-full flex items-center justify-center flex-shrink-0 text-xs font-medium mt-0.5"
-                  style={{
-                    backgroundColor: `${phaseInfo.color}20`,
-                    color: phaseInfo.color,
-                  }}
+                  className={`w-6 h-6 rounded-full flex items-center justify-center flex-shrink-0 text-xs font-medium mt-0.5 ${phaseInfo.colorClass} bg-current/20`}
                 >
                   {index + 1}
                 </span>

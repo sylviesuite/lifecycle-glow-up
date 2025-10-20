@@ -95,8 +95,7 @@ export const AnchoredTooltip = ({
               }`}
             >
               <div
-                className="w-3 h-3 rounded-sm flex-shrink-0"
-                style={{ backgroundColor: entry.color }}
+                className={`w-3 h-3 rounded-sm flex-shrink-0 ${phase.colorClass} bg-current`}
               />
               <span className="text-xs text-muted-foreground flex-1 text-left">
                 {phase.label}:

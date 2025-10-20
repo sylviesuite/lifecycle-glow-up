@@ -81,27 +81,27 @@ export const phaseConfig = {
   PointOfOriginProduction: {
     label: "Point of Origin → Production",
     shortLabel: "Production",
-    color: "#B4E197",
+    colorClass: "text-emerald-500",
   },
   Transport: {
     label: "Transport",
     shortLabel: "Transport",
-    color: "#5CB3FF",
+    colorClass: "text-sky-500",
   },
   Construction: {
     label: "Construction",
     shortLabel: "Construction",
-    color: "#FF7F50",
+    colorClass: "text-amber-500",
   },
   Maintenance: {
     label: "Maintenance",
     shortLabel: "Maintenance",
-    color: "#FFB347",
+    colorClass: "text-fuchsia-500",
   },
   Disposal: {
     label: "End of Life",
     shortLabel: "End of Life",
-    color: "#C96DD8",
+    colorClass: "text-rose-500",
   },
 };
 
@@ -157,9 +157,10 @@ const LifecycleBreakdown = () => {
           width={chipWidth}
           height={chipHeight}
           rx={chipHeight / 2}
-          fill={phaseConfig[phase].color}
+          fill="currentColor"
           opacity={0.9}
           filter="url(#chip-shadow)"
+          className={phaseConfig[phase].colorClass}
         />
         <text
           x={chipX + chipWidth / 2}
@@ -206,41 +207,41 @@ const LifecycleBreakdown = () => {
     : null;
 
   return (
-    <div className="min-h-screen bg-background p-6">
+    <div className="min-h-screen bg-neutral-50 p-4 md:p-6">
       <div className="max-w-6xl mx-auto">
-        <Card ref={cardRef} className="rounded-2xl shadow-lg min-h-[520px] md:min-h-[560px] relative">
-          <CardHeader>
-            <CardTitle className="text-3xl font-bold">
+        <Card ref={cardRef} className="rounded-2xl border shadow-sm bg-white p-4 md:p-6 min-h-[520px] md:min-h-[560px] relative">
+          <div className="space-y-2 mb-6">
+            <h1 className="text-3xl md:text-4xl font-extrabold tracking-tight">
               Lifecycle Breakdown
-            </CardTitle>
-            <CardDescription>
+            </h1>
+            <p className="text-slate-600">
               Stacked horizontal bars by lifecycle phase (mock data). Units shown
               are {units === "kgCO2e" ? "kg CO₂e" : "MJ"} per material. Hover to explore, click for details.
-            </CardDescription>
-          </CardHeader>
-          <CardContent className="space-y-6">
+            </p>
+          </div>
+          <div className="space-y-6">
             {/* Controls */}
             <div className="flex flex-col sm:flex-row gap-4">
               <div className="flex-1">
-                <label className="text-sm font-medium mb-2 block text-foreground">
+                <label className="text-sm font-semibold mb-2 block">
                   Filter Materials
                 </label>
                 <Input
                   placeholder="Search materials..."
                   value={filter}
                   onChange={(e) => setFilter(e.target.value)}
-                  className="max-w-sm"
+                  className="max-w-sm rounded-xl"
                 />
               </div>
               <div className="w-full sm:w-48">
-                <label className="text-sm font-medium mb-2 block text-foreground">
+                <label className="text-sm font-semibold mb-2 block">
                   Units
                 </label>
                 <Select
                   value={units}
                   onValueChange={(value: "kgCO2e" | "MJ") => setUnits(value)}
                 >
-                  <SelectTrigger>
+                  <SelectTrigger className="rounded-xl">
                     <SelectValue />
                   </SelectTrigger>
                   <SelectContent>
@@ -253,7 +254,7 @@ const LifecycleBreakdown = () => {
 
             {/* Chart */}
             <div
-              className="h-[420px] md:h-[480px] relative"
+              className="h-[460px] md:h-[520px] relative"
               role="region"
               aria-label="Lifecycle breakdown chart"
             >
@@ -261,10 +262,10 @@ const LifecycleBreakdown = () => {
                 <BarChart
                   data={filteredData}
                   layout="vertical"
-                  margin={{ top: 12, right: 24, bottom: 20, left: 150 }}
+                  margin={{ top: 12, right: 24, bottom: 24, left: 170 }}
                   barGap={3}
                   barCategoryGap="20%"
-                  barSize={isMobile ? 24 : 28}
+                  barSize={28}
                 >
                   <defs>
                     <filter id="chip-shadow" x="-50%" y="-50%" width="200%" height="200%">
@@ -287,7 +288,7 @@ const LifecycleBreakdown = () => {
                     type="category"
                     stroke="hsl(var(--muted-foreground))"
                     style={{ fontSize: "13px", fontWeight: 500 }}
-                    width={140}
+                    width={160}
                   />
                   <Tooltip content={<div />} cursor={{ fill: "hsl(var(--accent) / 0.1)" }} />
                   <Legend
@@ -302,21 +303,18 @@ const LifecycleBreakdown = () => {
                           {payload.map((item: any) => {
                             const phaseKey = item.dataKey as PhaseKey;
                             const isActive = activePhase === phaseKey;
+                            const colorClass = phaseConfig[phaseKey].colorClass;
                             return (
                               <li
                                 key={phaseKey}
-                                className={`flex items-center gap-2 transition-all ${
+                                className={`flex items-center gap-2 transition-all ${colorClass} ${
                                   isActive
-                                    ? "ring-2 font-semibold bg-accent/20 rounded-md px-2 py-1"
-                                    : "opacity-70 px-2 py-1"
+                                    ? "ring-2 ring-current font-semibold bg-black/5 rounded-md px-2 py-0.5"
+                                    : "opacity-80"
                                 }`}
-                                style={{ color: phaseConfig[phaseKey].color }}
                               >
-                                <span
-                                  className="inline-block w-3 h-3 rounded-sm"
-                                  style={{ backgroundColor: phaseConfig[phaseKey].color }}
-                                />
-                                <span className="text-xs text-foreground font-medium">
+                                <span className="inline-block w-3 h-3 rounded-sm bg-current" />
+                                <span className="text-xs text-slate-700 font-medium">
                                   {phaseConfig[phaseKey].label}
                                 </span>
                               </li>
@@ -330,13 +328,13 @@ const LifecycleBreakdown = () => {
                     dataKey="PointOfOriginProduction"
                     stackId="a"
                     radius={[6, 0, 0, 6]}
-                    fill={phaseConfig.PointOfOriginProduction.color}
+                    fill="currentColor"
+                    className={phaseConfig.PointOfOriginProduction.colorClass}
                     label={(props: any) => renderSegmentLabel(props, "PointOfOriginProduction", props.name)}
                   >
                     {filteredData.map((row) => (
                       <Cell
                         key={`cell-pop-${row.material}`}
-                        fill={phaseConfig.PointOfOriginProduction.color}
                         stroke={activeMaterial === row.material && activePhase === "PointOfOriginProduction" ? "currentColor" : "none"}
                         strokeWidth={2}
                         onMouseMove={(ev: any) => handleBarMouseMove(row.material, "PointOfOriginProduction", ev)}
@@ -349,13 +347,13 @@ const LifecycleBreakdown = () => {
                   <Bar
                     dataKey="Transport"
                     stackId="a"
-                    fill={phaseConfig.Transport.color}
+                    fill="currentColor"
+                    className={phaseConfig.Transport.colorClass}
                     label={(props: any) => renderSegmentLabel(props, "Transport", props.name)}
                   >
                     {filteredData.map((row) => (
                       <Cell
                         key={`cell-transport-${row.material}`}
-                        fill={phaseConfig.Transport.color}
                         stroke={activeMaterial === row.material && activePhase === "Transport" ? "currentColor" : "none"}
                         strokeWidth={2}
                         onMouseMove={(ev: any) => handleBarMouseMove(row.material, "Transport", ev)}
@@ -368,13 +366,13 @@ const LifecycleBreakdown = () => {
                   <Bar
                     dataKey="Construction"
                     stackId="a"
-                    fill={phaseConfig.Construction.color}
+                    fill="currentColor"
+                    className={phaseConfig.Construction.colorClass}
                     label={(props: any) => renderSegmentLabel(props, "Construction", props.name)}
                   >
                     {filteredData.map((row) => (
                       <Cell
                         key={`cell-construction-${row.material}`}
-                        fill={phaseConfig.Construction.color}
                         stroke={activeMaterial === row.material && activePhase === "Construction" ? "currentColor" : "none"}
                         strokeWidth={2}
                         onMouseMove={(ev: any) => handleBarMouseMove(row.material, "Construction", ev)}
@@ -387,13 +385,13 @@ const LifecycleBreakdown = () => {
                   <Bar
                     dataKey="Maintenance"
                     stackId="a"
-                    fill={phaseConfig.Maintenance.color}
+                    fill="currentColor"
+                    className={phaseConfig.Maintenance.colorClass}
                     label={(props: any) => renderSegmentLabel(props, "Maintenance", props.name)}
                   >
                     {filteredData.map((row) => (
                       <Cell
                         key={`cell-maintenance-${row.material}`}
-                        fill={phaseConfig.Maintenance.color}
                         stroke={activeMaterial === row.material && activePhase === "Maintenance" ? "currentColor" : "none"}
                         strokeWidth={2}
                         onMouseMove={(ev: any) => handleBarMouseMove(row.material, "Maintenance", ev)}
@@ -407,13 +405,13 @@ const LifecycleBreakdown = () => {
                     dataKey="Disposal"
                     stackId="a"
                     radius={[0, 6, 6, 0]}
-                    fill={phaseConfig.Disposal.color}
+                    fill="currentColor"
+                    className={phaseConfig.Disposal.colorClass}
                     label={(props: any) => renderSegmentLabel(props, "Disposal", props.name)}
                   >
                     {filteredData.map((row) => (
                       <Cell
                         key={`cell-disposal-${row.material}`}
-                        fill={phaseConfig.Disposal.color}
                         stroke={activeMaterial === row.material && activePhase === "Disposal" ? "currentColor" : "none"}
                         strokeWidth={2}
                         onMouseMove={(ev: any) => handleBarMouseMove(row.material, "Disposal", ev)}
@@ -428,11 +426,11 @@ const LifecycleBreakdown = () => {
             </div>
 
             {filteredData.length === 0 && (
-              <div className="text-center py-8 text-muted-foreground">
+              <div className="text-center py-8 text-slate-500">
                 No materials found matching "{filter}"
               </div>
             )}
-          </CardContent>
+          </div>
 
           {/* Anchored hover panel overlay */}
           {panelData && anchor && activeMaterial && (
@@ -442,7 +440,7 @@ const LifecycleBreakdown = () => {
                 dataKey: key,
                 name: key,
                 value: panelData[key as PhaseKey],
-                color: phaseConfig[key as PhaseKey].color,
+                colorClass: phaseConfig[key as PhaseKey].colorClass,
               }))}
               label={activeMaterial}
               coordinate={{ x: anchor.x, y: anchor.y }}
