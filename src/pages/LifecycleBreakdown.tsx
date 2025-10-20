@@ -10,12 +10,10 @@ import {
   ResponsiveContainer,
   Cell,
 } from "recharts";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Input } from "@/components/ui/input";
 import { AnchoredTooltip } from "@/components/AnchoredTooltip";
 import { PhaseDetailsDrawer } from "@/components/PhaseDetailsDrawer";
-import { useIsMobile } from "@/hooks/use-mobile";
 
 export type PhaseKey =
   | "PointOfOriginProduction"
@@ -117,7 +115,6 @@ const LifecycleBreakdown = () => {
     value: number;
   } | null>(null);
   const cardRef = useRef<HTMLDivElement>(null);
-  const isMobile = useIsMobile();
 
   const filteredData = mockData.filter((row) =>
     row.material.toLowerCase().includes(filter.toLowerCase())
@@ -207,9 +204,20 @@ const LifecycleBreakdown = () => {
     : null;
 
   return (
-    <div className="min-h-screen bg-neutral-50 p-4 md:p-6">
-      <div className="max-w-6xl mx-auto">
-        <Card ref={cardRef} className="rounded-2xl border shadow-sm bg-white p-4 md:p-6 min-h-[520px] md:min-h-[560px] relative">
+    <div className="relative min-h-screen bg-transparent">
+      {/* Ambient Background */}
+      <div
+        aria-hidden
+        className="pointer-events-none fixed inset-0 -z-10"
+      >
+        {/* Soft radial + linear gradient */}
+        <div className="absolute inset-0 bg-[radial-gradient(1200px_600px_at_20%_0%,_#b8e1d6_18%,_transparent_60%),radial-gradient(1000px_500px_at_85%_10%,_#dfeee9_20%,_transparent_60%),linear-gradient(180deg,_#f5f7f8_0%,_#eef3f1_60%,_#e9efed_100%)]" />
+        {/* Faint noise */}
+        <div className="absolute inset-0 opacity-[0.06] mix-blend-overlay bg-[url('data:image/svg+xml;utf8,<svg xmlns=%22http://www.w3.org/2000/svg%22 width=%2240%22 height=%2240%22 viewBox=%220 0 40 40%22><rect fill=%22%23ffffff%22 fill-opacity=%220.04%22 width=%2240%22 height=%2240%22/></svg>')]" />
+      </div>
+
+      <div className="max-w-6xl mx-auto p-4 md:p-6">
+        <section ref={cardRef} className="rounded-2xl bg-white/85 backdrop-blur-sm ring-1 ring-black/5 shadow-lg p-5 md:p-7 min-h-[520px] md:min-h-[560px] relative">
           <div className="space-y-2 mb-6">
             <h1 className="text-3xl md:text-4xl font-extrabold tracking-tight">
               Lifecycle Breakdown
@@ -230,7 +238,7 @@ const LifecycleBreakdown = () => {
                   placeholder="Search materials..."
                   value={filter}
                   onChange={(e) => setFilter(e.target.value)}
-                  className="max-w-sm rounded-xl"
+                  className="max-w-sm rounded-xl border-black/10 bg-white/90 backdrop-blur-sm shadow-sm focus:ring-2 focus:ring-emerald-500/25"
                 />
               </div>
               <div className="w-full sm:w-48">
@@ -241,7 +249,7 @@ const LifecycleBreakdown = () => {
                   value={units}
                   onValueChange={(value: "kgCO2e" | "MJ") => setUnits(value)}
                 >
-                  <SelectTrigger className="rounded-xl">
+                  <SelectTrigger className="rounded-xl border-black/10 bg-white/90 backdrop-blur-sm shadow-sm">
                     <SelectValue />
                   </SelectTrigger>
                   <SelectContent>
@@ -274,8 +282,7 @@ const LifecycleBreakdown = () => {
                   </defs>
                   <CartesianGrid
                     strokeDasharray="3 3"
-                    stroke="hsl(var(--border))"
-                    opacity={0.3}
+                    stroke="rgba(2, 6, 23, 0.06)"
                   />
                   <XAxis
                     type="number"
@@ -307,10 +314,10 @@ const LifecycleBreakdown = () => {
                             return (
                               <li
                                 key={phaseKey}
-                                className={`flex items-center gap-2 transition-all ${colorClass} ${
+                                className={`flex items-center gap-2 transition-all ${colorClass} rounded-md px-2 py-0.5 ${
                                   isActive
-                                    ? "ring-2 ring-current font-semibold bg-black/5 rounded-md px-2 py-0.5"
-                                    : "opacity-80"
+                                    ? "ring-2 ring-current font-semibold bg-white"
+                                    : "bg-white/70 ring-1 ring-black/5"
                                 }`}
                               >
                                 <span className="inline-block w-3 h-3 rounded-sm bg-current" />
@@ -337,6 +344,7 @@ const LifecycleBreakdown = () => {
                         key={`cell-pop-${row.material}`}
                         stroke={activeMaterial === row.material && activePhase === "PointOfOriginProduction" ? "currentColor" : "none"}
                         strokeWidth={2}
+                        opacity={activeMaterial === row.material && activePhase === "PointOfOriginProduction" ? 1 : 0.85}
                         onMouseMove={(ev: any) => handleBarMouseMove(row.material, "PointOfOriginProduction", ev)}
                         onMouseLeave={handleBarMouseLeave}
                         onClick={() => openPhaseDetails(row.material, "PointOfOriginProduction", row.PointOfOriginProduction)}
@@ -356,6 +364,7 @@ const LifecycleBreakdown = () => {
                         key={`cell-transport-${row.material}`}
                         stroke={activeMaterial === row.material && activePhase === "Transport" ? "currentColor" : "none"}
                         strokeWidth={2}
+                        opacity={activeMaterial === row.material && activePhase === "Transport" ? 1 : 0.85}
                         onMouseMove={(ev: any) => handleBarMouseMove(row.material, "Transport", ev)}
                         onMouseLeave={handleBarMouseLeave}
                         onClick={() => openPhaseDetails(row.material, "Transport", row.Transport)}
@@ -375,6 +384,7 @@ const LifecycleBreakdown = () => {
                         key={`cell-construction-${row.material}`}
                         stroke={activeMaterial === row.material && activePhase === "Construction" ? "currentColor" : "none"}
                         strokeWidth={2}
+                        opacity={activeMaterial === row.material && activePhase === "Construction" ? 1 : 0.85}
                         onMouseMove={(ev: any) => handleBarMouseMove(row.material, "Construction", ev)}
                         onMouseLeave={handleBarMouseLeave}
                         onClick={() => openPhaseDetails(row.material, "Construction", row.Construction)}
@@ -394,6 +404,7 @@ const LifecycleBreakdown = () => {
                         key={`cell-maintenance-${row.material}`}
                         stroke={activeMaterial === row.material && activePhase === "Maintenance" ? "currentColor" : "none"}
                         strokeWidth={2}
+                        opacity={activeMaterial === row.material && activePhase === "Maintenance" ? 1 : 0.85}
                         onMouseMove={(ev: any) => handleBarMouseMove(row.material, "Maintenance", ev)}
                         onMouseLeave={handleBarMouseLeave}
                         onClick={() => openPhaseDetails(row.material, "Maintenance", row.Maintenance)}
@@ -414,6 +425,7 @@ const LifecycleBreakdown = () => {
                         key={`cell-disposal-${row.material}`}
                         stroke={activeMaterial === row.material && activePhase === "Disposal" ? "currentColor" : "none"}
                         strokeWidth={2}
+                        opacity={activeMaterial === row.material && activePhase === "Disposal" ? 1 : 0.85}
                         onMouseMove={(ev: any) => handleBarMouseMove(row.material, "Disposal", ev)}
                         onMouseLeave={handleBarMouseLeave}
                         onClick={() => openPhaseDetails(row.material, "Disposal", row.Disposal)}
@@ -459,7 +471,7 @@ const LifecycleBreakdown = () => {
               units={units}
             />
           )}
-        </Card>
+        </section>
 
         <PhaseDetailsDrawer
           open={!!selectedPhase}
