@@ -50,11 +50,10 @@ export function Step3Breakdown({ onNext, onBack }: Step3BreakdownProps) {
     <div className="flex flex-col min-h-screen p-6 overflow-hidden">
       <div 
         ref={cardRef}
-        className="flex-1 rounded-2xl backdrop-blur-sm shadow-md p-8 flex flex-col"
+        className="h-[calc(100vh-3rem)] rounded-2xl backdrop-blur-sm shadow-md p-8 flex flex-col"
         style={{ 
           background: 'var(--canvas)', 
-          border: '1px solid var(--ring-lifecycle)',
-          maxHeight: 'calc(100vh - 3rem)',
+          border: '1px solid var(--ring-lifecycle)'
         }}
       >
         <div className="mb-6">
