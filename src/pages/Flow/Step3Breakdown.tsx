@@ -1,5 +1,5 @@
 import { useState, useRef, useMemo } from "react";
-import { motion } from "framer-motion";
+import { motion, AnimatePresence } from "framer-motion";
 import {
   BarChart,
   Bar,
@@ -331,57 +331,24 @@ export function Step3Breakdown({ onNext, onBack }: Step3BreakdownProps) {
           </motion.div>
 
           {/* Anchored info panel with tooltip */}
-          {activeRow && activePhase && originalRow && (
-            <motion.div 
-              className="mt-4 p-4 rounded-xl border"
-              style={{
-                background: 'rgba(255, 255, 255, 0.95)',
-                borderColor: 'var(--ring-lifecycle)',
-              }}
-              initial={{ opacity: 0, y: 10 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.2 }}
-            >
-              <div className="flex items-center justify-between">
-                <div className="flex items-center gap-3 mb-2">
-                  <div
-                    className="w-4 h-4 rounded"
-                    style={{ background: phaseConfig[activePhase].fill }}
-                  />
-                  <h4 className="font-bold text-lg" style={{ color: 'var(--text)' }}>
-                    {activeMaterial} — {phaseConfig[activePhase].label}
-                  </h4>
-                </div>
-                <ImpactCard
-                  lis={originalRow.lis}
-                  ris={originalRow.ris}
-                  risTier={originalRow.risTier}
-                  cpi={originalRow.cpi}
-                  materialName=""
-                />
-              </div>
-              <div className="grid grid-cols-3 gap-4 text-sm mt-3">
-                <div>
-                  <span style={{ color: 'var(--text-sub)' }}>Phase Impact:</span>
-                  <div className="font-semibold text-lg" style={{ color: 'var(--text)' }}>
-                    {activeRow[activePhase].toFixed(chartMode === "percentage" ? 1 : 2)} {getCurrentUnit()}
-                  </div>
-                </div>
-                <div>
-                  <span style={{ color: 'var(--text-sub)' }}>Total Impact:</span>
-                  <div className="font-semibold text-lg" style={{ color: 'var(--text)' }}>
-                    {activeRow.total?.toFixed(chartMode === "percentage" ? 0 : 2)} {getCurrentUnit()}
-                  </div>
-                </div>
-                <div>
-                  <span style={{ color: 'var(--text-sub)' }}>Source:</span>
-                  <div className="font-medium text-sm" style={{ color: 'var(--text)' }}>
-                    EPD #4123 | 2023
-                  </div>
-                </div>
-              </div>
-            </motion.div>
-          )}
+          <AnimatePresence mode="wait">
+            {activeRow && activePhase && originalRow && (
+              <motion.div 
+                key={`${activeMaterial}-${activePhase}`}
+                className="mt-4 p-4 rounded-xl border"
+                style={{
+                  background: 'rgba(255, 255, 255, 0.95)',
+                  borderColor: 'var(--ring-lifecycle)',
+                }}
+                initial={{ opacity: 0, y: -10 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -10 }}
+                transition={{ duration: 0.25, ease: "easeInOut" }}
+              >
+...
+              </motion.div>
+            )}
+          </AnimatePresence>
 
           <div className="flex items-center justify-between mt-6">
             <Button
