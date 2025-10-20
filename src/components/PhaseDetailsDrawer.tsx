@@ -21,39 +21,39 @@ interface PhaseDetailsDrawerProps {
 }
 
 const phaseDescriptions: Record<PhaseKey, string> = {
-  PointOfOriginProduction: "Emissions from raw material extraction, processing, and manufacturing at the point of origin.",
-  Transport: "Carbon footprint from transporting materials from production facilities to the construction site.",
-  Construction: "On-site emissions during the building phase, including equipment use and installation processes.",
-  Maintenance: "Lifecycle emissions from repairs, replacements, and ongoing maintenance over the building's lifetime.",
-  Disposal: "End-of-life impacts including demolition, waste processing, and material disposal or recycling.",
+  "Point of Origin → Production": "Emissions from raw material extraction, processing, and manufacturing at the point of origin.",
+  "Transport": "Carbon footprint from transporting materials from production facilities to the construction site.",
+  "Construction": "On-site emissions during the building phase, including equipment use and installation processes.",
+  "Maintenance": "Lifecycle emissions from repairs, replacements, and ongoing maintenance over the building's lifetime.",
+  "End of Life": "End-of-life impacts including demolition, waste processing, and material disposal or recycling.",
 };
 
 const calculationSteps: Record<PhaseKey, string[]> = {
-  PointOfOriginProduction: [
+  "Point of Origin → Production": [
     "Raw material extraction energy consumption",
     "Manufacturing process emissions",
     "Factory overhead and facility operations",
     "Quality control and packaging impacts",
   ],
-  Transport: [
+  "Transport": [
     "Distance from production to site",
     "Transportation mode fuel efficiency",
     "Loading and unloading equipment",
     "Storage and warehousing impacts",
   ],
-  Construction: [
+  "Construction": [
     "On-site equipment fuel consumption",
     "Installation process energy use",
     "Waste generated during construction",
     "Worker transportation to site",
   ],
-  Maintenance: [
+  "Maintenance": [
     "Expected service life of material",
     "Frequency of repairs or replacements",
     "Cleaning and upkeep requirements",
     "Performance degradation over time",
   ],
-  Disposal: [
+  "End of Life": [
     "Demolition energy requirements",
     "Transportation to disposal facilities",
     "Landfill or recycling processing",

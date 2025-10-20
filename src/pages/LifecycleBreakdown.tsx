@@ -18,67 +18,67 @@ import { AnchoredTooltip } from "@/components/AnchoredTooltip";
 import { PhaseDetailsDrawer } from "@/components/PhaseDetailsDrawer";
 
 export type PhaseKey =
-  | "PointOfOriginProduction"
+  | "Point of Origin → Production"
   | "Transport"
   | "Construction"
   | "Maintenance"
-  | "Disposal";
+  | "End of Life";
 
 type Row = {
-  material: string;
-  PointOfOriginProduction: number;
+  name: string;
+  "Point of Origin → Production": number;
   Transport: number;
   Construction: number;
   Maintenance: number;
-  Disposal: number;
+  "End of Life": number;
   total?: number;
 };
 
 const mockData: Row[] = [
   {
-    material: "Rammed Earth",
-    PointOfOriginProduction: 38,
+    name: "Rammed Earth",
+    "Point of Origin → Production": 38,
     Transport: 6,
     Construction: 14,
     Maintenance: 3,
-    Disposal: 5,
+    "End of Life": 5,
   },
   {
-    material: "2x6 Wall",
-    PointOfOriginProduction: 64,
+    name: "2x6 Wall",
+    "Point of Origin → Production": 64,
     Transport: 9,
     Construction: 18,
     Maintenance: 12,
-    Disposal: 8,
+    "End of Life": 8,
   },
   {
-    material: "Hempcrete (6\" infill)",
-    PointOfOriginProduction: 22,
+    name: "Hempcrete (6\" infill)",
+    "Point of Origin → Production": 22,
     Transport: 7,
     Construction: 16,
     Maintenance: 5,
-    Disposal: 4,
+    "End of Life": 4,
   },
   {
-    material: "Drywall 4x8 (1/2\")",
-    PointOfOriginProduction: 31,
+    name: "Drywall 4x8 (1/2\")",
+    "Point of Origin → Production": 31,
     Transport: 5,
     Construction: 10,
     Maintenance: 2,
-    Disposal: 7,
+    "End of Life": 7,
   },
 ].map((r) => ({
   ...r,
   total:
-    r.PointOfOriginProduction +
+    r["Point of Origin → Production"] +
     r.Transport +
     r.Construction +
     r.Maintenance +
-    r.Disposal,
+    r["End of Life"],
 }));
 
-export const phaseConfig = {
-  PointOfOriginProduction: {
+export const phaseConfig: Record<PhaseKey, { label: string; shortLabel: string; colorClass: string; fill: string }> = {
+  "Point of Origin → Production": {
     label: "Point of Origin → Production",
     shortLabel: "Production",
     colorClass: "text-[color:var(--phase-prod)]",
@@ -102,7 +102,7 @@ export const phaseConfig = {
     colorClass: "text-[color:var(--phase-main)]",
     fill: "var(--phase-main)",
   },
-  Disposal: {
+  "End of Life": {
     label: "End of Life",
     shortLabel: "End of Life",
     colorClass: "text-[color:var(--phase-eol)]",
@@ -113,6 +113,9 @@ export const phaseConfig = {
 const LifecycleBreakdown = () => {
   const [units, setUnits] = useState<"kgCO2e" | "MJ">("kgCO2e");
   const [filter, setFilter] = useState("");
+  const [visibleMaterials, setVisibleMaterials] = useState<Set<string>>(
+    new Set(mockData.map((r) => r.name))
+  );
   const [activeMaterial, setActiveMaterial] = useState<string | null>(null);
   const [activePhase, setActivePhase] = useState<PhaseKey | null>(null);
   const [anchor, setAnchor] = useState<{ x: number; y: number } | null>(null);
@@ -140,9 +143,23 @@ const LifecycleBreakdown = () => {
     localStorage.setItem('bp-theme', next);
   };
 
-  const filteredData = mockData.filter((row) =>
-    row.material.toLowerCase().includes(filter.toLowerCase())
+  const filteredData = mockData.filter(
+    (row) =>
+      row.name.toLowerCase().includes(filter.toLowerCase()) &&
+      visibleMaterials.has(row.name)
   );
+
+  const toggleMaterial = (material: string) => {
+    setVisibleMaterials((prev) => {
+      const next = new Set(prev);
+      if (next.has(material)) {
+        next.delete(material);
+      } else {
+        next.add(material);
+      }
+      return next;
+    });
+  };
 
   const formatNumber = (value: number) => {
     return new Intl.NumberFormat("en-US").format(value);
@@ -224,7 +241,7 @@ const LifecycleBreakdown = () => {
   };
 
   const panelData = activeMaterial
-    ? filteredData.find((d) => d.material === activeMaterial)
+    ? mockData.find((d) => d.name === activeMaterial)
     : null;
 
   return (
@@ -277,46 +294,76 @@ const LifecycleBreakdown = () => {
           </div>
           <div className="space-y-6">
             {/* Controls */}
-            <div className="flex flex-col sm:flex-row gap-4">
-              <div className="flex-1">
-                <label className="text-sm font-semibold mb-2 block">
-                  Filter Materials
-                </label>
+            <div className="flex flex-col gap-4">
+              <div className="flex flex-col sm:flex-row gap-4">
+                <div className="flex-1">
+                  <label className="text-sm font-semibold mb-2 block" style={{ color: 'var(--text)' }}>
+                    Filter Materials
+                  </label>
                   <Input
-                  placeholder="Search materials..."
-                  value={filter}
-                  onChange={(e) => setFilter(e.target.value)}
-                  className="max-w-sm rounded-xl backdrop-blur-sm shadow-sm"
-                  style={{ 
-                    background: 'var(--canvas)', 
-                    borderColor: 'var(--ring-lifecycle)',
-                    color: 'var(--text)'
-                  }}
-                />
-              </div>
-              <div className="w-full sm:w-48">
-                <label className="text-sm font-semibold mb-2 block">
-                  Units
-                </label>
-                <Select
-                  value={units}
-                  onValueChange={(value: "kgCO2e" | "MJ") => setUnits(value)}
-                >
-                  <SelectTrigger 
-                    className="rounded-xl backdrop-blur-sm shadow-sm"
+                    placeholder="Search materials..."
+                    value={filter}
+                    onChange={(e) => setFilter(e.target.value)}
+                    className="max-w-sm rounded-xl backdrop-blur-sm shadow-sm"
                     style={{ 
                       background: 'var(--canvas)', 
                       borderColor: 'var(--ring-lifecycle)',
                       color: 'var(--text)'
                     }}
+                  />
+                </div>
+                <div className="w-full sm:w-48">
+                  <label className="text-sm font-semibold mb-2 block" style={{ color: 'var(--text)' }}>
+                    Units
+                  </label>
+                  <Select
+                    value={units}
+                    onValueChange={(value: "kgCO2e" | "MJ") => setUnits(value)}
                   >
-                    <SelectValue />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="kgCO2e">kg CO₂e</SelectItem>
-                    <SelectItem value="MJ">MJ</SelectItem>
-                  </SelectContent>
-                </Select>
+                    <SelectTrigger 
+                      className="rounded-xl backdrop-blur-sm shadow-sm"
+                      style={{ 
+                        background: 'var(--canvas)', 
+                        borderColor: 'var(--ring-lifecycle)',
+                        color: 'var(--text)'
+                      }}
+                    >
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="kgCO2e">kg CO₂e</SelectItem>
+                      <SelectItem value="MJ">MJ</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+              </div>
+
+              {/* Material Checkboxes */}
+              <div>
+                <label className="text-sm font-semibold mb-2 block" style={{ color: 'var(--text)' }}>
+                  Show Materials
+                </label>
+                <div className="flex flex-wrap gap-3">
+                  {mockData.map((row) => (
+                    <label
+                      key={row.name}
+                      className="flex items-center gap-2 px-3 py-1.5 rounded-lg cursor-pointer transition-all"
+                      style={{
+                        background: visibleMaterials.has(row.name) ? 'var(--canvas)' : 'transparent',
+                        border: `1px solid var(--ring-lifecycle)`,
+                        color: 'var(--text-sub)',
+                      }}
+                    >
+                      <input
+                        type="checkbox"
+                        checked={visibleMaterials.has(row.name)}
+                        onChange={() => toggleMaterial(row.name)}
+                        className="rounded"
+                      />
+                      <span className="text-sm font-medium">{row.name}</span>
+                    </label>
+                  ))}
+                </div>
               </div>
             </div>
 
@@ -337,7 +384,7 @@ const LifecycleBreakdown = () => {
                 <BarChart
                   data={filteredData}
                   layout="vertical"
-                  margin={{ top: 12, right: 24, bottom: 24, left: 170 }}
+                  margin={{ top: 12, right: 24, bottom: 24, left: 180 }}
                   barGap={3}
                   barCategoryGap="20%"
                   barSize={28}
@@ -358,13 +405,13 @@ const LifecycleBreakdown = () => {
                     style={{ fontSize: "12px" }}
                   />
                   <YAxis
-                    dataKey="material"
+                    dataKey="name"
                     type="category"
                     tick={{ fill: 'var(--text-sub)' }}
                     style={{ fontSize: "13px", fontWeight: 500 }}
-                    width={160}
+                    width={170}
                   />
-                  <Tooltip content={<div />} cursor={{ fill: "hsl(var(--accent) / 0.1)" }} />
+                  <Tooltip content={<div />} cursor={{ fill: "transparent" }} />
                   <Legend
                     wrapperStyle={{
                       paddingTop: "20px",
@@ -381,16 +428,16 @@ const LifecycleBreakdown = () => {
                             return (
                               <li
                                 key={phaseKey}
-                                className={`flex items-center gap-2 transition-all ${colorClass} rounded-md px-2 py-0.5`}
+                                className={`flex items-center gap-2 transition-all ${colorClass} rounded-md px-3 py-1.5`}
                                 style={{
-                                  background: isActive ? 'rgba(255,255,255,0.9)' : 'var(--legend-pill)',
+                                  background: isActive ? 'white' : 'var(--legend-pill)',
                                   border: `1px solid var(--ring-lifecycle)`,
                                   boxShadow: isActive ? '0 0 0 2px currentColor inset' : 'none',
                                   fontWeight: isActive ? 600 : 400
                                 }}
                               >
                                 <span className="inline-block w-3 h-3 rounded-sm bg-current" />
-                                <span className="text-xs font-medium" style={{ color: 'var(--text-sub)' }}>
+                                <span className="text-sm font-medium" style={{ color: 'var(--text-sub)' }}>
                                   {phaseConfig[phaseKey].label}
                                 </span>
                               </li>
@@ -401,99 +448,102 @@ const LifecycleBreakdown = () => {
                     }}
                   />
                   <Bar
-                    dataKey="PointOfOriginProduction"
-                    stackId="a"
-                    radius={[6, 0, 0, 6]}
-                    fill={phaseConfig.PointOfOriginProduction.fill}
-                    label={(props: any) => renderSegmentLabel(props, "PointOfOriginProduction", props.name)}
+                    dataKey="Point of Origin → Production"
+                    stackId="lc"
+                    radius={[4, 0, 0, 4]}
+                    fill={phaseConfig["Point of Origin → Production"].fill}
+                    label={(props: any) => renderSegmentLabel(props, "Point of Origin → Production", props.name)}
                   >
                     {filteredData.map((row) => (
                       <Cell
-                        key={`cell-pop-${row.material}`}
-                        stroke={activeMaterial === row.material && activePhase === "PointOfOriginProduction" ? "#000000" : "none"}
+                        key={`cell-pop-${row.name}`}
+                        stroke={activeMaterial === row.name && activePhase === "Point of Origin → Production" ? "#000000" : "none"}
                         strokeWidth={1.5}
-                        opacity={activeMaterial === row.material && activePhase === "PointOfOriginProduction" ? 1.0 : 0.9}
+                        opacity={activeMaterial === row.name && activePhase === "Point of Origin → Production" ? 1.0 : 0.9}
                         style={{ cursor: "pointer" }}
-                        onMouseMove={(ev: any) => handleBarMouseMove(row.material, "PointOfOriginProduction", ev)}
+                        onMouseMove={(ev: any) => handleBarMouseMove(row.name, "Point of Origin → Production", ev)}
                         onMouseLeave={handleBarMouseLeave}
-                        onClick={() => openPhaseDetails(row.material, "PointOfOriginProduction", row.PointOfOriginProduction)}
+                        onClick={() => openPhaseDetails(row.name, "Point of Origin → Production", row["Point of Origin → Production"])}
                       />
                     ))}
                   </Bar>
                   <Bar
                     dataKey="Transport"
-                    stackId="a"
+                    stackId="lc"
+                    radius={[4, 4, 4, 4]}
                     fill={phaseConfig.Transport.fill}
                     label={(props: any) => renderSegmentLabel(props, "Transport", props.name)}
                   >
                     {filteredData.map((row) => (
                       <Cell
-                        key={`cell-transport-${row.material}`}
-                        stroke={activeMaterial === row.material && activePhase === "Transport" ? "#000000" : "none"}
+                        key={`cell-transport-${row.name}`}
+                        stroke={activeMaterial === row.name && activePhase === "Transport" ? "#000000" : "none"}
                         strokeWidth={1.5}
-                        opacity={activeMaterial === row.material && activePhase === "Transport" ? 1.0 : 0.9}
+                        opacity={activeMaterial === row.name && activePhase === "Transport" ? 1.0 : 0.9}
                         style={{ cursor: "pointer" }}
-                        onMouseMove={(ev: any) => handleBarMouseMove(row.material, "Transport", ev)}
+                        onMouseMove={(ev: any) => handleBarMouseMove(row.name, "Transport", ev)}
                         onMouseLeave={handleBarMouseLeave}
-                        onClick={() => openPhaseDetails(row.material, "Transport", row.Transport)}
+                        onClick={() => openPhaseDetails(row.name, "Transport", row.Transport)}
                       />
                     ))}
                   </Bar>
                   <Bar
                     dataKey="Construction"
-                    stackId="a"
+                    stackId="lc"
+                    radius={[4, 4, 4, 4]}
                     fill={phaseConfig.Construction.fill}
                     label={(props: any) => renderSegmentLabel(props, "Construction", props.name)}
                   >
                     {filteredData.map((row) => (
                       <Cell
-                        key={`cell-construction-${row.material}`}
-                        stroke={activeMaterial === row.material && activePhase === "Construction" ? "#000000" : "none"}
+                        key={`cell-construction-${row.name}`}
+                        stroke={activeMaterial === row.name && activePhase === "Construction" ? "#000000" : "none"}
                         strokeWidth={1.5}
-                        opacity={activeMaterial === row.material && activePhase === "Construction" ? 1.0 : 0.9}
+                        opacity={activeMaterial === row.name && activePhase === "Construction" ? 1.0 : 0.9}
                         style={{ cursor: "pointer" }}
-                        onMouseMove={(ev: any) => handleBarMouseMove(row.material, "Construction", ev)}
+                        onMouseMove={(ev: any) => handleBarMouseMove(row.name, "Construction", ev)}
                         onMouseLeave={handleBarMouseLeave}
-                        onClick={() => openPhaseDetails(row.material, "Construction", row.Construction)}
+                        onClick={() => openPhaseDetails(row.name, "Construction", row.Construction)}
                       />
                     ))}
                   </Bar>
                   <Bar
                     dataKey="Maintenance"
-                    stackId="a"
+                    stackId="lc"
+                    radius={[4, 4, 4, 4]}
                     fill={phaseConfig.Maintenance.fill}
                     label={(props: any) => renderSegmentLabel(props, "Maintenance", props.name)}
                   >
                     {filteredData.map((row) => (
                       <Cell
-                        key={`cell-maintenance-${row.material}`}
-                        stroke={activeMaterial === row.material && activePhase === "Maintenance" ? "#000000" : "none"}
+                        key={`cell-maintenance-${row.name}`}
+                        stroke={activeMaterial === row.name && activePhase === "Maintenance" ? "#000000" : "none"}
                         strokeWidth={1.5}
-                        opacity={activeMaterial === row.material && activePhase === "Maintenance" ? 1.0 : 0.9}
+                        opacity={activeMaterial === row.name && activePhase === "Maintenance" ? 1.0 : 0.9}
                         style={{ cursor: "pointer" }}
-                        onMouseMove={(ev: any) => handleBarMouseMove(row.material, "Maintenance", ev)}
+                        onMouseMove={(ev: any) => handleBarMouseMove(row.name, "Maintenance", ev)}
                         onMouseLeave={handleBarMouseLeave}
-                        onClick={() => openPhaseDetails(row.material, "Maintenance", row.Maintenance)}
+                        onClick={() => openPhaseDetails(row.name, "Maintenance", row.Maintenance)}
                       />
                     ))}
                   </Bar>
                   <Bar
-                    dataKey="Disposal"
-                    stackId="a"
-                    radius={[0, 6, 6, 0]}
-                    fill={phaseConfig.Disposal.fill}
-                    label={(props: any) => renderSegmentLabel(props, "Disposal", props.name)}
+                    dataKey="End of Life"
+                    stackId="lc"
+                    radius={[0, 4, 4, 0]}
+                    fill={phaseConfig["End of Life"].fill}
+                    label={(props: any) => renderSegmentLabel(props, "End of Life", props.name)}
                   >
                     {filteredData.map((row) => (
                       <Cell
-                        key={`cell-disposal-${row.material}`}
-                        stroke={activeMaterial === row.material && activePhase === "Disposal" ? "#000000" : "none"}
+                        key={`cell-eol-${row.name}`}
+                        stroke={activeMaterial === row.name && activePhase === "End of Life" ? "#000000" : "none"}
                         strokeWidth={1.5}
-                        opacity={activeMaterial === row.material && activePhase === "Disposal" ? 1.0 : 0.9}
+                        opacity={activeMaterial === row.name && activePhase === "End of Life" ? 1.0 : 0.9}
                         style={{ cursor: "pointer" }}
-                        onMouseMove={(ev: any) => handleBarMouseMove(row.material, "Disposal", ev)}
+                        onMouseMove={(ev: any) => handleBarMouseMove(row.name, "End of Life", ev)}
                         onMouseLeave={handleBarMouseLeave}
-                        onClick={() => openPhaseDetails(row.material, "Disposal", row.Disposal)}
+                        onClick={() => openPhaseDetails(row.name, "End of Life", row["End of Life"])}
                       />
                     ))}
                   </Bar>
