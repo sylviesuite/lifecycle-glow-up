@@ -1,112 +1,97 @@
-import { ScoreTier } from "@/store/lifecycleStore";
-import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
-import { Info } from "lucide-react";
+import { ScoreTier, Row } from "@/store/lifecycleStore";
+import { ArrowRight } from "lucide-react";
+import { PhaseKey } from "@/pages/LifecycleBreakdown";
 
 interface ImpactCardProps {
-  lis: number;
-  ris: number;
-  risTier: ScoreTier;
-  cpi: number;
-  materialName: string;
+  material: Row;
+  onClick: () => void;
+  currentMetric: number;
+  currentUnit: string;
+  phases: { phase: PhaseKey; value: number; color: string }[];
 }
 
-const tierColors: Record<ScoreTier, string> = {
-  Gold: "#d4af37",
-  Silver: "#c0c0c0",
-  Bronze: "#cd7f32",
-  Problematic: "#e74c3c",
-};
+export function ImpactCard({ 
+  material, 
+  onClick, 
+  currentMetric, 
+  currentUnit,
+  phases 
+}: ImpactCardProps) {
+  const maxValue = Math.max(...phases.map(p => p.value));
+  
+  // Get material category and region (mock data for now)
+  const category = material.name.includes('Wall') ? 'Wood' : 
+                   material.name.includes('Hempcrete') ? 'Bio-based' : 
+                   material.name.includes('Rammed') ? 'Earth' : 'Mineral';
+  const region = 'PNW'; // Pacific Northwest placeholder
 
-const tierLabels: Record<ScoreTier, string> = {
-  Gold: "High Performance",
-  Silver: "Resilient",
-  Bronze: "Adequate",
-  Problematic: "Needs Improvement",
-};
-
-export function ImpactCard({ lis, ris, risTier, cpi, materialName }: ImpactCardProps) {
   return (
-    <div 
-      className="rounded-xl shadow ring-1 px-4 py-3 space-y-2"
+    <button 
+      onClick={onClick}
+      className="group w-full rounded-xl shadow-sm border transition-all hover:shadow-md hover:scale-[1.02] active:scale-[0.98] p-4 text-left"
       style={{
         background: 'rgba(255, 255, 255, 0.6)',
         borderColor: 'rgba(0, 0, 0, 0.1)',
+        minHeight: '140px',
+        maxHeight: '160px',
       }}
     >
-      <div className="flex items-center justify-between">
-        <span className="text-xs font-semibold" style={{ color: 'var(--text-sub)' }}>
-          {materialName}
-        </span>
+      {/* Header: Material name + category/region */}
+      <div className="flex items-start justify-between mb-3">
+        <div className="flex-1 min-w-0">
+          <h3 className="font-bold text-base truncate mb-1" style={{ color: 'var(--text)' }}>
+            {material.name}
+          </h3>
+          <p className="text-xs font-medium" style={{ color: 'var(--text-sub)' }}>
+            {category} · {region}
+          </p>
+        </div>
+        <ArrowRight 
+          className="h-4 w-4 shrink-0 ml-2 transition-transform group-hover:translate-x-1" 
+          style={{ color: 'var(--text-sub)' }} 
+        />
       </div>
-      
-      <div className="space-y-1.5">
-        <TooltipProvider>
-          <Tooltip>
-            <TooltipTrigger asChild>
-              <div className="flex items-center justify-between cursor-help">
-                <div className="flex items-center gap-1.5">
-                  <span className="text-xs font-medium" style={{ color: 'var(--text)' }}>
-                    RIS
-                  </span>
-                  <Info className="h-3 w-3" style={{ color: 'var(--text-sub)' }} />
-                </div>
-                <div className="flex items-center gap-2">
-                  <span className="text-sm font-bold" style={{ color: tierColors[risTier] }}>
-                    {ris}
-                  </span>
-                  <span className="text-xs px-2 py-0.5 rounded-full" style={{ 
-                    background: tierColors[risTier] + '20',
-                    color: tierColors[risTier],
-                    fontWeight: 600,
-                  }}>
-                    {tierLabels[risTier]}
-                  </span>
-                </div>
-              </div>
-            </TooltipTrigger>
-            <TooltipContent>
-              <p className="text-xs">
-                Regenerative Impact Score: Weighted score for carbon + durability + circularity
-              </p>
-            </TooltipContent>
-          </Tooltip>
-        </TooltipProvider>
 
-        <TooltipProvider>
-          <Tooltip>
-            <TooltipTrigger asChild>
-              <div className="flex items-center justify-between cursor-help">
-                <div className="flex items-center gap-1.5">
-                  <span className="text-xs font-medium" style={{ color: 'var(--text)' }}>
-                    LIS
-                  </span>
-                  <Info className="h-3 w-3" style={{ color: 'var(--text-sub)' }} />
-                </div>
-                <span className="text-sm font-bold" style={{ color: 'var(--text)' }}>
-                  {lis}
-                </span>
-              </div>
-            </TooltipTrigger>
-            <TooltipContent>
-              <p className="text-xs">
-                Lifecycle Impact Score: Overall environmental performance across all phases
-              </p>
-            </TooltipContent>
-          </Tooltip>
-        </TooltipProvider>
-
-        <div className="flex items-center justify-between pt-1 border-t" style={{ borderColor: 'rgba(0, 0, 0, 0.1)' }}>
-          <span className="text-xs font-medium" style={{ color: 'var(--text)' }}>
-            CPI
+      {/* Key Metric */}
+      <div className="mb-3">
+        <div className="flex items-baseline gap-2">
+          <span className="text-2xl font-bold" style={{ color: 'var(--phase-prod)' }}>
+            {currentMetric.toFixed(1)}
           </span>
-          <span className="text-sm font-bold" style={{ color: 'var(--phase-prod)' }}>
-            ${cpi.toFixed(2)}
+          <span className="text-xs font-medium" style={{ color: 'var(--text-sub)' }}>
+            {currentUnit}
           </span>
         </div>
-        <p className="text-xs" style={{ color: 'var(--text-sub)' }}>
-          per kg CO₂e saved
-        </p>
       </div>
-    </div>
+
+      {/* Mini horizontal bar preview */}
+      <div className="space-y-1">
+        <p className="text-xs font-medium mb-1.5" style={{ color: 'var(--text-sub)' }}>
+          Lifecycle phases
+        </p>
+        <div className="flex h-2 rounded-full overflow-hidden" style={{ background: 'rgba(0, 0, 0, 0.05)' }}>
+          {phases.map((phase, idx) => {
+            const widthPercent = maxValue > 0 ? (phase.value / phases.reduce((sum, p) => sum + p.value, 0)) * 100 : 0;
+            return (
+              <div
+                key={idx}
+                style={{
+                  width: `${widthPercent}%`,
+                  background: phase.color,
+                }}
+                className="h-full"
+              />
+            );
+          })}
+        </div>
+      </div>
+
+      {/* Subtle "Details" CTA */}
+      <div className="mt-3 pt-2 border-t" style={{ borderColor: 'rgba(0, 0, 0, 0.05)' }}>
+        <span className="text-xs font-medium group-hover:underline" style={{ color: 'var(--phase-prod)' }}>
+          View full breakdown
+        </span>
+      </div>
+    </button>
   );
 }

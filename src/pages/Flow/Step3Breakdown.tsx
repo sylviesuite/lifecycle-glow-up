@@ -43,6 +43,7 @@ export function Step3Breakdown({ onNext, onBack }: Step3BreakdownProps) {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [selectedMaterial, setSelectedMaterial] = useState<string | null>(null);
   const [selectedPhase, setSelectedPhase] = useState<PhaseKey | null>(null);
+  const [layoutView, setLayoutView] = useState<"chart" | "tiles">("chart");
   const cardRef = useRef<HTMLDivElement>(null);
 
   const state = lifecycleStore.getState();
@@ -121,6 +122,12 @@ export function Step3Breakdown({ onNext, onBack }: Step3BreakdownProps) {
     setSidebarOpen(true);
   };
 
+  const handleTileClick = (materialName: string) => {
+    setSelectedMaterial(materialName);
+    setSelectedPhase("Point of Origin → Production"); // Default to first phase
+    setSidebarOpen(true);
+  };
+
   const activeRow = transformedRows.find(r => r.name === activeMaterial);
   const originalRow = rows.find(r => r.name === activeMaterial);
   const sidebarRow = rows.find(r => r.name === selectedMaterial);
@@ -155,201 +162,265 @@ export function Step3Breakdown({ onNext, onBack }: Step3BreakdownProps) {
               </p>
             </div>
 
-            {/* Multi-Impact Category Toggle */}
-            <div className="flex items-center gap-2 shrink-0">
-              {impactCategories.map((cat) => (
+            <div className="flex flex-col items-end gap-3 shrink-0">
+              {/* Layout View Toggle */}
+              <div className="flex rounded-lg overflow-hidden border shadow-sm" style={{ borderColor: 'var(--ring-lifecycle)' }}>
                 <button
-                  key={cat.value}
-                  onClick={() => {
-                    setImpactCategory(cat.value);
-                    lifecycleStore.setImpactCategory(cat.value);
-                  }}
-                  className={`px-3 py-2 rounded-lg text-sm transition-all ${
-                    impactCategory === cat.value ? 'font-bold' : 'font-medium'
-                  }`}
+                  onClick={() => setLayoutView("tiles")}
+                  className="px-3 py-1.5 text-xs font-medium transition-all"
                   style={{
-                    background: impactCategory === cat.value ? 'var(--phase-prod)' : 'rgba(255, 255, 255, 0.5)',
-                    color: impactCategory === cat.value ? 'white' : 'var(--text)',
-                    borderBottom: impactCategory === cat.value ? '3px solid var(--phase-prod)' : 'none',
+                    background: layoutView === "tiles" ? 'var(--phase-prod)' : 'rgba(255, 255, 255, 0.5)',
+                    color: layoutView === "tiles" ? 'white' : 'var(--text)',
                   }}
                 >
-                  {cat.label.split(' ')[0]}
+                  Tiles
                 </button>
+                <button
+                  onClick={() => setLayoutView("chart")}
+                  className="px-3 py-1.5 text-xs font-medium transition-all"
+                  style={{
+                    background: layoutView === "chart" ? 'var(--phase-prod)' : 'rgba(255, 255, 255, 0.5)',
+                    color: layoutView === "chart" ? 'white' : 'var(--text)',
+                  }}
+                >
+                  Chart
+                </button>
+              </div>
+
+              {/* Multi-Impact Category Toggle */}
+              <div className="flex items-center gap-2">
+                {impactCategories.map((cat) => (
+                  <button
+                    key={cat.value}
+                    onClick={() => {
+                      setImpactCategory(cat.value);
+                      lifecycleStore.setImpactCategory(cat.value);
+                    }}
+                    className={`px-3 py-2 rounded-lg text-sm transition-all ${
+                      impactCategory === cat.value ? 'font-bold' : 'font-medium'
+                    }`}
+                    style={{
+                      background: impactCategory === cat.value ? 'var(--phase-prod)' : 'rgba(255, 255, 255, 0.5)',
+                      color: impactCategory === cat.value ? 'white' : 'var(--text)',
+                      borderBottom: impactCategory === cat.value ? '3px solid var(--phase-prod)' : 'none',
+                    }}
+                  >
+                    {cat.label.split(' ')[0]}
+                  </button>
+                ))}
+              </div>
+            </div>
+          </div>
+
+          {/* View Mode and Chart Mode Toggles - only show for chart view */}
+          {layoutView === "chart" && (
+            <div className="mb-4 flex items-center justify-between">
+              <div className="flex items-center gap-2">
+                <button
+                  onClick={() => {
+                    setViewMode("impact");
+                    lifecycleStore.setViewMode("impact");
+                  }}
+                  className={`px-4 py-2 rounded-lg text-sm font-medium transition-all ${
+                    viewMode === "impact" ? 'shadow-md' : ''
+                  }`}
+                  style={{
+                    background: viewMode === "impact" ? 'white' : 'rgba(255, 255, 255, 0.5)',
+                    color: 'var(--text)',
+                    border: viewMode === "impact" ? '2px solid var(--phase-prod)' : '1px solid rgba(0, 0, 0, 0.1)',
+                  }}
+                >
+                  Impact View
+                </button>
+                <button
+                  onClick={() => {
+                    setViewMode("cpi");
+                    lifecycleStore.setViewMode("cpi");
+                  }}
+                  className={`px-4 py-2 rounded-lg text-sm font-medium transition-all ${
+                    viewMode === "cpi" ? 'shadow-md' : ''
+                  }`}
+                  style={{
+                    background: viewMode === "cpi" ? 'white' : 'rgba(255, 255, 255, 0.5)',
+                    color: 'var(--text)',
+                    border: viewMode === "cpi" ? '2px solid var(--phase-prod)' : '1px solid rgba(0, 0, 0, 0.1)',
+                  }}
+                >
+                  Cost ↔ Impact (CPI)
+                </button>
+              </div>
+
+              <div className="flex items-center gap-2">
+                <button
+                  onClick={() => {
+                    setChartMode("absolute");
+                    lifecycleStore.setChartMode("absolute");
+                  }}
+                  className={`px-4 py-2 rounded-lg text-sm font-medium transition-all ${
+                    chartMode === "absolute" ? 'shadow-md' : ''
+                  }`}
+                  style={{
+                    background: chartMode === "absolute" ? 'white' : 'rgba(255, 255, 255, 0.5)',
+                    color: 'var(--text)',
+                    border: chartMode === "absolute" ? '2px solid var(--phase-prod)' : '1px solid rgba(0, 0, 0, 0.1)',
+                  }}
+                >
+                  Absolute
+                </button>
+                <button
+                  onClick={() => {
+                    setChartMode("percentage");
+                    lifecycleStore.setChartMode("percentage");
+                  }}
+                  className={`px-4 py-2 rounded-lg text-sm font-medium transition-all ${
+                    chartMode === "percentage" ? 'shadow-md' : ''
+                  }`}
+                  style={{
+                    background: chartMode === "percentage" ? 'white' : 'rgba(255, 255, 255, 0.5)',
+                    color: 'var(--text)',
+                    border: chartMode === "percentage" ? '2px solid var(--phase-prod)' : '1px solid rgba(0, 0, 0, 0.1)',
+                  }}
+                >
+                  % of Total
+                </button>
+              </div>
+            </div>
+          )}
+
+          {/* Legend - only show for chart view */}
+          {layoutView === "chart" && (
+            <div className="flex flex-wrap gap-3 mb-6">
+              {phases.map((phase) => (
+                <div
+                  key={phase}
+                  className="flex items-center gap-2 px-3 py-1.5 rounded-md transition-all"
+                  style={{
+                    background: activePhase === phase ? 'white' : 'rgba(255, 255, 255, 0.7)',
+                    border: `1px solid ${activePhase === phase ? phaseConfig[phase].fill : 'rgba(0,0,0,0.05)'}`,
+                    opacity: activePhase === phase ? 1 : 0.7,
+                    fontWeight: activePhase === phase ? 600 : 400,
+                  }}
+                >
+                  <div
+                    className="w-3 h-3 rounded-sm"
+                    style={{ background: phaseConfig[phase].fill }}
+                  />
+                  <span className="text-sm" style={{ color: 'var(--text)' }}>
+                    {phaseConfig[phase].shortLabel}
+                  </span>
+                </div>
               ))}
             </div>
-          </div>
+          )}
 
-          {/* View Mode and Chart Mode Toggles */}
-          <div className="mb-4 flex items-center justify-between">
-            <div className="flex items-center gap-2">
-              <button
-                onClick={() => {
-                  setViewMode("impact");
-                  lifecycleStore.setViewMode("impact");
-                }}
-                className={`px-4 py-2 rounded-lg text-sm font-medium transition-all ${
-                  viewMode === "impact" ? 'shadow-md' : ''
-                }`}
-                style={{
-                  background: viewMode === "impact" ? 'white' : 'rgba(255, 255, 255, 0.5)',
-                  color: 'var(--text)',
-                  border: viewMode === "impact" ? '2px solid var(--phase-prod)' : '1px solid rgba(0, 0, 0, 0.1)',
-                }}
-              >
-                Impact View
-              </button>
-              <button
-                onClick={() => {
-                  setViewMode("cpi");
-                  lifecycleStore.setViewMode("cpi");
-                }}
-                className={`px-4 py-2 rounded-lg text-sm font-medium transition-all ${
-                  viewMode === "cpi" ? 'shadow-md' : ''
-                }`}
-                style={{
-                  background: viewMode === "cpi" ? 'white' : 'rgba(255, 255, 255, 0.5)',
-                  color: 'var(--text)',
-                  border: viewMode === "cpi" ? '2px solid var(--phase-prod)' : '1px solid rgba(0, 0, 0, 0.1)',
-                }}
-              >
-                Cost ↔ Impact (CPI)
-              </button>
-            </div>
-
-            <div className="flex items-center gap-2">
-              <button
-                onClick={() => {
-                  setChartMode("absolute");
-                  lifecycleStore.setChartMode("absolute");
-                }}
-                className={`px-4 py-2 rounded-lg text-sm font-medium transition-all ${
-                  chartMode === "absolute" ? 'shadow-md' : ''
-                }`}
-                style={{
-                  background: chartMode === "absolute" ? 'white' : 'rgba(255, 255, 255, 0.5)',
-                  color: 'var(--text)',
-                  border: chartMode === "absolute" ? '2px solid var(--phase-prod)' : '1px solid rgba(0, 0, 0, 0.1)',
-                }}
-              >
-                Absolute
-              </button>
-              <button
-                onClick={() => {
-                  setChartMode("percentage");
-                  lifecycleStore.setChartMode("percentage");
-                }}
-                className={`px-4 py-2 rounded-lg text-sm font-medium transition-all ${
-                  chartMode === "percentage" ? 'shadow-md' : ''
-                }`}
-                style={{
-                  background: chartMode === "percentage" ? 'white' : 'rgba(255, 255, 255, 0.5)',
-                  color: 'var(--text)',
-                  border: chartMode === "percentage" ? '2px solid var(--phase-prod)' : '1px solid rgba(0, 0, 0, 0.1)',
-                }}
-              >
-                % of Total
-              </button>
-            </div>
-          </div>
-
-          {/* Legend */}
-          <div className="flex flex-wrap gap-3 mb-6">
-            {phases.map((phase) => (
-              <div
-                key={phase}
-                className="flex items-center gap-2 px-3 py-1.5 rounded-md transition-all"
-                style={{
-                  background: activePhase === phase ? 'white' : 'rgba(255, 255, 255, 0.7)',
-                  border: `1px solid ${activePhase === phase ? phaseConfig[phase].fill : 'rgba(0,0,0,0.05)'}`,
-                  opacity: activePhase === phase ? 1 : 0.7,
-                  fontWeight: activePhase === phase ? 600 : 400,
-                }}
-              >
-                <div
-                  className="w-3 h-3 rounded-sm"
-                  style={{ background: phaseConfig[phase].fill }}
-                />
-                <span className="text-sm" style={{ color: 'var(--text)' }}>
-                  {phaseConfig[phase].shortLabel}
-                </span>
+          {/* Conditional Rendering: Chart or Tiles */}
+          {layoutView === "chart" ? (
+            <motion.div 
+              className="flex-1 min-h-0"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ duration: 0.5, ease: "easeInOut" }}
+            >
+              <ResponsiveContainer width="100%" height="100%">
+                <BarChart
+                  data={transformedRows}
+                  layout="vertical"
+                  margin={{ top: 20, right: 30, left: 200, bottom: 20 }}
+                >
+                  <CartesianGrid strokeDasharray="3 3" stroke="rgba(0, 0, 0, 0.1)" />
+                  <XAxis 
+                    type="number" 
+                    stroke="var(--text-sub)"
+                    domain={chartMode === "percentage" ? [0, 100] : undefined}
+                  />
+                  <YAxis
+                    type="category"
+                    dataKey="name"
+                    width={190}
+                    interval={0}
+                    stroke="var(--text)"
+                    style={{ fontSize: '14px', fontWeight: 500 }}
+                  />
+                  {phases.map((phase) => (
+                    <Bar
+                      key={phase}
+                      dataKey={phase}
+                      stackId="lc"
+                      fill={phaseConfig[phase].fill}
+                      isAnimationActive={true}
+                      animationDuration={600}
+                      animationEasing="ease-in-out"
+                      onMouseEnter={(data) => handleBarMouseEnter(data.name, phase)}
+                      onMouseLeave={handleBarMouseLeave}
+                      onClick={(data, index, event) => handleBarClick(data, phase, event)}
+                      style={{ cursor: 'pointer' }}
+                    >
+                      {transformedRows.map((row) => (
+                        <Cell
+                          key={`cell-${row.name}-${phase}`}
+                          opacity={activeMaterial === row.name && activePhase === phase ? 1 : 0.9}
+                          stroke={activeMaterial === row.name && activePhase === phase ? '#3A6E5E' : 'none'}
+                          strokeWidth={activeMaterial === row.name && activePhase === phase ? 1.5 : 0}
+                        />
+                      ))}
+                    </Bar>
+                  ))}
+                </BarChart>
+              </ResponsiveContainer>
+            </motion.div>
+          ) : (
+            /* Tile View */
+            <motion.div
+              className="flex-1 min-h-0 overflow-y-auto pr-2"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ duration: 0.5, ease: "easeInOut" }}
+            >
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 pb-4">
+                {transformedRows.map((row) => {
+                  const originalRow = rows.find(r => r.name === row.name);
+                  const impactData = originalRow?.impacts[impactCategory] || [0, 0, 0, 0, 0];
+                  
+                  return (
+                    <ImpactCard
+                      key={row.name}
+                      material={originalRow!}
+                      onClick={() => handleTileClick(row.name)}
+                      currentMetric={row.total || 0}
+                      currentUnit={getCurrentUnit()}
+                      phases={phases.map((phase, idx) => ({
+                        phase,
+                        value: impactData[idx],
+                        color: phaseConfig[phase].fill,
+                      }))}
+                    />
+                  );
+                })}
               </div>
-            ))}
-          </div>
+            </motion.div>
+          )}
 
-          {/* Chart */}
-          <motion.div 
-            className="flex-1 min-h-0"
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ duration: 0.5, ease: "easeInOut" }}
-          >
-            <ResponsiveContainer width="100%" height="100%">
-              <BarChart
-                data={transformedRows}
-                layout="vertical"
-                margin={{ top: 20, right: 30, left: 200, bottom: 20 }}
-              >
-                <CartesianGrid strokeDasharray="3 3" stroke="rgba(0, 0, 0, 0.1)" />
-                <XAxis 
-                  type="number" 
-                  stroke="var(--text-sub)"
-                  domain={chartMode === "percentage" ? [0, 100] : undefined}
-                />
-                <YAxis
-                  type="category"
-                  dataKey="name"
-                  width={190}
-                  interval={0}
-                  stroke="var(--text)"
-                  style={{ fontSize: '14px', fontWeight: 500 }}
-                />
-                {phases.map((phase) => (
-                  <Bar
-                    key={phase}
-                    dataKey={phase}
-                    stackId="lc"
-                    fill={phaseConfig[phase].fill}
-                    isAnimationActive={true}
-                    animationDuration={600}
-                    animationEasing="ease-in-out"
-                    onMouseEnter={(data) => handleBarMouseEnter(data.name, phase)}
-                    onMouseLeave={handleBarMouseLeave}
-                    onClick={(data, index, event) => handleBarClick(data, phase, event)}
-                    style={{ cursor: 'pointer' }}
-                  >
-                    {transformedRows.map((row) => (
-                      <Cell
-                        key={`cell-${row.name}-${phase}`}
-                        opacity={activeMaterial === row.name && activePhase === phase ? 1 : 0.9}
-                        stroke={activeMaterial === row.name && activePhase === phase ? '#3A6E5E' : 'none'}
-                        strokeWidth={activeMaterial === row.name && activePhase === phase ? 1.5 : 0}
-                      />
-                    ))}
-                  </Bar>
-                ))}
-              </BarChart>
-            </ResponsiveContainer>
-          </motion.div>
-
-          {/* Anchored info panel with tooltip */}
-          <AnimatePresence mode="wait">
-            {activeRow && activePhase && originalRow && (
-              <motion.div 
-                key={`${activeMaterial}-${activePhase}`}
-                className="mt-4 p-4 rounded-xl border"
-                style={{
-                  background: 'rgba(255, 255, 255, 0.95)',
-                  borderColor: 'var(--ring-lifecycle)',
-                }}
-                initial={{ opacity: 0, y: -10 }}
-                animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0, y: -10 }}
-                transition={{ duration: 0.25, ease: "easeInOut" }}
-              >
+          {/* Anchored info panel with tooltip - only show for chart view */}
+          {layoutView === "chart" && (
+            <AnimatePresence mode="wait">
+              {activeRow && activePhase && originalRow && (
+                <motion.div 
+                  key={`${activeMaterial}-${activePhase}`}
+                  className="mt-4 p-4 rounded-xl border"
+                  style={{
+                    background: 'rgba(255, 255, 255, 0.95)',
+                    borderColor: 'var(--ring-lifecycle)',
+                  }}
+                  initial={{ opacity: 0, y: -10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: -10 }}
+                  transition={{ duration: 0.25, ease: "easeInOut" }}
+                >
 ...
-              </motion.div>
-            )}
-          </AnimatePresence>
+                </motion.div>
+              )}
+            </AnimatePresence>
+          )}
 
           <div className="flex items-center justify-between mt-6">
             <Button
