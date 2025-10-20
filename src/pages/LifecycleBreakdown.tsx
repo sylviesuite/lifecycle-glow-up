@@ -118,9 +118,14 @@ const CALC_STEPS = [
   { key: "compare", label: "Compare", icon: "📈" },
 ];
 
-function Header({ onBack, onClose }: { onBack?: () => void; onClose?: () => void }) {
+function Header({ onBack, onClose, onToggleTheme, theme }: { 
+  onBack?: () => void; 
+  onClose?: () => void;
+  onToggleTheme: () => void;
+  theme: "light" | "dark";
+}) {
   return (
-    <div className="flex items-center justify-between mb-4">
+    <div className="flex items-center justify-between mb-3">
       <button
         onClick={() => (onBack ? onBack() : window.history.back())}
         className="inline-flex items-center gap-2 rounded-xl border border-black/10 bg-white/70 px-3 py-2 shadow-sm hover:bg-white focus:outline-none focus:ring-2 focus:ring-emerald-500/30"
@@ -130,17 +135,28 @@ function Header({ onBack, onClose }: { onBack?: () => void; onClose?: () => void
         <span className="text-sm font-medium text-slate-700">Back</span>
       </button>
 
-      <h1 className="text-2xl md:text-3xl font-extrabold tracking-tight" style={{ color: 'var(--text)' }}>
+      <h1 className="text-xl md:text-2xl font-extrabold tracking-tight" style={{ color: 'var(--text)' }}>
         Lifecycle Breakdown
       </h1>
 
-      <button
-        onClick={onClose}
-        className="h-9 w-9 grid place-items-center rounded-xl border border-black/10 bg-white/70 shadow-sm hover:bg-white focus:outline-none focus:ring-2 focus:ring-emerald-500/30"
-        aria-label="Close"
-      >
-        <X className="h-5 w-5 text-slate-700" />
-      </button>
+      <div className="flex items-center gap-2">
+        <Button
+          variant="outline"
+          size="icon"
+          onClick={onToggleTheme}
+          className="shrink-0"
+          aria-label="Toggle theme"
+        >
+          {theme === 'dark' ? <Sun className="h-4 w-4" /> : <Moon className="h-4 w-4" />}
+        </Button>
+        <button
+          onClick={onClose}
+          className="h-9 w-9 grid place-items-center rounded-xl border border-black/10 bg-white/70 shadow-sm hover:bg-white focus:outline-none focus:ring-2 focus:ring-emerald-500/30"
+          aria-label="Close"
+        >
+          <X className="h-5 w-5 text-slate-700" />
+        </button>
+      </div>
     </div>
   );
 }
@@ -333,21 +349,10 @@ const LifecycleBreakdown = () => {
             border: '1px solid var(--ring-lifecycle)' 
           }}
         >
-          <div className="mb-6">
-            <div className="flex items-start justify-between mb-3">
-              <Header />
-              <Button
-                variant="outline"
-                size="icon"
-                onClick={toggleTheme}
-                className="shrink-0"
-                aria-label="Toggle theme"
-              >
-                {theme === 'dark' ? <Sun className="h-5 w-5" /> : <Moon className="h-5 w-5" />}
-              </Button>
-            </div>
+          <div className="mb-5">
+            <Header onToggleTheme={toggleTheme} theme={theme} />
             <Stepper current={5} />
-            <p style={{ color: 'var(--text-sub)' }} className="text-sm">
+            <p style={{ color: 'var(--text-sub)' }} className="text-sm mt-2">
               Stacked horizontal bars by lifecycle phase (mock data). Units shown
               are {units === "kgCO2e" ? "kg CO₂e" : "MJ"} per material. Hover to explore, click for details.
             </p>
@@ -467,8 +472,8 @@ const LifecycleBreakdown = () => {
                   <YAxis
                     dataKey="name"
                     type="category"
-                    tick={{ fill: 'var(--text-sub)' }}
-                    style={{ fontSize: "13px", fontWeight: 500 }}
+                    tick={{ fill: 'var(--text)', fontWeight: 600 }}
+                    style={{ fontSize: "13px" }}
                     width={190}
                   />
                   <Tooltip content={<div />} cursor={{ fill: "transparent" }} />
