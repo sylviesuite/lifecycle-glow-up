@@ -110,8 +110,12 @@ export function Step3Breakdown({ onNext, onBack }: Step3BreakdownProps) {
     setActiveMaterial(null);
   };
 
-  const handleBarClick = (material: string, phase: PhaseKey) => {
-    setSelectedMaterial(material);
+  const handleBarClick = (data: any, phase: PhaseKey, event?: any) => {
+    if (event) {
+      event.stopPropagation();
+      event.preventDefault();
+    }
+    setSelectedMaterial(data.name);
     setSelectedPhase(phase);
     setSidebarOpen(true);
   };
@@ -306,7 +310,7 @@ export function Step3Breakdown({ onNext, onBack }: Step3BreakdownProps) {
                     fill={phaseConfig[phase].fill}
                     onMouseEnter={(data) => handleBarMouseEnter(data.name, phase)}
                     onMouseLeave={handleBarMouseLeave}
-                    onClick={(data) => handleBarClick(data.name, phase)}
+                    onClick={(data, index, event) => handleBarClick(data, phase, event)}
                     style={{ cursor: 'pointer' }}
                   >
                     {transformedRows.map((row) => (
