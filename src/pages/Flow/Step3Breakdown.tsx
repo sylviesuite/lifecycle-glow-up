@@ -143,24 +143,24 @@ export function Step3Breakdown({ onNext, onBack }: Step3BreakdownProps) {
   return (
     <>
       <div className="flex flex-col min-h-screen p-6 overflow-hidden">
-        <div 
-          ref={cardRef}
-          className="h-[calc(100vh-3rem)] rounded-2xl backdrop-blur-sm shadow-md p-8 flex flex-col"
-          style={{ 
-            background: 'var(--canvas)', 
-            border: '1px solid var(--ring-lifecycle)'
-          }}
-        >
-          {/* Header with toggles */}
-          <div className="mb-6 flex items-start justify-between">
-            <div>
-              <h2 className="text-3xl md:text-4xl font-extrabold tracking-tight mb-2" style={{ color: 'var(--text)' }}>
-                Lifecycle Breakdown
-              </h2>
-              <p className="text-base" style={{ color: 'var(--text-sub)' }}>
-                {currentCategory?.label} — {getCurrentUnit()} per m²
-              </p>
-            </div>
+      <div 
+        ref={cardRef}
+        className="h-[calc(100vh-3rem)] rounded-2xl backdrop-blur-sm shadow-md p-4 flex flex-col"
+        style={{ 
+          background: 'var(--canvas)', 
+          border: '1px solid var(--ring-lifecycle)'
+        }}
+      >
+        {/* Header with toggles */}
+        <div className="mb-3 flex items-start justify-between">
+          <div>
+            <h2 className="text-2xl md:text-3xl font-extrabold tracking-tight mb-1" style={{ color: 'var(--text)' }}>
+              Lifecycle Breakdown
+            </h2>
+            <p className="text-sm" style={{ color: 'var(--text-sub)' }}>
+              {currentCategory?.label} — {getCurrentUnit()} per m²
+            </p>
+          </div>
 
             <div className="flex flex-col items-end gap-3 shrink-0">
               {/* Layout View Toggle */}
