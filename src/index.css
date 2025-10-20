@@ -56,11 +56,11 @@ All colors MUST be HSL.
     --text: #1E293B;
     --text-sub: #475569;
     --grid: rgba(2,6,23,0.08);
-    --phase-prod: #5A9B7D;
-    --phase-trans: #6BB39E;
-    --phase-cons: #7BC2AF;
-    --phase-main: #8CCFBE;
-    --phase-eol: #9DD9CD;
+    --phase-prod: #5E9277;
+    --phase-trans: #4F89A6;
+    --phase-cons: #D48C47;
+    --phase-main: #A07CB8;
+    --phase-eol: #C2646E;
     --hover-stroke: #3A6E5E;
     --legend-pill: #FFFFFFB3;
   }
@@ -113,11 +113,11 @@ All colors MUST be HSL.
     --text: #E6F2EE;
     --text-sub: #B6C8C3;
     --grid: rgba(230,242,238,0.10);
-    --phase-prod: #4A8269;
-    --phase-trans: #5A9482;
-    --phase-cons: #6AA598;
-    --phase-main: #7AB5AA;
-    --phase-eol: #8AC5BA;
+    --phase-prod: #4C7A64;
+    --phase-trans: #3E708A;
+    --phase-cons: #BA783D;
+    --phase-main: #8C68A2;
+    --phase-eol: #A95660;
     --hover-stroke: #9DD4C4;
     --legend-pill: rgba(255,255,255,0.10);
   }

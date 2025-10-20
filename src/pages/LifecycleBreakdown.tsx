@@ -82,26 +82,31 @@ export const phaseConfig = {
     label: "Point of Origin → Production",
     shortLabel: "Production",
     colorClass: "text-[color:var(--phase-prod)]",
+    fill: "var(--phase-prod)",
   },
   Transport: {
     label: "Transport",
     shortLabel: "Transport",
     colorClass: "text-[color:var(--phase-trans)]",
+    fill: "var(--phase-trans)",
   },
   Construction: {
     label: "Construction",
     shortLabel: "Construction",
     colorClass: "text-[color:var(--phase-cons)]",
+    fill: "var(--phase-cons)",
   },
   Maintenance: {
     label: "Maintenance",
     shortLabel: "Maintenance",
     colorClass: "text-[color:var(--phase-main)]",
+    fill: "var(--phase-main)",
   },
   Disposal: {
     label: "End of Life",
     shortLabel: "End of Life",
     colorClass: "text-[color:var(--phase-eol)]",
+    fill: "var(--phase-eol)",
   },
 };
 
@@ -399,20 +404,16 @@ const LifecycleBreakdown = () => {
                     dataKey="PointOfOriginProduction"
                     stackId="a"
                     radius={[6, 0, 0, 6]}
-                    fill="currentColor"
-                    className={phaseConfig.PointOfOriginProduction.colorClass}
+                    fill={phaseConfig.PointOfOriginProduction.fill}
                     label={(props: any) => renderSegmentLabel(props, "PointOfOriginProduction", props.name)}
                   >
                     {filteredData.map((row) => (
                       <Cell
                         key={`cell-pop-${row.material}`}
-                        stroke={activeMaterial === row.material && activePhase === "PointOfOriginProduction" ? "currentColor" : "none"}
+                        stroke={activeMaterial === row.material && activePhase === "PointOfOriginProduction" ? "#3A6E5E" : "none"}
                         strokeWidth={1.5}
-                        style={{
-                          color: 'var(--hover-stroke)',
-                          opacity: activeMaterial === row.material && activePhase === "PointOfOriginProduction" ? 1 : 0.9,
-                          cursor: "pointer"
-                        }}
+                        opacity={activeMaterial === row.material && activePhase === "PointOfOriginProduction" ? 1.0 : 0.9}
+                        style={{ cursor: "pointer" }}
                         onMouseMove={(ev: any) => handleBarMouseMove(row.material, "PointOfOriginProduction", ev)}
                         onMouseLeave={handleBarMouseLeave}
                         onClick={() => openPhaseDetails(row.material, "PointOfOriginProduction", row.PointOfOriginProduction)}
@@ -422,20 +423,16 @@ const LifecycleBreakdown = () => {
                   <Bar
                     dataKey="Transport"
                     stackId="a"
-                    fill="currentColor"
-                    className={phaseConfig.Transport.colorClass}
+                    fill={phaseConfig.Transport.fill}
                     label={(props: any) => renderSegmentLabel(props, "Transport", props.name)}
                   >
                     {filteredData.map((row) => (
                       <Cell
                         key={`cell-transport-${row.material}`}
-                        stroke={activeMaterial === row.material && activePhase === "Transport" ? "currentColor" : "none"}
+                        stroke={activeMaterial === row.material && activePhase === "Transport" ? "#3A6E5E" : "none"}
                         strokeWidth={1.5}
-                        style={{
-                          color: 'var(--hover-stroke)',
-                          opacity: activeMaterial === row.material && activePhase === "Transport" ? 1 : 0.9,
-                          cursor: "pointer"
-                        }}
+                        opacity={activeMaterial === row.material && activePhase === "Transport" ? 1.0 : 0.9}
+                        style={{ cursor: "pointer" }}
                         onMouseMove={(ev: any) => handleBarMouseMove(row.material, "Transport", ev)}
                         onMouseLeave={handleBarMouseLeave}
                         onClick={() => openPhaseDetails(row.material, "Transport", row.Transport)}
@@ -445,20 +442,16 @@ const LifecycleBreakdown = () => {
                   <Bar
                     dataKey="Construction"
                     stackId="a"
-                    fill="currentColor"
-                    className={phaseConfig.Construction.colorClass}
+                    fill={phaseConfig.Construction.fill}
                     label={(props: any) => renderSegmentLabel(props, "Construction", props.name)}
                   >
                     {filteredData.map((row) => (
                       <Cell
                         key={`cell-construction-${row.material}`}
-                        stroke={activeMaterial === row.material && activePhase === "Construction" ? "currentColor" : "none"}
+                        stroke={activeMaterial === row.material && activePhase === "Construction" ? "#3A6E5E" : "none"}
                         strokeWidth={1.5}
-                        style={{
-                          color: 'var(--hover-stroke)',
-                          opacity: activeMaterial === row.material && activePhase === "Construction" ? 1 : 0.9,
-                          cursor: "pointer"
-                        }}
+                        opacity={activeMaterial === row.material && activePhase === "Construction" ? 1.0 : 0.9}
+                        style={{ cursor: "pointer" }}
                         onMouseMove={(ev: any) => handleBarMouseMove(row.material, "Construction", ev)}
                         onMouseLeave={handleBarMouseLeave}
                         onClick={() => openPhaseDetails(row.material, "Construction", row.Construction)}
@@ -468,20 +461,16 @@ const LifecycleBreakdown = () => {
                   <Bar
                     dataKey="Maintenance"
                     stackId="a"
-                    fill="currentColor"
-                    className={phaseConfig.Maintenance.colorClass}
+                    fill={phaseConfig.Maintenance.fill}
                     label={(props: any) => renderSegmentLabel(props, "Maintenance", props.name)}
                   >
                     {filteredData.map((row) => (
                       <Cell
                         key={`cell-maintenance-${row.material}`}
-                        stroke={activeMaterial === row.material && activePhase === "Maintenance" ? "currentColor" : "none"}
+                        stroke={activeMaterial === row.material && activePhase === "Maintenance" ? "#3A6E5E" : "none"}
                         strokeWidth={1.5}
-                        style={{
-                          color: 'var(--hover-stroke)',
-                          opacity: activeMaterial === row.material && activePhase === "Maintenance" ? 1 : 0.9,
-                          cursor: "pointer"
-                        }}
+                        opacity={activeMaterial === row.material && activePhase === "Maintenance" ? 1.0 : 0.9}
+                        style={{ cursor: "pointer" }}
                         onMouseMove={(ev: any) => handleBarMouseMove(row.material, "Maintenance", ev)}
                         onMouseLeave={handleBarMouseLeave}
                         onClick={() => openPhaseDetails(row.material, "Maintenance", row.Maintenance)}
@@ -492,20 +481,16 @@ const LifecycleBreakdown = () => {
                     dataKey="Disposal"
                     stackId="a"
                     radius={[0, 6, 6, 0]}
-                    fill="currentColor"
-                    className={phaseConfig.Disposal.colorClass}
+                    fill={phaseConfig.Disposal.fill}
                     label={(props: any) => renderSegmentLabel(props, "Disposal", props.name)}
                   >
                     {filteredData.map((row) => (
                       <Cell
                         key={`cell-disposal-${row.material}`}
-                        stroke={activeMaterial === row.material && activePhase === "Disposal" ? "currentColor" : "none"}
+                        stroke={activeMaterial === row.material && activePhase === "Disposal" ? "#3A6E5E" : "none"}
                         strokeWidth={1.5}
-                        style={{
-                          color: 'var(--hover-stroke)',
-                          opacity: activeMaterial === row.material && activePhase === "Disposal" ? 1 : 0.9,
-                          cursor: "pointer"
-                        }}
+                        opacity={activeMaterial === row.material && activePhase === "Disposal" ? 1.0 : 0.9}
+                        style={{ cursor: "pointer" }}
                         onMouseMove={(ev: any) => handleBarMouseMove(row.material, "Disposal", ev)}
                         onMouseLeave={handleBarMouseLeave}
                         onClick={() => openPhaseDetails(row.material, "Disposal", row.Disposal)}
