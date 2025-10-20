@@ -81,6 +81,7 @@ export const mockData: Row[] = [
 type LifecycleState = {
   category: string;
   scope: string;
+  scopePhase: "A1-A5" | "A1-C4" | "A1-D";
   units: "kgCO2e" | "MJ";
   searchQuery: string;
   selectedAssemblies: string[];
@@ -92,6 +93,7 @@ type LifecycleState = {
 const state: LifecycleState = {
   category: "Wall Systems",
   scope: "A1-A5",
+  scopePhase: "A1-A5",
   units: "kgCO2e",
   searchQuery: "",
   selectedAssemblies: mockData.map(r => r.name), // Select all by default
@@ -109,6 +111,10 @@ export const lifecycleStore = {
   
   setScope: (scope: string) => {
     state.scope = scope;
+  },
+  
+  setScopePhase: (scopePhase: "A1-A5" | "A1-C4" | "A1-D") => {
+    state.scopePhase = scopePhase;
   },
   
   setUnits: (units: "kgCO2e" | "MJ") => {

@@ -1,8 +1,10 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
+import { Input } from "@/components/ui/input";
 import { lifecycleStore, mockData } from "@/store/lifecycleStore";
-import { ChevronLeft } from "lucide-react";
+import { ChevronLeft, Info } from "lucide-react";
+import { MaterialCompositionModal } from "@/components/MaterialCompositionModal";
 
 interface Step2MaterialsProps {
   onNext: () => void;
@@ -13,6 +15,12 @@ export function Step2Materials({ onNext, onBack }: Step2MaterialsProps) {
   const [selectedAssemblies, setSelectedAssemblies] = useState<string[]>(
     lifecycleStore.getState().selectedAssemblies
   );
+  const [searchQuery, setSearchQuery] = useState("");
+  const [lowCarbonOnly, setLowCarbonOnly] = useState(false);
+  const [localSourceOnly, setLocalSourceOnly] = useState(false);
+  const [highRISOnly, setHighRISOnly] = useState(false);
+  const [modalOpen, setModalOpen] = useState(false);
+  const [selectedMaterial, setSelectedMaterial] = useState("");
 
   useEffect(() => {
     lifecycleStore.setSelectedAssemblies(selectedAssemblies);
@@ -28,10 +36,33 @@ export function Step2Materials({ onNext, onBack }: Step2MaterialsProps) {
     });
   };
 
-  const searchQuery = lifecycleStore.getState().searchQuery;
-  const filteredMaterials = mockData.filter(row =>
-    row.name.toLowerCase().includes(searchQuery.toLowerCase())
-  );
+  const openModal = (materialName: string) => {
+    setSelectedMaterial(materialName);
+    setModalOpen(true);
+  };
+
+  // Debounced and filtered materials
+  const filteredMaterials = useMemo(() => {
+    let filtered = mockData.filter(row =>
+      row.name.toLowerCase().includes(searchQuery.toLowerCase())
+    );
+
+    if (lowCarbonOnly) {
+      filtered = filtered.filter(row => (row.total || 0) < 60);
+    }
+
+    if (localSourceOnly) {
+      // Mock filter: assume materials with lower transport values are "local"
+      filtered = filtered.filter(row => row.Transport < 7);
+    }
+
+    if (highRISOnly) {
+      // Mock filter: assume materials with lower totals have higher RIS scores
+      filtered = filtered.filter(row => (row.total || 0) < 70);
+    }
+
+    return filtered;
+  }, [searchQuery, lowCarbonOnly, localSourceOnly, highRISOnly]);
 
   return (
     <div className="flex flex-col items-center justify-center min-h-screen p-6 overflow-hidden">
@@ -42,7 +73,7 @@ export function Step2Materials({ onNext, onBack }: Step2MaterialsProps) {
           border: '1px solid var(--ring-lifecycle)' 
         }}
       >
-        <div className="mb-8 text-center">
+        <div className="mb-6 text-center">
           <h2 className="text-3xl md:text-4xl font-extrabold tracking-tight mb-3" style={{ color: 'var(--text)' }}>
             Material Selection
           </h2>
@@ -57,6 +88,62 @@ export function Step2Materials({ onNext, onBack }: Step2MaterialsProps) {
             }}
           >
             {selectedAssemblies.length} selected
+          </div>
+        </div>
+
+        {/* Search and Filter Chips */}
+        <div className="mb-4 shrink-0">
+          <Input
+            placeholder="Search materials by name..."
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+            className="rounded-lg border px-3 py-2 shadow-inner mb-3"
+            style={{
+              borderColor: 'var(--ring-lifecycle)',
+              background: 'var(--canvas)',
+              color: 'var(--text)',
+            }}
+          />
+          <div className="flex gap-2 flex-wrap">
+            <button
+              onClick={() => setLowCarbonOnly(!lowCarbonOnly)}
+              className={`rounded-full px-3 py-1 text-sm transition-all ${
+                lowCarbonOnly ? 'font-semibold ring-2' : 'ring-1'
+              }`}
+              style={{
+                background: lowCarbonOnly ? 'rgba(94, 146, 119, 0.2)' : 'rgba(255, 255, 255, 0.5)',
+                color: 'var(--text)',
+                borderColor: lowCarbonOnly ? 'var(--phase-prod)' : 'rgba(0, 0, 0, 0.05)',
+              }}
+            >
+              Low Carbon Only
+            </button>
+            <button
+              onClick={() => setLocalSourceOnly(!localSourceOnly)}
+              className={`rounded-full px-3 py-1 text-sm transition-all ${
+                localSourceOnly ? 'font-semibold ring-2' : 'ring-1'
+              }`}
+              style={{
+                background: localSourceOnly ? 'rgba(94, 146, 119, 0.2)' : 'rgba(255, 255, 255, 0.5)',
+                color: 'var(--text)',
+                borderColor: localSourceOnly ? 'var(--phase-prod)' : 'rgba(0, 0, 0, 0.05)',
+              }}
+            >
+              Local Source (&lt; 300 km)
+            </button>
+            <button
+              onClick={() => setHighRISOnly(!highRISOnly)}
+              className={`rounded-full px-3 py-1 text-sm transition-all ${
+                highRISOnly ? 'font-semibold ring-2' : 'ring-1'
+              }`}
+              style={{
+                background: highRISOnly ? 'rgba(94, 146, 119, 0.2)' : 'rgba(255, 255, 255, 0.5)',
+                color: 'var(--text)',
+                borderColor: highRISOnly ? 'var(--phase-prod)' : 'rgba(0, 0, 0, 0.05)',
+              }}
+            >
+              High RIS Score (&gt; 60)
+            </button>
           </div>
         </div>
 
@@ -87,9 +174,24 @@ export function Step2Materials({ onNext, onBack }: Step2MaterialsProps) {
               >
                 {material.name}
               </label>
-              <span className="text-sm" style={{ color: 'var(--text-sub)' }}>
-                {material.total} kg CO₂e
-              </span>
+              <div className="flex items-center gap-3">
+                <span className="text-sm" style={{ color: 'var(--text-sub)' }}>
+                  {material.total} kg CO₂e
+                </span>
+                <button
+                  onClick={(e) => {
+                    e.preventDefault();
+                    openModal(material.name);
+                  }}
+                  className="cursor-help transition-colors"
+                  style={{ color: 'var(--text-sub)' }}
+                  onMouseEnter={(e) => e.currentTarget.style.color = 'var(--text)'}
+                  onMouseLeave={(e) => e.currentTarget.style.color = 'var(--text-sub)'}
+                  title="View composition"
+                >
+                  <Info className="h-4 w-4" />
+                </button>
+              </div>
             </div>
             ))}
           </div>
@@ -120,6 +222,12 @@ export function Step2Materials({ onNext, onBack }: Step2MaterialsProps) {
           </Button>
         </div>
       </div>
+
+      <MaterialCompositionModal
+        open={modalOpen}
+        onOpenChange={setModalOpen}
+        assemblyName={selectedMaterial}
+      />
     </div>
   );
 }

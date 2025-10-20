@@ -11,8 +11,8 @@ interface Step1FiltersProps {
 export function Step1Filters({ onNext }: Step1FiltersProps) {
   const [category, setCategory] = useState(lifecycleStore.getState().category);
   const [scope, setScope] = useState(lifecycleStore.getState().scope);
+  const [scopePhase, setScopePhase] = useState(lifecycleStore.getState().scopePhase);
   const [units, setUnits] = useState(lifecycleStore.getState().units);
-  const [searchQuery, setSearchQuery] = useState(lifecycleStore.getState().searchQuery);
 
   useEffect(() => {
     lifecycleStore.setCategory(category);
@@ -23,12 +23,12 @@ export function Step1Filters({ onNext }: Step1FiltersProps) {
   }, [scope]);
 
   useEffect(() => {
-    lifecycleStore.setUnits(units);
-  }, [units]);
+    lifecycleStore.setScopePhase(scopePhase);
+  }, [scopePhase]);
 
   useEffect(() => {
-    lifecycleStore.setSearchQuery(searchQuery);
-  }, [searchQuery]);
+    lifecycleStore.setUnits(units);
+  }, [units]);
 
   return (
     <div className="flex flex-col items-center justify-center min-h-screen p-6 overflow-hidden">
@@ -97,6 +97,29 @@ export function Step1Filters({ onNext }: Step1FiltersProps) {
 
           <div>
             <label className="text-sm font-semibold mb-2 block" style={{ color: 'var(--text)' }}>
+              Scope
+            </label>
+            <Select value={scopePhase} onValueChange={(val: "A1-A5" | "A1-C4" | "A1-D") => setScopePhase(val)}>
+              <SelectTrigger 
+                className="rounded-xl backdrop-blur-sm shadow-sm"
+                style={{ 
+                  background: 'var(--canvas)', 
+                  borderColor: 'var(--ring-lifecycle)',
+                  color: 'var(--text)'
+                }}
+              >
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="A1-A5">A1–A5 (Build Stage only)</SelectItem>
+                <SelectItem value="A1-C4">A1–C4 (Full Lifecycle)</SelectItem>
+                <SelectItem value="A1-D">A1–D (Circular System)</SelectItem>
+              </SelectContent>
+            </Select>
+          </div>
+
+          <div>
+            <label className="text-sm font-semibold mb-2 block" style={{ color: 'var(--text)' }}>
               Units
             </label>
             <Select value={units} onValueChange={(val: "kgCO2e" | "MJ") => setUnits(val)}>
@@ -115,23 +138,6 @@ export function Step1Filters({ onNext }: Step1FiltersProps) {
                 <SelectItem value="MJ">MJ per m²</SelectItem>
               </SelectContent>
             </Select>
-          </div>
-
-          <div>
-            <label className="text-sm font-semibold mb-2 block" style={{ color: 'var(--text)' }}>
-              Search Filter
-            </label>
-            <Input
-              placeholder="Filter materials by name..."
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              className="rounded-xl backdrop-blur-sm shadow-sm"
-              style={{ 
-                background: 'var(--canvas)', 
-                borderColor: 'var(--ring-lifecycle)',
-                color: 'var(--text)'
-              }}
-            />
           </div>
         </div>
 
