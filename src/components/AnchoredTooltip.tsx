@@ -68,12 +68,14 @@ export const AnchoredTooltip = ({
         position: "absolute",
         left: `${position.left}px`,
         top: `${position.top}px`,
-        pointerEvents: "auto",
+        pointerEvents: "none",
         zIndex: 50,
         opacity: 0,
         animation: "fadeSlideIn 150ms ease-out forwards",
       }}
       className="bg-card border border-border rounded-lg shadow-xl p-3 min-w-[280px] max-w-[320px]"
+      role="note"
+      aria-live="polite"
     >
       <p className="font-semibold text-sm text-foreground mb-2.5">{label}</p>
       <div className="space-y-1">
@@ -83,10 +85,10 @@ export const AnchoredTooltip = ({
           if (!phase) return null;
 
           return (
-            <button
+            <div
               key={key}
               onClick={() => onPhaseClick(key)}
-              className={`flex items-center gap-2 px-2 py-1.5 rounded cursor-pointer transition-all ${
+              className={`flex items-center gap-2 px-2 py-1.5 rounded transition-all pointer-events-auto cursor-pointer ${
                 activePhase === key
                   ? "bg-accent/20 font-bold scale-[1.02]"
                   : "hover:bg-accent/10 opacity-70"
@@ -102,7 +104,7 @@ export const AnchoredTooltip = ({
               <span className="text-xs font-medium whitespace-nowrap">
                 {formatNumber(entry.value)} {units === "kgCO2e" ? "kg CO₂e" : "MJ"}
               </span>
-            </button>
+            </div>
           );
         })}
       </div>

@@ -8,6 +8,7 @@ import {
   Tooltip,
   Legend,
   ResponsiveContainer,
+  Cell,
 } from "recharts";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
@@ -142,7 +143,7 @@ const LifecycleBreakdown = () => {
     setAnchor(null);
   };
 
-  const handlePhaseClick = (material: string, phase: PhaseKey, value: number) => {
+  const openPhaseDetails = (material: string, phase: PhaseKey, value: number) => {
     setSelectedPhase({ material, phase, value });
   };
 
@@ -242,55 +243,90 @@ const LifecycleBreakdown = () => {
                   <Bar
                     dataKey="PointOfOriginProduction"
                     stackId="a"
-                    fill={phaseConfig.PointOfOriginProduction.color}
-                    fillOpacity={activePhase && activePhase !== "PointOfOriginProduction" ? 0.45 : 1}
                     radius={[6, 0, 0, 6]}
-                    onMouseMove={(data: any, _: any, ev: any) => 
-                      handleBarMouseMove(data.material, "PointOfOriginProduction", ev)
-                    }
-                    onMouseLeave={handleBarMouseLeave}
-                  />
+                  >
+                    {filteredData.map((row) => (
+                      <Cell
+                        key={`cell-pop-${row.material}`}
+                        fill={phaseConfig.PointOfOriginProduction.color}
+                        stroke={activeMaterial === row.material && activePhase === "PointOfOriginProduction" ? "currentColor" : "none"}
+                        strokeWidth={2}
+                        onMouseMove={(ev: any) => handleBarMouseMove(row.material, "PointOfOriginProduction", ev)}
+                        onMouseLeave={handleBarMouseLeave}
+                        onClick={() => openPhaseDetails(row.material, "PointOfOriginProduction", row.PointOfOriginProduction)}
+                        style={{ cursor: "pointer" }}
+                      />
+                    ))}
+                  </Bar>
                   <Bar
                     dataKey="Transport"
                     stackId="a"
-                    fill={phaseConfig.Transport.color}
-                    fillOpacity={activePhase && activePhase !== "Transport" ? 0.45 : 1}
-                    onMouseMove={(data: any, _: any, ev: any) => 
-                      handleBarMouseMove(data.material, "Transport", ev)
-                    }
-                    onMouseLeave={handleBarMouseLeave}
-                  />
+                  >
+                    {filteredData.map((row) => (
+                      <Cell
+                        key={`cell-transport-${row.material}`}
+                        fill={phaseConfig.Transport.color}
+                        stroke={activeMaterial === row.material && activePhase === "Transport" ? "currentColor" : "none"}
+                        strokeWidth={2}
+                        onMouseMove={(ev: any) => handleBarMouseMove(row.material, "Transport", ev)}
+                        onMouseLeave={handleBarMouseLeave}
+                        onClick={() => openPhaseDetails(row.material, "Transport", row.Transport)}
+                        style={{ cursor: "pointer" }}
+                      />
+                    ))}
+                  </Bar>
                   <Bar
                     dataKey="Construction"
                     stackId="a"
-                    fill={phaseConfig.Construction.color}
-                    fillOpacity={activePhase && activePhase !== "Construction" ? 0.45 : 1}
-                    onMouseMove={(data: any, _: any, ev: any) => 
-                      handleBarMouseMove(data.material, "Construction", ev)
-                    }
-                    onMouseLeave={handleBarMouseLeave}
-                  />
+                  >
+                    {filteredData.map((row) => (
+                      <Cell
+                        key={`cell-construction-${row.material}`}
+                        fill={phaseConfig.Construction.color}
+                        stroke={activeMaterial === row.material && activePhase === "Construction" ? "currentColor" : "none"}
+                        strokeWidth={2}
+                        onMouseMove={(ev: any) => handleBarMouseMove(row.material, "Construction", ev)}
+                        onMouseLeave={handleBarMouseLeave}
+                        onClick={() => openPhaseDetails(row.material, "Construction", row.Construction)}
+                        style={{ cursor: "pointer" }}
+                      />
+                    ))}
+                  </Bar>
                   <Bar
                     dataKey="Maintenance"
                     stackId="a"
-                    fill={phaseConfig.Maintenance.color}
-                    fillOpacity={activePhase && activePhase !== "Maintenance" ? 0.45 : 1}
-                    onMouseMove={(data: any, _: any, ev: any) => 
-                      handleBarMouseMove(data.material, "Maintenance", ev)
-                    }
-                    onMouseLeave={handleBarMouseLeave}
-                  />
+                  >
+                    {filteredData.map((row) => (
+                      <Cell
+                        key={`cell-maintenance-${row.material}`}
+                        fill={phaseConfig.Maintenance.color}
+                        stroke={activeMaterial === row.material && activePhase === "Maintenance" ? "currentColor" : "none"}
+                        strokeWidth={2}
+                        onMouseMove={(ev: any) => handleBarMouseMove(row.material, "Maintenance", ev)}
+                        onMouseLeave={handleBarMouseLeave}
+                        onClick={() => openPhaseDetails(row.material, "Maintenance", row.Maintenance)}
+                        style={{ cursor: "pointer" }}
+                      />
+                    ))}
+                  </Bar>
                   <Bar
                     dataKey="Disposal"
                     stackId="a"
-                    fill={phaseConfig.Disposal.color}
-                    fillOpacity={activePhase && activePhase !== "Disposal" ? 0.45 : 1}
                     radius={[0, 6, 6, 0]}
-                    onMouseMove={(data: any, _: any, ev: any) => 
-                      handleBarMouseMove(data.material, "Disposal", ev)
-                    }
-                    onMouseLeave={handleBarMouseLeave}
-                  />
+                  >
+                    {filteredData.map((row) => (
+                      <Cell
+                        key={`cell-disposal-${row.material}`}
+                        fill={phaseConfig.Disposal.color}
+                        stroke={activeMaterial === row.material && activePhase === "Disposal" ? "currentColor" : "none"}
+                        strokeWidth={2}
+                        onMouseMove={(ev: any) => handleBarMouseMove(row.material, "Disposal", ev)}
+                        onMouseLeave={handleBarMouseLeave}
+                        onClick={() => openPhaseDetails(row.material, "Disposal", row.Disposal)}
+                        style={{ cursor: "pointer" }}
+                      />
+                    ))}
+                  </Bar>
                 </BarChart>
               </ResponsiveContainer>
             </div>
@@ -323,7 +359,7 @@ const LifecycleBreakdown = () => {
               activePhase={activePhase}
               onPhaseClick={(phase) => {
                 if (panelData) {
-                  handlePhaseClick(activeMaterial, phase, panelData[phase]);
+                  openPhaseDetails(activeMaterial, phase, panelData[phase]);
                 }
               }}
               units={units}
