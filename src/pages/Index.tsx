@@ -99,41 +99,64 @@ const Index = () => {
       {/* Content */}
       <div className="relative z-10 text-center space-y-8 px-6 max-w-4xl">
         <div className="space-y-4">
-          <h1 className="mb-4 text-5xl md:text-6xl font-extrabold tracking-tight" style={{ color: '#F9FAFB' }}>
+          <h1 
+            className="mb-4 text-5xl md:text-6xl font-extrabold tracking-tight opacity-0 animate-[fadeIn_0.8s_ease-out_0.2s_forwards]" 
+            style={{ color: '#F9FAFB' }}
+          >
             BlockPlane
           </h1>
-          <p className="text-xl md:text-2xl mb-3" style={{ color: '#9CA3AF' }}>
+          <p 
+            className="text-xl md:text-2xl mb-3 opacity-0 animate-[fadeIn_0.8s_ease-out_0.4s_forwards]" 
+            style={{ color: '#9CA3AF' }}
+          >
             Material Lifecycle Analysis
           </p>
           <p 
-            className="text-xs md:text-sm tracking-[0.2em] uppercase font-light"
+            className="text-xs md:text-sm tracking-[0.2em] uppercase font-light opacity-0 animate-[fadeIn_0.8s_ease-out_0.6s_forwards]"
             style={{ color: 'rgba(148, 163, 184, 0.7)' }}
           >
             Carbon · Circularity · Materials · Clarity
           </p>
         </div>
         
-        <Link to="/lifecycle">
-          <Button 
-            size="lg" 
-            className="px-12 py-7 rounded-full text-lg font-bold transition-all duration-300 hover:scale-[1.03] relative overflow-hidden group"
-            style={{
-              background: 'linear-gradient(135deg, #09FBD3 0%, #3CE4B2 50%, #FF8E4A 100%)',
-              color: '#0B0F16',
-              boxShadow: '0 0 40px rgba(9, 251, 211, 0.8), 0 0 60px rgba(9, 251, 211, 0.4)'
-            }}
-          >
-            {/* Inner glow on hover */}
-            <span 
-              className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-300"
+        <div className="opacity-0 animate-[fadeIn_0.8s_ease-out_0.8s_forwards]">
+          <Link to="/lifecycle">
+            <Button 
+              size="lg" 
+              className="px-12 py-7 rounded-full text-lg font-bold transition-all duration-300 hover:scale-[1.03] relative overflow-hidden group"
               style={{
-                background: 'linear-gradient(180deg, rgba(255,255,255,0.3) 0%, transparent 50%)',
+                background: 'linear-gradient(135deg, #09FBD3 0%, #3CE4B2 50%, #FF8E4A 100%)',
+                color: '#0B0F16',
+                boxShadow: '0 0 40px rgba(9, 251, 211, 0.8), 0 0 60px rgba(9, 251, 211, 0.4)'
               }}
-            />
-            <span className="relative z-10">View Lifecycle Breakdown</span>
-          </Button>
-        </Link>
+            >
+              {/* Inner glow on hover */}
+              <span 
+                className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-300"
+                style={{
+                  background: 'linear-gradient(180deg, rgba(255,255,255,0.3) 0%, transparent 50%)',
+                }}
+              />
+              <span className="relative z-10">View Lifecycle Breakdown</span>
+            </Button>
+          </Link>
+        </div>
       </div>
+      
+      <style>
+        {`
+          @keyframes fadeIn {
+            from {
+              opacity: 0;
+              transform: translateY(20px);
+            }
+            to {
+              opacity: 1;
+              transform: translateY(0);
+            }
+          }
+        `}
+      </style>
     </div>
   );
 };
