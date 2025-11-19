@@ -150,6 +150,27 @@ const Index = () => {
             </Button>
           </Link>
         </div>
+
+        {/* Scroll Indicator */}
+        <div className="opacity-0 animate-[fadeIn_0.8s_ease-out_2s_forwards]">
+          <div className="flex flex-col items-center gap-2 animate-[bounce_2s_ease-in-out_infinite]">
+            <svg 
+              width="24" 
+              height="24" 
+              viewBox="0 0 24 24" 
+              fill="none"
+              className="opacity-40"
+            >
+              <path 
+                d="M12 5v14m0 0l-7-7m7 7l7-7" 
+                stroke="rgba(148, 163, 184, 0.8)" 
+                strokeWidth="2" 
+                strokeLinecap="round" 
+                strokeLinejoin="round"
+              />
+            </svg>
+          </div>
+        </div>
       </div>
       
       <style>
@@ -162,6 +183,15 @@ const Index = () => {
             to {
               opacity: 1;
               transform: translateY(0);
+            }
+          }
+          
+          @keyframes bounce {
+            0%, 100% {
+              transform: translateY(0);
+            }
+            50% {
+              transform: translateY(8px);
             }
           }
         `}
