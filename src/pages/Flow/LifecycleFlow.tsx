@@ -48,17 +48,24 @@ export function LifecycleFlow() {
   };
 
   return (
-    <div className="relative min-h-screen overflow-hidden">
-      {/* Ambient Background */}
+    <div className="relative min-h-screen overflow-hidden" style={{ background: '#0B0F16' }}>
+      {/* GMUNK Glowing Background */}
       <div
         aria-hidden
         className="pointer-events-none fixed inset-0 -z-10"
       >
         <div 
-          className="absolute inset-0" 
-          style={{ background: 'linear-gradient(180deg, var(--bg-from), var(--bg-via), var(--bg-to))' }}
+          className="absolute top-0 left-0 w-[600px] h-[600px] rounded-full blur-[120px] opacity-40"
+          style={{ background: 'radial-gradient(circle, #09FBD3 0%, transparent 70%)' }}
         />
-        <div className="absolute inset-0 opacity-[0.06] mix-blend-overlay bg-[url('data:image/svg+xml;utf8,<svg xmlns=%22http://www.w3.org/2000/svg%22 width=%2240%22 height=%2240%22><rect fill=%22%23000000%22 fill-opacity=%220.04%22 width=%2240%22 height=%2240%22/></svg>')]" />
+        <div 
+          className="absolute bottom-0 right-0 w-[600px] h-[600px] rounded-full blur-[120px] opacity-40"
+          style={{ background: 'radial-gradient(circle, #FF8E4A 0%, transparent 70%)' }}
+        />
+        <div 
+          className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[400px] h-[400px] rounded-full blur-[100px] opacity-20"
+          style={{ background: 'radial-gradient(circle, #8378FF 0%, transparent 70%)' }}
+        />
       </div>
 
       {/* Header Actions - Fixed position */}

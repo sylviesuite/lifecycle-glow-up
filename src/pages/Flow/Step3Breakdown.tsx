@@ -161,32 +161,34 @@ export function Step3Breakdown({ onNext, onBack }: Step3BreakdownProps) {
       <div className="flex flex-col min-h-screen p-6 overflow-hidden">
       <div 
         ref={cardRef}
-        className="h-[calc(100vh-3rem)] rounded-2xl backdrop-blur-sm shadow-md p-4 flex flex-col"
+        className="h-[calc(100vh-3rem)] rounded-3xl p-4 flex flex-col"
         style={{ 
-          background: 'var(--canvas)', 
-          border: '1px solid var(--ring-lifecycle)'
+          background: 'rgba(15, 23, 42, 0.65)', 
+          backdropFilter: 'blur(20px)',
+          border: '1px solid rgba(255, 255, 255, 0.15)',
+          boxShadow: '0 0 30px rgba(9, 251, 211, 0.25)'
         }}
       >
         {/* Header with toggles */}
         <div className="mb-3 flex items-start justify-between">
           <div>
-            <h2 className="text-xl md:text-2xl font-bold tracking-tight mb-1" style={{ color: 'var(--text)' }}>
+            <h2 className="text-xl md:text-2xl font-bold tracking-tight mb-1" style={{ color: '#F9FAFB' }}>
               Lifecycle Breakdown
             </h2>
-            <p className="text-sm" style={{ color: 'var(--text-sub)' }}>
+            <p className="text-sm" style={{ color: '#9CA3AF' }}>
               {currentCategory?.label} — {getCurrentUnit()} per m²
             </p>
           </div>
 
             <div className="flex flex-col items-end gap-3 shrink-0">
               {/* Layout View Toggle */}
-              <div className="flex rounded-lg overflow-hidden border shadow-sm" style={{ borderColor: 'var(--ring-lifecycle)' }}>
+              <div className="flex rounded-lg overflow-hidden shadow-sm" style={{ border: '1px solid rgba(148, 163, 184, 0.5)' }}>
                 <button
                   onClick={() => setLayoutView("tiles")}
                   className="px-3 py-1.5 text-xs font-medium transition-all"
                   style={{
-                    background: layoutView === "tiles" ? 'var(--phase-prod)' : 'rgba(255, 255, 255, 0.5)',
-                    color: layoutView === "tiles" ? 'white' : 'var(--text)',
+                    background: layoutView === "tiles" ? 'linear-gradient(135deg, #09FBD3 0%, #3CE4B2 100%)' : 'rgba(15, 23, 42, 0.6)',
+                    color: layoutView === "tiles" ? '#0B0F16' : '#F9FAFB',
                   }}
                 >
                   Tiles
@@ -195,8 +197,8 @@ export function Step3Breakdown({ onNext, onBack }: Step3BreakdownProps) {
                   onClick={() => setLayoutView("chart")}
                   className="px-3 py-1.5 text-xs font-medium transition-all"
                   style={{
-                    background: layoutView === "chart" ? 'var(--phase-prod)' : 'rgba(255, 255, 255, 0.5)',
-                    color: layoutView === "chart" ? 'white' : 'var(--text)',
+                    background: layoutView === "chart" ? 'linear-gradient(135deg, #09FBD3 0%, #3CE4B2 100%)' : 'rgba(15, 23, 42, 0.6)',
+                    color: layoutView === "chart" ? '#0B0F16' : '#F9FAFB',
                   }}
                 >
                   Chart
@@ -213,11 +215,11 @@ export function Step3Breakdown({ onNext, onBack }: Step3BreakdownProps) {
                       lifecycleStore.setImpactCategory(cat.value);
                     }}
                     className={`px-3 py-2 rounded-lg text-sm transition-all ${
-                      impactCategory === cat.value ? 'font-bold' : 'font-medium'
+                      impactCategory === cat.value ? 'font-bold shadow-[0_0_16px_rgba(9,251,211,0.4)]' : 'font-medium'
                     }`}
                     style={{
-                      background: impactCategory === cat.value ? 'var(--phase-prod)' : 'rgba(255, 255, 255, 0.5)',
-                      color: impactCategory === cat.value ? 'white' : 'var(--text)',
+                      background: impactCategory === cat.value ? 'linear-gradient(135deg, #09FBD3 0%, #3CE4B2 100%)' : 'rgba(15, 23, 42, 0.6)',
+                      color: impactCategory === cat.value ? '#0B0F16' : '#F9FAFB',
                       borderBottom: impactCategory === cat.value ? '3px solid var(--phase-prod)' : 'none',
                     }}
                   >
@@ -238,12 +240,12 @@ export function Step3Breakdown({ onNext, onBack }: Step3BreakdownProps) {
                     lifecycleStore.setViewMode("impact");
                   }}
                   className={`px-4 py-2 rounded-lg text-sm font-medium transition-all ${
-                    viewMode === "impact" ? 'shadow-md' : ''
+                    viewMode === "impact" ? 'shadow-[0_0_16px_rgba(9,251,211,0.4)]' : ''
                   }`}
                   style={{
-                    background: viewMode === "impact" ? 'white' : 'rgba(255, 255, 255, 0.5)',
-                    color: 'var(--text)',
-                    border: viewMode === "impact" ? '2px solid var(--phase-prod)' : '1px solid rgba(0, 0, 0, 0.1)',
+                    background: viewMode === "impact" ? 'linear-gradient(135deg, #09FBD3 0%, #3CE4B2 100%)' : 'rgba(15, 23, 42, 0.6)',
+                    color: viewMode === "impact" ? '#0B0F16' : '#F9FAFB',
+                    border: viewMode === "impact" ? 'none' : '1px solid rgba(148, 163, 184, 0.5)',
                   }}
                 >
                   Impact View
@@ -254,12 +256,12 @@ export function Step3Breakdown({ onNext, onBack }: Step3BreakdownProps) {
                     lifecycleStore.setViewMode("cpi");
                   }}
                   className={`px-4 py-2 rounded-lg text-sm font-medium transition-all ${
-                    viewMode === "cpi" ? 'shadow-md' : ''
+                    viewMode === "cpi" ? 'shadow-[0_0_16px_rgba(9,251,211,0.4)]' : ''
                   }`}
                   style={{
-                    background: viewMode === "cpi" ? 'white' : 'rgba(255, 255, 255, 0.5)',
-                    color: 'var(--text)',
-                    border: viewMode === "cpi" ? '2px solid var(--phase-prod)' : '1px solid rgba(0, 0, 0, 0.1)',
+                    background: viewMode === "cpi" ? 'linear-gradient(135deg, #09FBD3 0%, #3CE4B2 100%)' : 'rgba(15, 23, 42, 0.6)',
+                    color: viewMode === "cpi" ? '#0B0F16' : '#F9FAFB',
+                    border: viewMode === "cpi" ? 'none' : '1px solid rgba(148, 163, 184, 0.5)',
                   }}
                 >
                   Cost ↔ Impact (CPI)
@@ -273,12 +275,12 @@ export function Step3Breakdown({ onNext, onBack }: Step3BreakdownProps) {
                     lifecycleStore.setChartMode("absolute");
                   }}
                   className={`px-4 py-2 rounded-lg text-sm font-medium transition-all ${
-                    chartMode === "absolute" ? 'shadow-md' : ''
+                    chartMode === "absolute" ? 'shadow-[0_0_16px_rgba(9,251,211,0.4)]' : ''
                   }`}
                   style={{
-                    background: chartMode === "absolute" ? 'white' : 'rgba(255, 255, 255, 0.5)',
-                    color: 'var(--text)',
-                    border: chartMode === "absolute" ? '2px solid var(--phase-prod)' : '1px solid rgba(0, 0, 0, 0.1)',
+                    background: chartMode === "absolute" ? 'linear-gradient(135deg, #09FBD3 0%, #3CE4B2 100%)' : 'rgba(15, 23, 42, 0.6)',
+                    color: chartMode === "absolute" ? '#0B0F16' : '#F9FAFB',
+                    border: chartMode === "absolute" ? 'none' : '1px solid rgba(148, 163, 184, 0.5)',
                   }}
                 >
                   Absolute
@@ -289,12 +291,12 @@ export function Step3Breakdown({ onNext, onBack }: Step3BreakdownProps) {
                     lifecycleStore.setChartMode("percentage");
                   }}
                   className={`px-4 py-2 rounded-lg text-sm font-medium transition-all ${
-                    chartMode === "percentage" ? 'shadow-md' : ''
+                    chartMode === "percentage" ? 'shadow-[0_0_16px_rgba(9,251,211,0.4)]' : ''
                   }`}
                   style={{
-                    background: chartMode === "percentage" ? 'white' : 'rgba(255, 255, 255, 0.5)',
-                    color: 'var(--text)',
-                    border: chartMode === "percentage" ? '2px solid var(--phase-prod)' : '1px solid rgba(0, 0, 0, 0.1)',
+                    background: chartMode === "percentage" ? 'linear-gradient(135deg, #09FBD3 0%, #3CE4B2 100%)' : 'rgba(15, 23, 42, 0.6)',
+                    color: chartMode === "percentage" ? '#0B0F16' : '#F9FAFB',
+                    border: chartMode === "percentage" ? 'none' : '1px solid rgba(148, 163, 184, 0.5)',
                   }}
                 >
                   % of Total
@@ -305,7 +307,7 @@ export function Step3Breakdown({ onNext, onBack }: Step3BreakdownProps) {
 
           {/* Phase Filter Pills */}
           <div className="mb-4">
-            <p className="text-xs font-semibold mb-2 uppercase tracking-wide" style={{ color: 'var(--text-sub)' }}>
+            <p className="text-xs font-semibold mb-2 uppercase tracking-wide" style={{ color: '#9CA3AF' }}>
               Filter by Phase
             </p>
             <div className="flex flex-wrap gap-2">
@@ -315,12 +317,13 @@ export function Step3Breakdown({ onNext, onBack }: Step3BreakdownProps) {
                   <button
                     key={phase}
                     onClick={() => togglePhaseFilter(phase)}
-                    className="flex items-center gap-2 px-3 py-1.5 rounded-full transition-all text-sm font-medium cursor-pointer"
+                    className="flex items-center gap-2 px-3 py-1.5 rounded-full transition-all text-sm font-medium cursor-pointer hover:scale-105"
                     style={{
-                      background: isActive ? phaseConfig[phase].fill : 'rgba(0, 0, 0, 0.05)',
-                      color: isActive ? 'white' : 'var(--text-sub)',
-                      border: `1px solid ${isActive ? phaseConfig[phase].fill : 'transparent'}`,
+                      background: isActive ? phaseConfig[phase].fill : 'rgba(15, 23, 42, 0.5)',
+                      color: isActive ? 'white' : '#9CA3AF',
+                      border: `1px solid ${isActive ? phaseConfig[phase].fill : 'rgba(148, 163, 184, 0.3)'}`,
                       opacity: isActive ? 1 : 0.6,
+                      boxShadow: isActive ? `0 0 12px ${phaseConfig[phase].fill}40` : 'none',
                     }}
                   >
                     <div
@@ -334,10 +337,11 @@ export function Step3Breakdown({ onNext, onBack }: Step3BreakdownProps) {
               {activePhaseFilters.size > 0 && (
                 <button
                   onClick={() => setActivePhaseFilters(new Set())}
-                  className="px-3 py-1.5 rounded-full text-xs font-medium transition-all"
+                  className="px-3 py-1.5 rounded-full text-xs font-medium transition-all hover:scale-105"
                   style={{
-                    background: 'rgba(0, 0, 0, 0.05)',
-                    color: 'var(--text-sub)',
+                    background: 'rgba(15, 23, 42, 0.5)',
+                    color: '#9CA3AF',
+                    border: '1px solid rgba(148, 163, 184, 0.3)',
                   }}
                 >
                   Clear filters
@@ -469,10 +473,11 @@ export function Step3Breakdown({ onNext, onBack }: Step3BreakdownProps) {
           <div className="flex items-center justify-between mt-6">
             <Button
               onClick={onBack}
-              className="px-6 py-3 rounded-xl text-base font-medium shadow-sm"
+              className="px-6 py-3 rounded-xl text-base font-medium shadow-sm hover:scale-[1.02] transition-all"
               style={{
-                background: 'var(--phase-prod)',
-                color: 'white',
+                background: 'rgba(15, 23, 42, 0.75)',
+                color: '#F9FAFB',
+                border: '1px solid rgba(148, 163, 184, 0.7)',
               }}
             >
               <ChevronLeft className="h-4 w-4 mr-2" />
@@ -480,10 +485,11 @@ export function Step3Breakdown({ onNext, onBack }: Step3BreakdownProps) {
             </Button>
             <Button
               onClick={onNext}
-              className="px-8 py-3 rounded-xl text-base font-semibold shadow-md hover:shadow-lg transition-all"
+              className="px-8 py-3 rounded-xl text-base font-bold transition-all hover:scale-[1.02]"
               style={{
-                background: 'var(--phase-prod)',
-                color: 'white',
+                background: 'linear-gradient(135deg, #09FBD3 0%, #3CE4B2 50%, #FF8E4A 100%)',
+                color: '#0B0F16',
+                boxShadow: '0 0 24px rgba(9, 251, 211, 0.6)'
               }}
             >
               Next: Insights & Export

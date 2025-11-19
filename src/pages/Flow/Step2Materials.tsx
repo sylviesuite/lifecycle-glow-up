@@ -67,24 +67,26 @@ export function Step2Materials({ onNext, onBack }: Step2MaterialsProps) {
   return (
     <div className="flex flex-col items-center justify-center min-h-screen p-6 overflow-hidden">
       <div 
-        className="w-full max-w-2xl h-[calc(100vh-3rem)] flex flex-col rounded-2xl backdrop-blur-sm shadow-md p-8"
+        className="w-full max-w-2xl h-[calc(100vh-3rem)] flex flex-col rounded-3xl p-8"
         style={{ 
-          background: 'var(--canvas)', 
-          border: '1px solid var(--ring-lifecycle)' 
+          background: 'rgba(15, 23, 42, 0.65)', 
+          backdropFilter: 'blur(20px)',
+          border: '1px solid rgba(255, 255, 255, 0.15)',
+          boxShadow: '0 0 30px rgba(9, 251, 211, 0.25)'
         }}
       >
         <div className="mb-6 text-center">
-          <h2 className="text-3xl md:text-4xl font-extrabold tracking-tight mb-3" style={{ color: 'var(--text)' }}>
+          <h2 className="text-3xl md:text-4xl font-extrabold tracking-tight mb-3" style={{ color: '#F9FAFB' }}>
             Material Selection
           </h2>
-          <p className="text-base mb-2" style={{ color: 'var(--text-sub)' }}>
+          <p className="text-base mb-2" style={{ color: '#9CA3AF' }}>
             Select assemblies to compare in the lifecycle breakdown
           </p>
           <div 
-            className="inline-flex items-center gap-2 px-3 py-1 rounded-full text-sm font-medium"
+            className="inline-flex items-center gap-2 px-3 py-1 rounded-full text-sm font-medium shadow-[0_0_16px_rgba(9,251,211,0.4)]"
             style={{ 
-              background: 'var(--phase-prod)', 
-              color: 'white' 
+              background: 'linear-gradient(135deg, #09FBD3 0%, #3CE4B2 100%)', 
+              color: '#0B0F16' 
             }}
           >
             {selectedAssemblies.length} selected
@@ -97,11 +99,11 @@ export function Step2Materials({ onNext, onBack }: Step2MaterialsProps) {
             placeholder="Search materials by name..."
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            className="rounded-lg border px-3 py-2 shadow-inner mb-3"
+            className="rounded-xl px-3 py-2 shadow-inner mb-3 transition-all focus-within:shadow-[0_0_12px_rgba(9,251,211,0.4)]"
             style={{
-              borderColor: 'var(--ring-lifecycle)',
-              background: 'var(--canvas)',
-              color: 'var(--text)',
+              border: '1px solid rgba(148, 163, 184, 0.7)',
+              background: 'rgba(15, 23, 42, 0.75)',
+              color: '#F9FAFB',
             }}
           />
           <div className="flex gap-2 flex-wrap">
@@ -152,14 +154,14 @@ export function Step2Materials({ onNext, onBack }: Step2MaterialsProps) {
             {filteredMaterials.map((material) => (
             <div
               key={material.name}
-              className="flex items-center gap-3 p-4 rounded-xl border transition-all hover:shadow-md"
+              className="flex items-center gap-3 p-4 rounded-xl transition-all hover:shadow-[0_0_16px_rgba(9,251,211,0.3)]"
               style={{
                 background: selectedAssemblies.includes(material.name) 
-                  ? 'rgba(94, 146, 119, 0.1)' 
-                  : 'var(--canvas)',
-                borderColor: selectedAssemblies.includes(material.name)
-                  ? 'var(--phase-prod)'
-                  : 'var(--ring-lifecycle)',
+                  ? 'rgba(9, 251, 211, 0.15)' 
+                  : 'rgba(15, 23, 42, 0.5)',
+                border: selectedAssemblies.includes(material.name)
+                  ? '1px solid rgba(9, 251, 211, 0.6)'
+                  : '1px solid rgba(148, 163, 184, 0.3)',
               }}
             >
               <Checkbox
@@ -170,12 +172,12 @@ export function Step2Materials({ onNext, onBack }: Step2MaterialsProps) {
               <label
                 htmlFor={material.name}
                 className="flex-1 text-base font-medium cursor-pointer"
-                style={{ color: 'var(--text)' }}
+                style={{ color: '#F9FAFB' }}
               >
                 {material.name}
               </label>
               <div className="flex items-center gap-3">
-                <span className="text-sm" style={{ color: 'var(--text-sub)' }}>
+                <span className="text-sm" style={{ color: '#9CA3AF' }}>
                   {material.total} kg CO₂e
                 </span>
                 <button
@@ -184,9 +186,9 @@ export function Step2Materials({ onNext, onBack }: Step2MaterialsProps) {
                     openModal(material.name);
                   }}
                   className="cursor-help transition-colors"
-                  style={{ color: 'var(--text-sub)' }}
-                  onMouseEnter={(e) => e.currentTarget.style.color = 'var(--text)'}
-                  onMouseLeave={(e) => e.currentTarget.style.color = 'var(--text-sub)'}
+                  style={{ color: '#9CA3AF' }}
+                  onMouseEnter={(e) => e.currentTarget.style.color = '#09FBD3'}
+                  onMouseLeave={(e) => e.currentTarget.style.color = '#9CA3AF'}
                   title="View composition"
                 >
                   <Info className="h-4 w-4" />
@@ -200,10 +202,11 @@ export function Step2Materials({ onNext, onBack }: Step2MaterialsProps) {
         <div className="flex items-center justify-between shrink-0">
           <Button
             onClick={onBack}
-            className="px-6 py-3 rounded-xl text-base font-medium shadow-sm"
+            className="px-6 py-3 rounded-xl text-base font-medium shadow-sm hover:scale-[1.02] transition-all"
             style={{
-              background: 'var(--phase-prod)',
-              color: 'white',
+              background: 'rgba(15, 23, 42, 0.75)',
+              color: '#F9FAFB',
+              border: '1px solid rgba(148, 163, 184, 0.7)',
             }}
           >
             <ChevronLeft className="h-4 w-4 mr-2" />
@@ -212,10 +215,13 @@ export function Step2Materials({ onNext, onBack }: Step2MaterialsProps) {
           <Button
             onClick={onNext}
             disabled={selectedAssemblies.length === 0}
-            className="px-8 py-3 rounded-xl text-base font-semibold shadow-md hover:shadow-lg transition-all disabled:opacity-50"
+            className="px-8 py-3 rounded-xl text-base font-bold transition-all hover:scale-[1.02] disabled:opacity-50"
             style={{
-              background: selectedAssemblies.length > 0 ? 'var(--phase-prod)' : 'var(--text-sub)',
-              color: 'white',
+              background: selectedAssemblies.length > 0 
+                ? 'linear-gradient(135deg, #09FBD3 0%, #3CE4B2 50%, #FF8E4A 100%)' 
+                : 'rgba(15, 23, 42, 0.5)',
+              color: selectedAssemblies.length > 0 ? '#0B0F16' : '#6B7280',
+              boxShadow: selectedAssemblies.length > 0 ? '0 0 24px rgba(9, 251, 211, 0.6)' : 'none',
             }}
           >
             Next: Lifecycle Breakdown
