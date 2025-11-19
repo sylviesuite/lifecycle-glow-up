@@ -1,8 +1,23 @@
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import FloatingParticles from "@/components/FloatingParticles";
+import { useState, useEffect } from "react";
 
 const Index = () => {
+  const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
+
+  useEffect(() => {
+    const handleMouseMove = (e: MouseEvent) => {
+      // Normalize mouse position to -1 to 1 range
+      const x = (e.clientX / window.innerWidth - 0.5) * 2;
+      const y = (e.clientY / window.innerHeight - 0.5) * 2;
+      setMousePosition({ x, y });
+    };
+
+    window.addEventListener('mousemove', handleMouseMove);
+    return () => window.removeEventListener('mousemove', handleMouseMove);
+  }, []);
+
   return (
     <div 
       className="relative flex min-h-screen items-center justify-center overflow-hidden"
@@ -11,16 +26,25 @@ const Index = () => {
       {/* GMUNK Glowing Background */}
       <div className="absolute inset-0 pointer-events-none">
         <div 
-          className="absolute top-0 left-0 w-[600px] h-[600px] rounded-full blur-[120px] opacity-40"
-          style={{ background: 'radial-gradient(circle, #09FBD3 0%, transparent 70%)' }}
+          className="absolute top-0 left-0 w-[600px] h-[600px] rounded-full blur-[120px] opacity-40 transition-transform duration-500 ease-out"
+          style={{ 
+            background: 'radial-gradient(circle, #09FBD3 0%, transparent 70%)',
+            transform: `translate(${mousePosition.x * 20}px, ${mousePosition.y * 20}px)`
+          }}
         />
         <div 
-          className="absolute bottom-0 right-0 w-[600px] h-[600px] rounded-full blur-[120px] opacity-40"
-          style={{ background: 'radial-gradient(circle, #FF8E4A 0%, transparent 70%)' }}
+          className="absolute bottom-0 right-0 w-[600px] h-[600px] rounded-full blur-[120px] opacity-40 transition-transform duration-500 ease-out"
+          style={{ 
+            background: 'radial-gradient(circle, #FF8E4A 0%, transparent 70%)',
+            transform: `translate(${mousePosition.x * -15}px, ${mousePosition.y * -15}px)`
+          }}
         />
         <div 
-          className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[400px] h-[400px] rounded-full blur-[100px] opacity-20"
-          style={{ background: 'radial-gradient(circle, #8378FF 0%, transparent 70%)' }}
+          className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[400px] h-[400px] rounded-full blur-[100px] opacity-20 transition-transform duration-500 ease-out"
+          style={{ 
+            background: 'radial-gradient(circle, #8378FF 0%, transparent 70%)',
+            transform: `translate(calc(-50% + ${mousePosition.x * 10}px), calc(-50% + ${mousePosition.y * 10}px))`
+          }}
         />
       </div>
 
@@ -42,8 +66,11 @@ const Index = () => {
           width="800" 
           height="800" 
           viewBox="0 0 800 800" 
-          className="opacity-[0.06]"
-          style={{ filter: 'blur(2px)' }}
+          className="opacity-[0.06] transition-transform duration-700 ease-out"
+          style={{ 
+            filter: 'blur(2px)',
+            transform: `translate(${mousePosition.x * 30}px, ${mousePosition.y * 30}px)`
+          }}
         >
           <polygon 
             points="400,50 650,212.5 650,537.5 400,700 150,537.5 150,212.5"
