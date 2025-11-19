@@ -90,40 +90,26 @@ export function LifecycleFlow() {
         </Button>
       </div>
 
-      {/* Step Indicator */}
+      {/* Step Indicator - Glowing Capsules */}
       <div className="fixed top-3 left-1/2 -translate-x-1/2 z-50">
-        <div 
-          className="flex items-center gap-2 px-3 py-1.5 rounded-full shadow-lg"
-          style={{
-            background: 'var(--canvas)',
-            border: '1px solid var(--ring-lifecycle)',
-          }}
-        >
+        <div className="flex items-center gap-3">
           {[1, 2, 3, 4].map((s) => (
             <div
               key={s}
-              className="flex items-center gap-2"
+              className={`w-10 h-10 rounded-full grid place-items-center text-sm font-bold transition-all ${
+                s === step ? 'shadow-[0_0_20px_rgba(9,251,211,0.6)]' : ''
+              }`}
+              style={{
+                background: s === step 
+                  ? 'linear-gradient(135deg, #09FBD3 0%, #FF8E4A 100%)' 
+                  : 'rgba(15, 23, 42, 0.6)',
+                border: s === step ? 'none' : '1px solid rgba(255, 255, 255, 0.15)',
+                backdropFilter: s === step ? 'none' : 'blur(10px)',
+                color: s === step ? '#0B0F16' : 'rgba(249, 250, 251, 0.5)',
+              }}
+              aria-current={s === step ? 'step' : undefined}
             >
-              <div
-                className={`w-8 h-8 rounded-full grid place-items-center text-xs font-semibold transition-all ${
-                  s === step ? 'shadow-md' : ''
-                }`}
-                style={{
-                  background: s === step ? 'var(--phase-prod)' : s < step ? 'var(--phase-trans)' : 'var(--legend-pill)',
-                  color: s <= step ? 'white' : 'var(--text-sub)',
-                }}
-                aria-current={s === step ? 'step' : undefined}
-              >
-                {s}
-              </div>
-              {s < 4 && (
-                <div
-                  className="w-8 h-0.5"
-                  style={{
-                    background: s < step ? 'var(--phase-trans)' : 'var(--ring-lifecycle)',
-                  }}
-                />
-              )}
+              {s}
             </div>
           ))}
         </div>

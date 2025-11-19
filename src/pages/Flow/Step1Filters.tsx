@@ -31,35 +31,59 @@ export function Step1Filters({ onNext }: Step1FiltersProps) {
   }, [units]);
 
   return (
-    <div className="flex flex-col items-center justify-center min-h-screen p-6 overflow-hidden">
+    <div 
+      className="flex flex-col items-center justify-center min-h-screen p-6 overflow-hidden relative"
+      style={{
+        background: '#0B0F16',
+      }}
+    >
+      {/* Glowing radial gradients */}
+      <div className="absolute inset-0 pointer-events-none">
+        <div 
+          className="absolute top-0 left-0 w-[600px] h-[600px] rounded-full blur-[120px] opacity-40"
+          style={{ background: 'radial-gradient(circle, #09FBD3 0%, transparent 70%)' }}
+        />
+        <div 
+          className="absolute bottom-0 right-0 w-[600px] h-[600px] rounded-full blur-[120px] opacity-40"
+          style={{ background: 'radial-gradient(circle, #FF8E4A 0%, transparent 70%)' }}
+        />
+        <div 
+          className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[400px] h-[400px] rounded-full blur-[100px] opacity-20"
+          style={{ background: 'radial-gradient(circle, #8378FF 0%, transparent 70%)' }}
+        />
+      </div>
+
+      {/* Frosted glass card */}
       <div 
-        className="w-full max-w-2xl rounded-2xl backdrop-blur-sm shadow-md p-8"
+        className="w-full max-w-2xl rounded-3xl p-8 relative z-10"
         style={{ 
-          background: 'var(--canvas)', 
-          border: '1px solid var(--ring-lifecycle)' 
+          background: 'rgba(15, 23, 42, 0.65)', 
+          backdropFilter: 'blur(20px)',
+          border: '1px solid rgba(255, 255, 255, 0.15)',
+          boxShadow: '0 0 30px rgba(9, 251, 211, 0.25)'
         }}
       >
         <div className="mb-8 text-center">
-          <h2 className="text-3xl md:text-4xl font-extrabold tracking-tight mb-3" style={{ color: 'var(--text)' }}>
+          <h2 className="text-3xl md:text-4xl font-extrabold tracking-tight mb-3" style={{ color: '#F9FAFB' }}>
             Filters & Project Setup
           </h2>
-          <p className="text-base" style={{ color: 'var(--text-sub)' }}>
+          <p className="text-base" style={{ color: '#9CA3AF' }}>
             Configure your analysis parameters before selecting materials
           </p>
         </div>
 
         <div className="space-y-6">
           <div>
-            <label className="text-sm font-semibold mb-2 block" style={{ color: 'var(--text)' }}>
+            <label className="text-sm font-semibold mb-2 block" style={{ color: '#F9FAFB' }}>
               Category
             </label>
             <Select value={category} onValueChange={setCategory}>
               <SelectTrigger 
-                className="rounded-xl backdrop-blur-sm shadow-sm"
+                className="rounded-xl shadow-inner transition-all focus-within:shadow-[0_0_12px_rgba(9,251,211,0.4)]"
                 style={{ 
-                  background: 'var(--canvas)', 
-                  borderColor: 'var(--ring-lifecycle)',
-                  color: 'var(--text)'
+                  background: 'rgba(15, 23, 42, 0.75)', 
+                  border: '1px solid rgba(148, 163, 184, 0.7)',
+                  color: '#F9FAFB'
                 }}
               >
                 <SelectValue />
@@ -74,16 +98,16 @@ export function Step1Filters({ onNext }: Step1FiltersProps) {
           </div>
 
           <div>
-            <label className="text-sm font-semibold mb-2 block" style={{ color: 'var(--text)' }}>
+            <label className="text-sm font-semibold mb-2 block" style={{ color: '#F9FAFB' }}>
               Lifecycle Scope
             </label>
             <Select value={scope} onValueChange={setScope}>
               <SelectTrigger 
-                className="rounded-xl backdrop-blur-sm shadow-sm"
+                className="rounded-xl shadow-inner transition-all focus-within:shadow-[0_0_12px_rgba(9,251,211,0.4)]"
                 style={{ 
-                  background: 'var(--canvas)', 
-                  borderColor: 'var(--ring-lifecycle)',
-                  color: 'var(--text)'
+                  background: 'rgba(15, 23, 42, 0.75)', 
+                  border: '1px solid rgba(148, 163, 184, 0.7)',
+                  color: '#F9FAFB'
                 }}
               >
                 <SelectValue />
@@ -96,16 +120,16 @@ export function Step1Filters({ onNext }: Step1FiltersProps) {
           </div>
 
           <div>
-            <label className="text-sm font-semibold mb-2 block" style={{ color: 'var(--text)' }}>
+            <label className="text-sm font-semibold mb-2 block" style={{ color: '#F9FAFB' }}>
               Scope
             </label>
             <Select value={scopePhase} onValueChange={(val: "A1-A5" | "A1-C4" | "A1-D") => setScopePhase(val)}>
               <SelectTrigger 
-                className="rounded-xl backdrop-blur-sm shadow-sm"
+                className="rounded-xl shadow-inner transition-all focus-within:shadow-[0_0_12px_rgba(9,251,211,0.4)]"
                 style={{ 
-                  background: 'var(--canvas)', 
-                  borderColor: 'var(--ring-lifecycle)',
-                  color: 'var(--text)'
+                  background: 'rgba(15, 23, 42, 0.75)', 
+                  border: '1px solid rgba(148, 163, 184, 0.7)',
+                  color: '#F9FAFB'
                 }}
               >
                 <SelectValue />
@@ -119,16 +143,16 @@ export function Step1Filters({ onNext }: Step1FiltersProps) {
           </div>
 
           <div>
-            <label className="text-sm font-semibold mb-2 block" style={{ color: 'var(--text)' }}>
+            <label className="text-sm font-semibold mb-2 block" style={{ color: '#F9FAFB' }}>
               Units
             </label>
             <Select value={units} onValueChange={(val: "kgCO2e" | "MJ") => setUnits(val)}>
               <SelectTrigger 
-                className="rounded-xl backdrop-blur-sm shadow-sm"
+                className="rounded-xl shadow-inner transition-all focus-within:shadow-[0_0_12px_rgba(9,251,211,0.4)]"
                 style={{ 
-                  background: 'var(--canvas)', 
-                  borderColor: 'var(--ring-lifecycle)',
-                  color: 'var(--text)'
+                  background: 'rgba(15, 23, 42, 0.75)', 
+                  border: '1px solid rgba(148, 163, 184, 0.7)',
+                  color: '#F9FAFB'
                 }}
               >
                 <SelectValue />
@@ -144,10 +168,11 @@ export function Step1Filters({ onNext }: Step1FiltersProps) {
         <div className="mt-8 flex justify-end">
           <Button
             onClick={onNext}
-            className="px-8 py-3 rounded-xl text-base font-semibold shadow-md hover:shadow-lg transition-all"
+            className="px-8 py-3 rounded-xl text-base font-bold transition-all hover:scale-[1.02]"
             style={{
-              background: 'var(--phase-prod)',
-              color: 'white',
+              background: 'linear-gradient(135deg, #09FBD3 0%, #3CE4B2 50%, #FF8E4A 100%)',
+              color: '#0B0F16',
+              boxShadow: '0 0 24px rgba(9, 251, 211, 0.6)'
             }}
           >
             Next: Select Materials
