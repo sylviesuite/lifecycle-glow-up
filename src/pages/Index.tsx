@@ -1,5 +1,6 @@
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
+import FloatingParticles from "@/components/FloatingParticles";
 
 const Index = () => {
   return (
@@ -22,6 +23,9 @@ const Index = () => {
           style={{ background: 'radial-gradient(circle, #8378FF 0%, transparent 70%)' }}
         />
       </div>
+
+      {/* Floating Particles */}
+      <FloatingParticles />
 
       {/* Subtle Noise Texture Overlay */}
       <div 
