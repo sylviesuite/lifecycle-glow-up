@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import { Moon, Sun, ArrowLeft } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useNavigate } from "react-router-dom";
+import { motion, AnimatePresence } from "framer-motion";
 import { Step1Filters } from "./Step1Filters";
 import { Step2Materials } from "./Step2Materials";
 import { Step3Breakdown } from "./Step3Breakdown";
@@ -158,10 +159,52 @@ export function LifecycleFlow() {
 
       {/* Step Content */}
       <div className="w-full h-screen overflow-hidden">
-        {step === 1 && <Step1Filters onNext={handleNext} />}
-        {step === 2 && <Step2Materials onNext={handleNext} onBack={handleBack} />}
-        {step === 3 && <Step3Breakdown onNext={handleNext} onBack={handleBack} />}
-        {step === 4 && <Step4Insights onBack={handleBack} onFinish={handleFinish} />}
+        <AnimatePresence mode="wait">
+          {step === 1 && (
+            <motion.div
+              key="step1"
+              initial={{ opacity: 0, x: 100 }}
+              animate={{ opacity: 1, x: 0 }}
+              exit={{ opacity: 0, x: -100 }}
+              transition={{ duration: 0.5, ease: "easeInOut" }}
+            >
+              <Step1Filters onNext={handleNext} />
+            </motion.div>
+          )}
+          {step === 2 && (
+            <motion.div
+              key="step2"
+              initial={{ opacity: 0, x: 100 }}
+              animate={{ opacity: 1, x: 0 }}
+              exit={{ opacity: 0, x: -100 }}
+              transition={{ duration: 0.5, ease: "easeInOut" }}
+            >
+              <Step2Materials onNext={handleNext} onBack={handleBack} />
+            </motion.div>
+          )}
+          {step === 3 && (
+            <motion.div
+              key="step3"
+              initial={{ opacity: 0, x: 100 }}
+              animate={{ opacity: 1, x: 0 }}
+              exit={{ opacity: 0, x: -100 }}
+              transition={{ duration: 0.5, ease: "easeInOut" }}
+            >
+              <Step3Breakdown onNext={handleNext} onBack={handleBack} />
+            </motion.div>
+          )}
+          {step === 4 && (
+            <motion.div
+              key="step4"
+              initial={{ opacity: 0, x: 100 }}
+              animate={{ opacity: 1, x: 0 }}
+              exit={{ opacity: 0, x: -100 }}
+              transition={{ duration: 0.5, ease: "easeInOut" }}
+            >
+              <Step4Insights onBack={handleBack} onFinish={handleFinish} />
+            </motion.div>
+          )}
+        </AnimatePresence>
       </div>
     </div>
   );
