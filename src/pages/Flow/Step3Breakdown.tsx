@@ -161,7 +161,7 @@ export function Step3Breakdown({ onNext, onBack }: Step3BreakdownProps) {
       <div className="flex flex-col min-h-screen p-6 overflow-hidden">
       <div 
         ref={cardRef}
-        className="h-[calc(100vh-3rem)] rounded-3xl p-4 flex flex-col"
+        className="h-[calc(100vh-3rem)] rounded-3xl p-4 flex flex-col opacity-0 animate-[fadeIn_0.8s_ease-out_0.2s_forwards]"
         style={{ 
           background: 'rgba(15, 23, 42, 0.65)', 
           backdropFilter: 'blur(20px)',
@@ -508,6 +508,21 @@ export function Step3Breakdown({ onNext, onBack }: Step3BreakdownProps) {
         currentUnit={getCurrentUnit()}
         activePhases={activePhaseFilters}
       />
+      
+      <style>
+        {`
+          @keyframes fadeIn {
+            from {
+              opacity: 0;
+              transform: translateY(20px);
+            }
+            to {
+              opacity: 1;
+              transform: translateY(0);
+            }
+          }
+        `}
+      </style>
     </>
   );
 }

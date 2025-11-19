@@ -6,11 +6,24 @@ import { Step1Filters } from "./Step1Filters";
 import { Step2Materials } from "./Step2Materials";
 import { Step3Breakdown } from "./Step3Breakdown";
 import { Step4Insights } from "./Step4Insights";
+import FloatingParticles from "@/components/FloatingParticles";
 
 export function LifecycleFlow() {
   const [step, setStep] = useState(1);
   const [theme, setTheme] = useState<"light" | "dark">("light");
+  const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
   const navigate = useNavigate();
+
+  useEffect(() => {
+    const handleMouseMove = (e: MouseEvent) => {
+      const x = (e.clientX / window.innerWidth - 0.5) * 2;
+      const y = (e.clientY / window.innerHeight - 0.5) * 2;
+      setMousePosition({ x, y });
+    };
+
+    window.addEventListener('mousemove', handleMouseMove);
+    return () => window.removeEventListener('mousemove', handleMouseMove);
+  }, []);
 
   useEffect(() => {
     const saved = localStorage.getItem('bp-theme') as "light" | "dark" | null;
@@ -49,24 +62,45 @@ export function LifecycleFlow() {
 
   return (
     <div className="relative min-h-screen overflow-hidden" style={{ background: '#0B0F16' }}>
-      {/* GMUNK Glowing Background */}
+      {/* GMUNK Glowing Background with Parallax */}
       <div
         aria-hidden
         className="pointer-events-none fixed inset-0 -z-10"
       >
         <div 
-          className="absolute top-0 left-0 w-[600px] h-[600px] rounded-full blur-[120px] opacity-40"
-          style={{ background: 'radial-gradient(circle, #09FBD3 0%, transparent 70%)' }}
+          className="absolute top-0 left-0 w-[600px] h-[600px] rounded-full blur-[120px] opacity-40 transition-transform duration-500 ease-out"
+          style={{ 
+            background: 'radial-gradient(circle, #09FBD3 0%, transparent 70%)',
+            transform: `translate(${mousePosition.x * 20}px, ${mousePosition.y * 20}px)`
+          }}
         />
         <div 
-          className="absolute bottom-0 right-0 w-[600px] h-[600px] rounded-full blur-[120px] opacity-40"
-          style={{ background: 'radial-gradient(circle, #FF8E4A 0%, transparent 70%)' }}
+          className="absolute bottom-0 right-0 w-[600px] h-[600px] rounded-full blur-[120px] opacity-40 transition-transform duration-500 ease-out"
+          style={{ 
+            background: 'radial-gradient(circle, #FF8E4A 0%, transparent 70%)',
+            transform: `translate(${mousePosition.x * -15}px, ${mousePosition.y * -15}px)`
+          }}
         />
         <div 
-          className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[400px] h-[400px] rounded-full blur-[100px] opacity-20"
-          style={{ background: 'radial-gradient(circle, #8378FF 0%, transparent 70%)' }}
+          className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[400px] h-[400px] rounded-full blur-[100px] opacity-20 transition-transform duration-500 ease-out"
+          style={{ 
+            background: 'radial-gradient(circle, #8378FF 0%, transparent 70%)',
+            transform: `translate(calc(-50% + ${mousePosition.x * 10}px), calc(-50% + ${mousePosition.y * 10}px))`
+          }}
         />
       </div>
+
+      {/* Floating Particles */}
+      <FloatingParticles />
+
+      {/* Architectural Grid Overlay */}
+      <div 
+        className="fixed inset-0 pointer-events-none opacity-[0.04] -z-10"
+        style={{
+          backgroundImage: `url("data:image/svg+xml,%3Csvg width='80' height='80' xmlns='http://www.w3.org/2000/svg'%3E%3Cdefs%3E%3Cpattern id='grid' width='80' height='80' patternUnits='userSpaceOnUse'%3E%3Cpath d='M 80 0 L 0 0 0 80' fill='none' stroke='rgba(9, 251, 211, 0.15)' stroke-width='0.5'/%3E%3C/pattern%3E%3C/defs%3E%3Crect width='100%25' height='100%25' fill='url(%23grid)' /%3E%3C/svg%3E")`,
+          backgroundSize: '80px 80px',
+        }}
+      />
 
       {/* Header Actions - Fixed position */}
       <div className="fixed top-3 left-4 right-4 flex items-center justify-between z-50">
