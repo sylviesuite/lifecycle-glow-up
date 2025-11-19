@@ -31,31 +31,10 @@ export function Step1Filters({ onNext }: Step1FiltersProps) {
   }, [units]);
 
   return (
-    <div 
-      className="flex flex-col items-center justify-center min-h-screen p-6 overflow-hidden relative"
-      style={{
-        background: '#0B0F16',
-      }}
-    >
-      {/* Glowing radial gradients */}
-      <div className="absolute inset-0 pointer-events-none">
-        <div 
-          className="absolute top-0 left-0 w-[600px] h-[600px] rounded-full blur-[120px] opacity-40"
-          style={{ background: 'radial-gradient(circle, #09FBD3 0%, transparent 70%)' }}
-        />
-        <div 
-          className="absolute bottom-0 right-0 w-[600px] h-[600px] rounded-full blur-[120px] opacity-40"
-          style={{ background: 'radial-gradient(circle, #FF8E4A 0%, transparent 70%)' }}
-        />
-        <div 
-          className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[400px] h-[400px] rounded-full blur-[100px] opacity-20"
-          style={{ background: 'radial-gradient(circle, #8378FF 0%, transparent 70%)' }}
-        />
-      </div>
-
+    <>
       {/* Frosted glass card */}
       <div 
-        className="w-full max-w-2xl rounded-3xl p-8 relative z-10"
+        className="w-full max-w-2xl rounded-3xl p-8 relative z-10 opacity-0 animate-[fadeIn_0.8s_ease-out_0.2s_forwards]"
         style={{ 
           background: 'rgba(15, 23, 42, 0.65)', 
           backdropFilter: 'blur(20px)',
@@ -179,6 +158,21 @@ export function Step1Filters({ onNext }: Step1FiltersProps) {
           </Button>
         </div>
       </div>
-    </div>
+      
+      <style>
+        {`
+          @keyframes fadeIn {
+            from {
+              opacity: 0;
+              transform: translateY(20px);
+            }
+            to {
+              opacity: 1;
+              transform: translateY(0);
+            }
+          }
+        `}
+      </style>
+    </>
   );
 }

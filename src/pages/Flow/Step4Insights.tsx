@@ -29,9 +29,10 @@ export function Step4Insights({ onBack, onFinish }: Step4InsightsProps) {
   };
 
   return (
-    <div className="flex flex-col items-center justify-center min-h-screen p-6 overflow-hidden">
-      <div 
-        className="w-full max-w-3xl h-[calc(100vh-3rem)] flex flex-col rounded-3xl p-8"
+    <>
+      <div className="flex flex-col items-center justify-center min-h-screen p-6 overflow-hidden">
+        <div 
+          className="w-full max-w-3xl h-[calc(100vh-3rem)] flex flex-col rounded-3xl p-8 opacity-0 animate-[fadeIn_0.8s_ease-out_0.2s_forwards]"
         style={{ 
           background: 'rgba(15, 23, 42, 0.65)', 
           backdropFilter: 'blur(20px)',
@@ -180,6 +181,22 @@ export function Step4Insights({ onBack, onFinish }: Step4InsightsProps) {
           </Button>
         </div>
       </div>
-    </div>
+      </div>
+      
+      <style>
+        {`
+          @keyframes fadeIn {
+            from {
+              opacity: 0;
+              transform: translateY(20px);
+            }
+            to {
+              opacity: 1;
+              transform: translateY(0);
+            }
+          }
+        `}
+      </style>
+    </>
   );
 }
