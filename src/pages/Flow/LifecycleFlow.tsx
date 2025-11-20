@@ -11,6 +11,7 @@ import FloatingParticles from "@/components/FloatingParticles";
 
 export function LifecycleFlow() {
   const [step, setStep] = useState(1);
+  const [direction, setDirection] = useState<"forward" | "backward">("forward");
   const [theme, setTheme] = useState<"light" | "dark">("light");
   const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
   const navigate = useNavigate();
@@ -43,12 +44,14 @@ export function LifecycleFlow() {
 
   const handleNext = () => {
     if (step < 4) {
+      setDirection("forward");
       setStep(step + 1);
     }
   };
 
   const handleBack = () => {
     if (step > 1) {
+      setDirection("backward");
       setStep(step - 1);
     }
   };
@@ -159,13 +162,13 @@ export function LifecycleFlow() {
 
       {/* Step Content */}
       <div className="w-full h-screen overflow-hidden">
-        <AnimatePresence mode="wait">
+        <AnimatePresence mode="wait" custom={direction}>
           {step === 1 && (
             <motion.div
               key="step1"
-              initial={{ opacity: 0, x: 100 }}
+              initial={{ opacity: 0, x: direction === "forward" ? 100 : -100 }}
               animate={{ opacity: 1, x: 0 }}
-              exit={{ opacity: 0, x: -100 }}
+              exit={{ opacity: 0, x: direction === "forward" ? -100 : 100 }}
               transition={{ duration: 0.5, ease: "easeInOut" }}
             >
               <Step1Filters onNext={handleNext} />
@@ -174,9 +177,9 @@ export function LifecycleFlow() {
           {step === 2 && (
             <motion.div
               key="step2"
-              initial={{ opacity: 0, x: 100 }}
+              initial={{ opacity: 0, x: direction === "forward" ? 100 : -100 }}
               animate={{ opacity: 1, x: 0 }}
-              exit={{ opacity: 0, x: -100 }}
+              exit={{ opacity: 0, x: direction === "forward" ? -100 : 100 }}
               transition={{ duration: 0.5, ease: "easeInOut" }}
             >
               <Step2Materials onNext={handleNext} onBack={handleBack} />
@@ -185,9 +188,9 @@ export function LifecycleFlow() {
           {step === 3 && (
             <motion.div
               key="step3"
-              initial={{ opacity: 0, x: 100 }}
+              initial={{ opacity: 0, x: direction === "forward" ? 100 : -100 }}
               animate={{ opacity: 1, x: 0 }}
-              exit={{ opacity: 0, x: -100 }}
+              exit={{ opacity: 0, x: direction === "forward" ? -100 : 100 }}
               transition={{ duration: 0.5, ease: "easeInOut" }}
             >
               <Step3Breakdown onNext={handleNext} onBack={handleBack} />
@@ -196,9 +199,9 @@ export function LifecycleFlow() {
           {step === 4 && (
             <motion.div
               key="step4"
-              initial={{ opacity: 0, x: 100 }}
+              initial={{ opacity: 0, x: direction === "forward" ? 100 : -100 }}
               animate={{ opacity: 1, x: 0 }}
-              exit={{ opacity: 0, x: -100 }}
+              exit={{ opacity: 0, x: direction === "forward" ? -100 : 100 }}
               transition={{ duration: 0.5, ease: "easeInOut" }}
             >
               <Step4Insights onBack={handleBack} onFinish={handleFinish} />
