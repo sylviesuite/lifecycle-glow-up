@@ -169,7 +169,7 @@ export function LifecycleFlow() {
               initial={{ opacity: 0, x: direction === "forward" ? 100 : -100 }}
               animate={{ opacity: 1, x: 0 }}
               exit={{ opacity: 0, x: direction === "forward" ? -100 : 100 }}
-              transition={{ duration: 0.5, ease: "easeInOut" }}
+              transition={{ type: "spring", stiffness: 300, damping: 30 }}
             >
               <Step1Filters onNext={handleNext} />
             </motion.div>
@@ -180,7 +180,7 @@ export function LifecycleFlow() {
               initial={{ opacity: 0, x: direction === "forward" ? 100 : -100 }}
               animate={{ opacity: 1, x: 0 }}
               exit={{ opacity: 0, x: direction === "forward" ? -100 : 100 }}
-              transition={{ duration: 0.5, ease: "easeInOut" }}
+              transition={{ type: "spring", stiffness: 300, damping: 30 }}
             >
               <Step2Materials onNext={handleNext} onBack={handleBack} />
             </motion.div>
@@ -191,7 +191,7 @@ export function LifecycleFlow() {
               initial={{ opacity: 0, x: direction === "forward" ? 100 : -100 }}
               animate={{ opacity: 1, x: 0 }}
               exit={{ opacity: 0, x: direction === "forward" ? -100 : 100 }}
-              transition={{ duration: 0.5, ease: "easeInOut" }}
+              transition={{ type: "spring", stiffness: 300, damping: 30 }}
             >
               <Step3Breakdown onNext={handleNext} onBack={handleBack} />
             </motion.div>
@@ -202,7 +202,7 @@ export function LifecycleFlow() {
               initial={{ opacity: 0, x: direction === "forward" ? 100 : -100 }}
               animate={{ opacity: 1, x: 0 }}
               exit={{ opacity: 0, x: direction === "forward" ? -100 : 100 }}
-              transition={{ duration: 0.5, ease: "easeInOut" }}
+              transition={{ type: "spring", stiffness: 300, damping: 30 }}
             >
               <Step4Insights onBack={handleBack} onFinish={handleFinish} />
             </motion.div>
