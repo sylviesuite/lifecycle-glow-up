@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { Moon, Sun, ArrowLeft } from "lucide-react";
+import { Moon, Sun, ArrowLeft, Check } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useNavigate } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
@@ -12,6 +12,7 @@ import FloatingParticles from "@/components/FloatingParticles";
 export function LifecycleFlow() {
   const [step, setStep] = useState(1);
   const [direction, setDirection] = useState<"forward" | "backward">("forward");
+  const [completedSteps, setCompletedSteps] = useState<Set<number>>(new Set());
   const [theme, setTheme] = useState<"light" | "dark">("light");
   const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
   const navigate = useNavigate();
@@ -44,6 +45,7 @@ export function LifecycleFlow() {
 
   const handleNext = () => {
     if (step < 4) {
+      setCompletedSteps(prev => new Set([...prev, step]));
       setDirection("forward");
       setStep(step + 1);
     }
@@ -161,14 +163,20 @@ export function LifecycleFlow() {
               style={{
                 background: s === step 
                   ? 'linear-gradient(135deg, #09FBD3 0%, #FF8E4A 100%)' 
+                  : completedSteps.has(s)
+                  ? 'linear-gradient(135deg, #09FBD3 0%, #FF8E4A 100%)'
                   : 'rgba(15, 23, 42, 0.6)',
-                border: s === step ? 'none' : '1px solid rgba(255, 255, 255, 0.15)',
-                backdropFilter: s === step ? 'none' : 'blur(10px)',
-                color: s === step ? '#0B0F16' : 'rgba(249, 250, 251, 0.5)',
+                border: s === step || completedSteps.has(s) ? 'none' : '1px solid rgba(255, 255, 255, 0.15)',
+                backdropFilter: s === step || completedSteps.has(s) ? 'none' : 'blur(10px)',
+                color: s === step || completedSteps.has(s) ? '#0B0F16' : 'rgba(249, 250, 251, 0.5)',
               }}
               aria-current={s === step ? 'step' : undefined}
             >
-              {s}
+              {completedSteps.has(s) ? (
+                <Check className="h-5 w-5" strokeWidth={3} />
+              ) : (
+                s
+              )}
             </div>
           ))}
         </div>
