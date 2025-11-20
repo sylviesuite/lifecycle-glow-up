@@ -106,6 +106,20 @@ export function LifecycleFlow() {
         }}
       />
 
+      {/* Progress Bar */}
+      <div className="fixed top-0 left-0 right-0 h-1 bg-white/10 z-50">
+        <motion.div
+          className="h-full"
+          style={{
+            background: 'linear-gradient(90deg, #09FBD3 0%, #FF8E4A 100%)',
+            boxShadow: '0 0 10px rgba(9, 251, 211, 0.5)'
+          }}
+          initial={{ width: '25%' }}
+          animate={{ width: `${(step / 4) * 100}%` }}
+          transition={{ type: "spring", stiffness: 300, damping: 30 }}
+        />
+      </div>
+
       {/* Header Actions - Fixed position */}
       <div className="fixed top-3 left-4 right-4 flex items-center justify-between z-50">
         <Button
